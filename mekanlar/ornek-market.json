@@ -1,0 +1,48 @@
+{
+  "id": "ornek-market",
+  "ad": "Örnek Market",
+  "tur": "magaza",
+  "surum": 1,
+  "giris": "giris",
+  "kasa": "kasa",
+  "noktalar": [
+    {"id": "giris", "ad": "Giriş"},
+    {"id": "k1",    "ad": "1. koridor başı"},
+    {"id": "k2",    "ad": "2. koridor başı"},
+    {"id": "k3",    "ad": "3. koridor başı"},
+    {"id": "k4",    "ad": "4. koridor başı"},
+    {"id": "k5",    "ad": "5. koridor başı"},
+    {"id": "k6",    "ad": "6. koridor başı"},
+    {"id": "kasa",  "ad": "Kasalar"}
+  ],
+  "baglantilar": [
+    {"a": "giris", "b": "k1", "adim": 8,  "tarif": "Girişten düz ilerleyin",                     "geriTarif": "Girişe doğru düz ilerleyin"},
+    {"a": "k1",    "b": "k2", "adim": 6,  "tarif": "Ön koridorda sağa doğru ilerleyin",          "geriTarif": "Ön koridorda sola doğru ilerleyin"},
+    {"a": "k2",    "b": "k3", "adim": 6,  "tarif": "Ön koridorda sağa doğru ilerleyin",          "geriTarif": "Ön koridorda sola doğru ilerleyin"},
+    {"a": "k3",    "b": "k4", "adim": 6,  "tarif": "Ön koridorda sağa doğru ilerleyin",          "geriTarif": "Ön koridorda sola doğru ilerleyin"},
+    {"a": "k4",    "b": "k5", "adim": 6,  "tarif": "Ön koridorda sağa doğru ilerleyin",          "geriTarif": "Ön koridorda sola doğru ilerleyin"},
+    {"a": "k5",    "b": "k6", "adim": 6,  "tarif": "Ön koridorda sağa doğru ilerleyin",          "geriTarif": "Ön koridorda sola doğru ilerleyin"},
+    {"a": "k6",    "b": "kasa", "adim": 10, "tarif": "Ön koridorun sonundan sola, kasalara doğru ilerleyin", "geriTarif": "Kasalardan ön koridora doğru ilerleyin"},
+    {"a": "kasa",  "b": "giris", "adim": 5, "tarif": "Kasalardan çıkışa doğru ilerleyin", "tekYon": true}
+  ],
+  "hedefler": [
+    {"ad": "Meyve Sebze", "nokta": "k1", "koridor": "1",
+     "tarif": "1. koridora girin. Meyve ve sebzeler koridorun iki yanındaki tezgahlarda.",
+     "anahtarlar": ["meyve", "sebze", "salata", "domates", "elma", "muz", "patates", "soğan", "fruit", "vegetable"]},
+    {"ad": "Ekmek ve Fırın", "nokta": "k2", "koridor": "2", "raf": "1",
+     "tarif": "2. koridora girin. Ekmekler sol taraftaki ilk raflarda.",
+     "anahtarlar": ["ekmek", "unlu", "pasta", "bisküvi", "çikolata", "kek", "kraker", "simit", "bread", "biscuit", "chocolate", "cake"]},
+    {"ad": "Süt Ürünleri", "nokta": "k3", "koridor": "3", "raf": "2",
+     "tarif": "3. koridora girin. Süt ürünleri sağ taraftaki soğutucu dolaplarda.",
+     "anahtarlar": ["süt", "peynir", "yoğurt", "tereyağ", "krema", "kaymak", "yumurta", "milk", "cheese", "dairy", "yogurt"]},
+    {"ad": "Et Ürünleri", "nokta": "k4", "koridor": "4", "raf": "1",
+     "tarif": "4. koridora girin. Et ürünleri koridorun sonundaki kasap reyonunda.",
+     "anahtarlar": ["et", "kıyma", "tavuk", "balık", "sucuk", "salam", "sosis", "pastırma", "meat", "chicken", "fish"]},
+    {"ad": "İçecek", "nokta": "k5", "koridor": "5", "raf": "3",
+     "tarif": "5. koridora girin. Su ve meşrubatlar sol tarafta, çay ve kahve sağ tarafta.",
+     "anahtarlar": ["suyu", "su", "kola", "gazoz", "soda", "çay", "kahve", "içecek", "ayran", "water", "juice", "coffee", "tea", "drink"]},
+    {"ad": "Temizlik ve Kozmetik", "nokta": "k6", "koridor": "6", "raf": "2",
+     "tarif": "6. koridora girin. Deterjanlar solda, şampuan ve kişisel bakım sağda.",
+     "anahtarlar": ["deterjan", "sabun", "şampuan", "temizlik", "krem", "kozmetik", "diş", "peçete", "detergent", "shampoo", "soap"]}
+  ]
+}

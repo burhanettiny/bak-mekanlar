@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BAK QR Etiketleri</title>
+<!-- Kullanım: etiketler.html?mekan=<id>. Etiketler mekanlar/<id>.json dosyasından otomatik üretilir:
+     girişe BAK:MEKAN:<id>, her noktaya BAK:NOKTA:<id>:<nokta> asılır. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 24px; color: #111; background: #fff; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  p { margin: 0 0 20px; color: #555; font-size: 14px; }
+  .hata { color: #b00020; font-weight: bold; }
+  .izgara { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+  .etiket { border: 2px dashed #999; border-radius: 8px; padding: 16px; text-align: center; break-inside: avoid; }
+  .etiket svg { width: 160px; height: 160px; }
+  .ad { font-size: 18px; font-weight: bold; margin-top: 8px; }
+  .alt { font-size: 13px; color: #333; margin-top: 4px; }
+  .kod { font-family: monospace; font-size: 11px; color: #666; margin-top: 4px; word-break: break-all; }
+  .giris { border-color: #1e88e5; border-style: solid; }
+  @media print { p { display: none; } body { margin: 8mm; } }
+</style>
+</head>
+<body>
+<h1 id="baslik">QR Etiketleri</h1>
+<p>Etiketleri sabit bir yüksekliğe (ör. 120 cm) ve kabartma bir çerçeveyle asın ki görme engelli kullanıcı elle bulabilsin.
+   Mavi çerçeveli etiket binanın girişine asılır. Yazdırmak için Ctrl+P.</p>
+<div class="izgara" id="izgara"></div>
+<script>
+  const katAdi = k => k === 0 ? 'Zemin kat' : k === -1 ? 'Bodrum kat' : k > 0 ? `${k}. kat` : `Eksi ${-k}. kat`;
+  const kacis = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+
+  function etiketEkle(izgara, kod, ad, alt, giris) {
+    const qr = qrcode(0, 'M');
+    qr.addData(kod);
+    qr.make();
+    const kutu = document.createElement('div');
+    kutu.className = 'etiket' + (giris ? ' giris' : '');
+    kutu.innerHTML = qr.createSvgTag({cellSize: 4, margin: 2}) +
+      `<div class="ad">${kacis(ad)}</div>` + (alt ? `<div class="alt">${kacis(alt)}</div>` : '') +
+      `<div class="kod">${kacis(kod)}</div>`;
+    izgara.appendChild(kutu);
+  }
+
+  async function yukle() {
+    const id = new URLSearchParams(location.search).get('mekan');
+    const izgara = document.getElementById('izgara');
+    if (!id || !/^[\w-]+$/.test(id)) {
+      izgara.innerHTML = '<p class="hata">Adrese ?mekan=&lt;mekân kimliği&gt; ekleyin.</p>';
+      return;
+    }
+    let mekan;
+    try {
+      const yanit = await fetch(`mekanlar/${id}.json`);
+      if (!yanit.ok) throw new Error(yanit.status);
+      mekan = await yanit.json();
+    } catch (e) {
+      izgara.innerHTML = `<p class="hata">mekanlar/${kacis(id)}.json okunamadı (${kacis(e.message)}).</p>`;
+      return;
+    }
+    document.title = `${mekan.ad} — QR Etiketleri`;
+    document.getElementById('baslik').textContent = `${mekan.ad} — QR Etiketleri (sürüm ${mekan.surum})`;
+    const cokKatli = new Set(mekan.noktalar.map(n => n.kat ?? 0)).size > 1;
+
+    etiketEkle(izgara, `BAK:MEKAN:${mekan.id}`, 'GİRİŞ', mekan.ad, true);
+    for (const n of mekan.noktalar) {
+      if (n.id === mekan.giris) continue;
+      const buradakiler = mekan.hedefler.filter(h => h.nokta === n.id).map(h => h.ad).join(', ');
+      const ad = cokKatli ? `${katAdi(n.kat ?? 0)} — ${n.ad}` : n.ad;
+      etiketEkle(izgara, `BAK:NOKTA:${mekan.id}:${n.id}`, ad, buradakiler, false);
+    }
+  }
+  yukle();
+</script>
+</body>
+</html>

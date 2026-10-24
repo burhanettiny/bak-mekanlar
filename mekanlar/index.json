@@ -1,0 +1,6 @@
+{
+  "mekanlar": [
+    {"id": "ornek-market",  "ad": "Örnek Market",           "tur": "magaza"},
+    {"id": "ornek-hastane", "ad": "Örnek Devlet Hastanesi", "tur": "hastane"}
+  ]
+}

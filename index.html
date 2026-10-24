@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BAK Mekânları</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 24px; max-width: 720px; color: #111; background: #fff; line-height: 1.5; }
+  h1 { font-size: 22px; }
+  li { margin: 8px 0; }
+  .tur { color: #666; font-size: 14px; }
+  .hata { color: #b00020; }
+</style>
+</head>
+<body>
+<h1>BAK — Bina İçi Yönlendirme Mekânları</h1>
+<p>BAK uygulaması, girişteki QR okutulduğunda binanın düzenini buradan indirir.
+   Her mekân için JSON dosyasına ve yazdırılabilir QR etiketlerine aşağıdan ulaşabilirsiniz.</p>
+<ul id="liste"><li>Yükleniyor…</li></ul>
+<script>
+  const kacis = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+  const TURLER = {magaza: 'Mağaza', hastane: 'Hastane', kurum: 'Kamu kurumu', diger: 'Diğer'};
+  fetch('mekanlar/index.json')
+    .then(y => y.json())
+    .then(({mekanlar}) => {
+      document.getElementById('liste').innerHTML = mekanlar.map(m =>
+        `<li><strong>${kacis(m.ad)}</strong> <span class="tur">(${kacis(TURLER[m.tur] || m.tur)})</span><br>` +
+        `<a href="etiketler.html?mekan=${encodeURIComponent(m.id)}">QR etiketleri</a> · ` +
+        `<a href="mekanlar/${encodeURIComponent(m.id)}.json">Düzen dosyası</a></li>`).join('');
+    })
+    .catch(() => {
+      document.getElementById('liste').innerHTML = '<li class="hata">Mekân listesi okunamadı.</li>';
+    });
+</script>
+</body>
+</html>
