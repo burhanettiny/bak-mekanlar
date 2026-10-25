@@ -1,0 +1,7 @@
+[theme]
+base = "light"
+primaryColor = "#0d47a1"
+baseRadius = "medium"
+
+[server]
+maxUploadSize = 1

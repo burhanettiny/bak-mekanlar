@@ -1,0 +1,37 @@
+{
+ "sablonAdi": "Kamu kurumu / belediye hizmet binası (tek katlı)",
+ "id": "q-sablon",
+ "ad": "Örnek Belediyesi Hizmet Binası",
+ "tur": "kurum",
+ "surum": 1,
+ "giris": "giris",
+ "noktalar": [
+  {"id": "giris", "ad": "Ana giriş"},
+  {"id": "guvenlik", "ad": "Güvenlik noktası"},
+  {"id": "danisma", "ad": "Danışma bankosu"},
+  {"id": "sira", "ad": "Sıra numaratörü"},
+  {"id": "koridor", "ad": "Hizmet koridoru başı"},
+  {"id": "vezne", "ad": "Vezne gişeleri"},
+  {"id": "evrak", "ad": "Evrak kayıt bürosu kapısı"},
+  {"id": "imar", "ad": "İmar müdürlüğü kapısı"},
+  {"id": "wc", "ad": "Tuvaletler"}
+ ],
+ "baglantilar": [
+  {"a": "giris", "b": "guvenlik", "adim": 4, "tarif": "Girişten düz ilerleyin, güvenlik kontrolünden geçin", "geriTarif": "Güvenlik kontrolünden çıkışa doğru düz ilerleyin"},
+  {"a": "guvenlik", "b": "danisma", "adim": 6, "tarif": "Düz ilerleyin, danışma bankosu karşınızda", "geriTarif": "Danışmadan çıkışa doğru düz ilerleyin"},
+  {"a": "danisma", "b": "sira", "adim": 3, "tarif": "Danışmanın hemen sağındaki numaratöre yönelin", "geriTarif": "Numaratörden sola dönün, danışmaya ulaşırsınız"},
+  {"a": "danisma", "b": "koridor", "adim": 5, "tarif": "Danışmanın solundaki koridora girin", "geriTarif": "Koridorun başından danışmaya doğru ilerleyin"},
+  {"a": "koridor", "b": "vezne", "adim": 6, "tarif": "Koridorda düz ilerleyin, vezneler sağınızda", "geriTarif": "Veznelerden koridorun başına doğru geri dönün"},
+  {"a": "vezne", "b": "evrak", "adim": 5, "tarif": "Koridorda düz devam edin, evrak kayıt solunuzda", "geriTarif": "Koridorda veznelere doğru geri dönün"},
+  {"a": "evrak", "b": "imar", "adim": 7, "tarif": "Koridorda düz devam edin, imar müdürlüğü solunuzda", "geriTarif": "Koridorda geri dönün"},
+  {"a": "koridor", "b": "wc", "adim": 3, "tarif": "Koridorun başında solunuzdaki kapı", "geriTarif": "Tuvaletten çıkıp sağa dönün"}
+ ],
+ "hedefler": [
+  {"ad": "Danışma", "nokta": "danisma", "tarif": "Danışma bankosu tam önünüzde. Görevliler yardımcı olacaktır.", "anahtarlar": ["danışma", "bilgi", "yardım masası"]},
+  {"ad": "Sıra numarası", "nokta": "sira", "tarif": "Numaratörün ekranı göğüs hizasında; sesli yardım için danışmaya sorabilirsiniz.", "anahtarlar": ["sıra", "numara", "numaratör"]},
+  {"ad": "Vezne", "nokta": "vezne", "tarif": "Vezne gişeleri sağınızda.", "anahtarlar": ["vezne", "ödeme", "su faturası", "emlak vergisi"]},
+  {"ad": "Evrak kayıt", "nokta": "evrak", "tarif": "Evrak kayıt bürosunun kapısı solunuzda.", "anahtarlar": ["evrak", "dilekçe", "başvuru"]},
+  {"ad": "İmar müdürlüğü", "nokta": "imar", "oda": "12", "tarif": "İmar müdürlüğünün kapısı solunuzda, oda 12.", "anahtarlar": ["imar", "ruhsat", "proje"]},
+  {"ad": "Tuvalet", "nokta": "wc", "tarif": "Tuvalet kapısı solunuzda. Engelli tuvaleti en sondaki kapı.", "anahtarlar": ["tuvalet", "wc", "lavabo", "engelli tuvaleti"]}
+ ]
+}

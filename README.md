@@ -78,3 +78,10 @@ Tam örnekler: [`mekanlar/ornek-hastane.json`](mekanlar/ornek-hastane.json) (iki
 - **Bozuk dosya hiç yüklenmez.** Olmayan bir noktaya giden yol ya da tarifi eksik bir yürüme yolu varsa uygulama düzeni reddeder ve kullanıcıya "bir görevliye danışın" der. Görme engelli birini yanlış yere göndermektense hiç yönlendirmemek daha güvenlidir.
 - **Değişiklikten sonra kontrol edin.** Uygulama projesinde `npm test` çalıştırıldığında bu klasördeki tüm düzen dosyaları da doğrulanır.
 - **Tarifleri yerinde deneyin.** Mümkünse bir görme engelli kullanıcıyla birlikte deneyin. Adım sayıları ve "sağ/sol" ifadeleri en sık hata yapılan yerlerdir.
+
+## Kurumların kendi QR'ı: BAK QR oluşturucu
+
+Her kurumun düzenini bu depoya eklemek yerine kurumlar [`olusturucu/`](olusturucu/) klasöründeki Streamlit
+uygulamasıyla kendi giriş QR'larını hazırlayabilir. Bina bilgisi QR'ın içinde taşınır, depoya bir şey eklenmez.
+Bu binalar uygulamada "kurum tarafından hazırlandı, doğrulanmadı" diye duyurulur. Yayınlama adımları:
+[`olusturucu/README.md`](olusturucu/README.md).
