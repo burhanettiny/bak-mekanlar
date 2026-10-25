@@ -1,6 +1,22 @@
 {
   "mekanlar": [
-    {"id": "ornek-market",  "ad": "Örnek Market",           "tur": "magaza"},
-    {"id": "ornek-hastane", "ad": "Örnek Devlet Hastanesi", "tur": "hastane"}
+    {"id": "ornek-market", "ad": "Örnek Market", "tur": "magaza"},
+    {"id": "ornek-hastane", "ad": "Örnek Devlet Hastanesi", "tur": "hastane"},
+    {"id": "gebze-emlak-konutlari-3", "ad": "Gebze Emlak Konutları 3. Etap", "tur": "diger"},
+    {"id": "gebze-a-tipi-2-1", "ad": "A tipi 2+1 daire, Gebze Emlak Konutları 3. Etap", "tur": "diger"},
+    {"id": "gebze-a-tipi-3-1", "ad": "A tipi 3+1 daire, Gebze Emlak Konutları 3. Etap", "tur": "diger"},
+    {"id": "gebze-b-tipi-2-1", "ad": "B tipi 2+1 daire, Gebze Emlak Konutları 3. Etap", "tur": "diger"},
+    {"id": "gebze-b-tipi-3-1", "ad": "B tipi 3+1 daire, Gebze Emlak Konutları 3. Etap", "tur": "diger"},
+    {"id": "gebze-c-tipi-2-1-acik-mutfak", "ad": "C tipi 2+1 daire (açık mutfaklı), Gebze Emlak Konutları 3. Etap", "tur": "diger"},
+    {"id": "gebze-c-tipi-2-1", "ad": "C tipi 2+1 daire, Gebze Emlak Konutları 3. Etap", "tur": "diger"},
+    {"id": "gebze-c-tipi-3-1", "ad": "C tipi 3+1 daire, Gebze Emlak Konutları 3. Etap", "tur": "diger"},
+    {"id": "gebze-c-tipi-4-1", "ad": "C tipi 4+1 daire, Gebze Emlak Konutları 3. Etap", "tur": "diger"},
+    {"id": "gebze-d-tipi-2-1-acik-mutfak", "ad": "D tipi 2+1 daire (açık mutfaklı), Gebze Emlak Konutları 3. Etap", "tur": "diger"},
+    {"id": "gebze-d-tipi-2-1", "ad": "D tipi 2+1 daire, Gebze Emlak Konutları 3. Etap", "tur": "diger"},
+    {"id": "gebze-d-tipi-3-1", "ad": "D tipi 3+1 daire, Gebze Emlak Konutları 3. Etap", "tur": "diger"},
+    {"id": "gebze-e-tipi-3-1", "ad": "E tipi 3+1 daire, Gebze Emlak Konutları 3. Etap", "tur": "diger"},
+    {"id": "gebze-e-tipi-3-1-b", "ad": "E tipi 3+1 daire (işlikli), Gebze Emlak Konutları 3. Etap", "tur": "diger"},
+    {"id": "gebze-f-tipi-4-1", "ad": "F tipi 4+1 daire, Gebze Emlak Konutları 3. Etap", "tur": "diger"},
+    {"id": "gebze-f-tipi-4-1-dubleks", "ad": "F tipi 4+1 dubleks daire, Gebze Emlak Konutları 3. Etap", "tur": "diger"}
   ]
 }

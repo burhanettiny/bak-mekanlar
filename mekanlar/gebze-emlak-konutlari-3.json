@@ -1,0 +1,891 @@
+{
+ "id": "gebze-emlak-konutlari-3",
+ "ad": "Gebze Emlak Konutları 3. Etap",
+ "tur": "diger",
+ "surum": 1,
+ "giris": "giris",
+ "noktalar": [
+  {
+   "id": "giris",
+   "ad": "Site girişi",
+   "kat": 0
+  },
+  {
+   "id": "gb-dogu",
+   "ad": "B7 ve C6 yol ayrımı",
+   "kat": 0
+  },
+  {
+   "id": "gb-orta",
+   "ad": "B1 ve F1 yol ayrımı",
+   "kat": 0
+  },
+  {
+   "id": "bati-kavsak",
+   "ad": "Batı kavşağı",
+   "kat": 0
+  },
+  {
+   "id": "B1",
+   "ad": "B1 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "A6",
+   "ad": "A6 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "B6",
+   "ad": "B6 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "B5",
+   "ad": "B5 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "B4",
+   "ad": "B4 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "C5",
+   "ad": "C5 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "C4",
+   "ad": "C4 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "B3",
+   "ad": "B3 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "B2",
+   "ad": "B2 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "A2",
+   "ad": "A2 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "C1",
+   "ad": "C1 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "C2",
+   "ad": "C2 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "C3",
+   "ad": "C3 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "F5",
+   "ad": "F5 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "F6",
+   "ad": "F6 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "F1",
+   "ad": "F1 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "D1",
+   "ad": "D1 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "E1",
+   "ad": "E1 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "F2",
+   "ad": "F2 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "F3",
+   "ad": "F3 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "F4",
+   "ad": "F4 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "A1",
+   "ad": "A1 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "B7",
+   "ad": "B7 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "B8",
+   "ad": "B8 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "C6",
+   "ad": "C6 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "kb-kavsak",
+   "ad": "Kuzeybatı ada girişi",
+   "kat": 0
+  },
+  {
+   "id": "A3",
+   "ad": "A3 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "E2",
+   "ad": "E2 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "F7",
+   "ad": "F7 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "F8",
+   "ad": "F8 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "F9",
+   "ad": "F9 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "basket",
+   "ad": "Basketbol sahası",
+   "kat": 0
+  },
+  {
+   "id": "k-kavsak",
+   "ad": "Kuzey ada girişi",
+   "kat": 0
+  },
+  {
+   "id": "E3",
+   "ad": "E3 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "A4",
+   "ad": "A4 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "F12",
+   "ad": "F12 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "F11",
+   "ad": "F11 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "F10",
+   "ad": "F10 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "kd-kavsak",
+   "ad": "Kuzeydoğu ada girişi",
+   "kat": 0
+  },
+  {
+   "id": "A5",
+   "ad": "A5 Blok girişi",
+   "kat": 0
+  },
+  {
+   "id": "D2",
+   "ad": "D2 Blok girişi",
+   "kat": 0
+  }
+ ],
+ "baglantilar": [
+  {
+   "a": "giris",
+   "b": "gb-dogu",
+   "adim": 128,
+   "tarif": "Güney yolunun kaldırımında B7 ve C6 yol ayrımı yönüne ilerleyin",
+   "geriTarif": "Güney yolunun kaldırımında Site girişi yönüne ilerleyin"
+  },
+  {
+   "a": "gb-dogu",
+   "b": "gb-orta",
+   "adim": 108,
+   "tarif": "Güney yolunun kaldırımında B1 ve F1 yol ayrımı yönüne ilerleyin",
+   "geriTarif": "Güney yolunun kaldırımında B7 ve C6 yol ayrımı yönüne ilerleyin"
+  },
+  {
+   "a": "gb-orta",
+   "b": "bati-kavsak",
+   "adim": 169,
+   "tarif": "Güney yolunun kaldırımında Batı kavşağı yönüne ilerleyin",
+   "geriTarif": "Güney yolunun kaldırımında B1 ve F1 yol ayrımı yönüne ilerleyin"
+  },
+  {
+   "a": "gb-orta",
+   "b": "B1",
+   "adim": 75,
+   "tarif": "Yaya yolunda B1 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda B1 ve F1 yol ayrımı yönüne ilerleyin"
+  },
+  {
+   "a": "bati-kavsak",
+   "b": "B3",
+   "adim": 76,
+   "tarif": "Yaya yolunda B3 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda Batı kavşağı yönüne ilerleyin"
+  },
+  {
+   "a": "B1",
+   "b": "A6",
+   "adim": 115,
+   "tarif": "Merkez halka yolda A6 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Merkez halka yolda B1 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "A6",
+   "b": "B6",
+   "adim": 93,
+   "tarif": "Merkez halka yolda B6 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Merkez halka yolda A6 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "B6",
+   "b": "B5",
+   "adim": 92,
+   "tarif": "Merkez halka yolda B5 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Merkez halka yolda B6 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "B5",
+   "b": "B4",
+   "adim": 72,
+   "tarif": "Merkez halka yolda B4 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Merkez halka yolda B5 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "B4",
+   "b": "C5",
+   "adim": 83,
+   "tarif": "Merkez halka yolda C5 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Merkez halka yolda B4 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "C5",
+   "b": "C4",
+   "adim": 76,
+   "tarif": "Merkez halka yolda C4 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Merkez halka yolda C5 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "C4",
+   "b": "B3",
+   "adim": 80,
+   "tarif": "Merkez halka yolda B3 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Merkez halka yolda C4 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "B3",
+   "b": "B2",
+   "adim": 75,
+   "tarif": "Merkez halka yolda B2 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Merkez halka yolda B3 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "B2",
+   "b": "B1",
+   "adim": 67,
+   "tarif": "Merkez halka yolda B1 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Merkez halka yolda B2 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "bati-kavsak",
+   "b": "A2",
+   "adim": 44,
+   "tarif": "Yaya yolunda A2 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda Batı kavşağı yönüne ilerleyin"
+  },
+  {
+   "a": "A2",
+   "b": "C1",
+   "adim": 50,
+   "tarif": "Yaya yolunda C1 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda A2 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "C1",
+   "b": "C2",
+   "adim": 53,
+   "tarif": "Yaya yolunda C2 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda C1 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "C2",
+   "b": "C3",
+   "adim": 55,
+   "tarif": "Yaya yolunda C3 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda C2 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "C3",
+   "b": "F5",
+   "adim": 47,
+   "tarif": "Yaya yolunda F5 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda C3 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "F5",
+   "b": "F6",
+   "adim": 38,
+   "tarif": "Yaya yolunda F6 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda F5 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "gb-orta",
+   "b": "F1",
+   "adim": 53,
+   "tarif": "Yaya yolunda F1 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda B1 ve F1 yol ayrımı yönüne ilerleyin"
+  },
+  {
+   "a": "F1",
+   "b": "D1",
+   "adim": 43,
+   "tarif": "Yaya yolunda D1 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda F1 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "gb-orta",
+   "b": "E1",
+   "adim": 66,
+   "tarif": "Yaya yolunda E1 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda B1 ve F1 yol ayrımı yönüne ilerleyin"
+  },
+  {
+   "a": "F1",
+   "b": "F2",
+   "adim": 49,
+   "tarif": "Yaya yolunda F2 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda F1 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "F2",
+   "b": "E1",
+   "adim": 48,
+   "tarif": "Yaya yolunda E1 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda F2 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "F2",
+   "b": "F3",
+   "adim": 43,
+   "tarif": "Yaya yolunda F3 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda F2 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "F3",
+   "b": "F4",
+   "adim": 42,
+   "tarif": "Yaya yolunda F4 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda F3 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "F4",
+   "b": "A1",
+   "adim": 57,
+   "tarif": "Yaya yolunda A1 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda F4 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "A1",
+   "b": "bati-kavsak",
+   "adim": 37,
+   "tarif": "Yaya yolunda Batı kavşağı yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda A1 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "gb-dogu",
+   "b": "B7",
+   "adim": 34,
+   "tarif": "Yaya yolunda B7 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda B7 ve C6 yol ayrımı yönüne ilerleyin"
+  },
+  {
+   "a": "B7",
+   "b": "B8",
+   "adim": 76,
+   "tarif": "Yaya yolunda B8 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda B7 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "gb-dogu",
+   "b": "C6",
+   "adim": 99,
+   "tarif": "Yaya yolunda C6 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda B7 ve C6 yol ayrımı yönüne ilerleyin"
+  },
+  {
+   "a": "C5",
+   "b": "kb-kavsak",
+   "adim": 28,
+   "tarif": "Yaya yolunda Kuzeybatı ada girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda C5 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "kb-kavsak",
+   "b": "A3",
+   "adim": 57,
+   "tarif": "Yaya yolunda A3 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda Kuzeybatı ada girişi yönüne ilerleyin"
+  },
+  {
+   "a": "A3",
+   "b": "basket",
+   "adim": 38,
+   "tarif": "Yaya yolunda Basketbol sahası yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda A3 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "A3",
+   "b": "F7",
+   "adim": 57,
+   "tarif": "Yaya yolunda F7 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda A3 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "kb-kavsak",
+   "b": "E2",
+   "adim": 86,
+   "tarif": "Yaya yolunda E2 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda Kuzeybatı ada girişi yönüne ilerleyin"
+  },
+  {
+   "a": "F7",
+   "b": "F8",
+   "adim": 40,
+   "tarif": "Yaya yolunda F8 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda F7 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "F8",
+   "b": "F9",
+   "adim": 40,
+   "tarif": "Yaya yolunda F9 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda F8 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "B4",
+   "b": "k-kavsak",
+   "adim": 27,
+   "tarif": "Yaya yolunda Kuzey ada girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda B4 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "k-kavsak",
+   "b": "E3",
+   "adim": 36,
+   "tarif": "Yaya yolunda E3 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda Kuzey ada girişi yönüne ilerleyin"
+  },
+  {
+   "a": "k-kavsak",
+   "b": "A4",
+   "adim": 69,
+   "tarif": "Yaya yolunda A4 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda Kuzey ada girişi yönüne ilerleyin"
+  },
+  {
+   "a": "E3",
+   "b": "F12",
+   "adim": 48,
+   "tarif": "Yaya yolunda F12 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda E3 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "F12",
+   "b": "F11",
+   "adim": 40,
+   "tarif": "Yaya yolunda F11 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda F12 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "F11",
+   "b": "F10",
+   "adim": 40,
+   "tarif": "Yaya yolunda F10 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda F11 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "B5",
+   "b": "kd-kavsak",
+   "adim": 75,
+   "tarif": "Yaya yolunda Kuzeydoğu ada girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda B5 Blok girişi yönüne ilerleyin"
+  },
+  {
+   "a": "kd-kavsak",
+   "b": "A5",
+   "adim": 64,
+   "tarif": "Yaya yolunda A5 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda Kuzeydoğu ada girişi yönüne ilerleyin"
+  },
+  {
+   "a": "A5",
+   "b": "D2",
+   "adim": 80,
+   "tarif": "Yaya yolunda D2 Blok girişi yönüne ilerleyin",
+   "geriTarif": "Yaya yolunda A5 Blok girişi yönüne ilerleyin"
+  }
+ ],
+ "hedefler": [
+  {
+   "ad": "B1 Blok",
+   "nokta": "B1",
+   "tarif": "B1 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "b1"
+   ]
+  },
+  {
+   "ad": "A6 Blok",
+   "nokta": "A6",
+   "tarif": "A6 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "a6"
+   ]
+  },
+  {
+   "ad": "B6 Blok",
+   "nokta": "B6",
+   "tarif": "B6 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "b6"
+   ]
+  },
+  {
+   "ad": "B5 Blok",
+   "nokta": "B5",
+   "tarif": "B5 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "b5"
+   ]
+  },
+  {
+   "ad": "B4 Blok",
+   "nokta": "B4",
+   "tarif": "B4 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "b4"
+   ]
+  },
+  {
+   "ad": "C5 Blok",
+   "nokta": "C5",
+   "tarif": "C5 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "c5"
+   ]
+  },
+  {
+   "ad": "C4 Blok",
+   "nokta": "C4",
+   "tarif": "C4 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "c4"
+   ]
+  },
+  {
+   "ad": "B3 Blok",
+   "nokta": "B3",
+   "tarif": "B3 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "b3"
+   ]
+  },
+  {
+   "ad": "B2 Blok",
+   "nokta": "B2",
+   "tarif": "B2 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "b2"
+   ]
+  },
+  {
+   "ad": "A2 Blok",
+   "nokta": "A2",
+   "tarif": "A2 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "a2"
+   ]
+  },
+  {
+   "ad": "C1 Blok",
+   "nokta": "C1",
+   "tarif": "C1 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "c1"
+   ]
+  },
+  {
+   "ad": "C2 Blok",
+   "nokta": "C2",
+   "tarif": "C2 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "c2"
+   ]
+  },
+  {
+   "ad": "C3 Blok",
+   "nokta": "C3",
+   "tarif": "C3 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "c3"
+   ]
+  },
+  {
+   "ad": "F5 Blok",
+   "nokta": "F5",
+   "tarif": "F5 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "f5"
+   ]
+  },
+  {
+   "ad": "F6 Blok",
+   "nokta": "F6",
+   "tarif": "F6 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "f6"
+   ]
+  },
+  {
+   "ad": "F1 Blok",
+   "nokta": "F1",
+   "tarif": "F1 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "f1"
+   ]
+  },
+  {
+   "ad": "D1 Blok",
+   "nokta": "D1",
+   "tarif": "D1 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "d1"
+   ]
+  },
+  {
+   "ad": "E1 Blok",
+   "nokta": "E1",
+   "tarif": "E1 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "e1"
+   ]
+  },
+  {
+   "ad": "F2 Blok",
+   "nokta": "F2",
+   "tarif": "F2 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "f2"
+   ]
+  },
+  {
+   "ad": "F3 Blok",
+   "nokta": "F3",
+   "tarif": "F3 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "f3"
+   ]
+  },
+  {
+   "ad": "F4 Blok",
+   "nokta": "F4",
+   "tarif": "F4 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "f4"
+   ]
+  },
+  {
+   "ad": "A1 Blok",
+   "nokta": "A1",
+   "tarif": "A1 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "a1"
+   ]
+  },
+  {
+   "ad": "B7 Blok",
+   "nokta": "B7",
+   "tarif": "B7 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "b7"
+   ]
+  },
+  {
+   "ad": "B8 Blok",
+   "nokta": "B8",
+   "tarif": "B8 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "b8"
+   ]
+  },
+  {
+   "ad": "C6 Blok",
+   "nokta": "C6",
+   "tarif": "C6 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "c6"
+   ]
+  },
+  {
+   "ad": "A3 Blok",
+   "nokta": "A3",
+   "tarif": "A3 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "a3"
+   ]
+  },
+  {
+   "ad": "E2 Blok",
+   "nokta": "E2",
+   "tarif": "E2 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "e2"
+   ]
+  },
+  {
+   "ad": "F7 Blok",
+   "nokta": "F7",
+   "tarif": "F7 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "f7"
+   ]
+  },
+  {
+   "ad": "F8 Blok",
+   "nokta": "F8",
+   "tarif": "F8 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "f8"
+   ]
+  },
+  {
+   "ad": "F9 Blok",
+   "nokta": "F9",
+   "tarif": "F9 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "f9"
+   ]
+  },
+  {
+   "ad": "E3 Blok",
+   "nokta": "E3",
+   "tarif": "E3 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "e3"
+   ]
+  },
+  {
+   "ad": "A4 Blok",
+   "nokta": "A4",
+   "tarif": "A4 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "a4"
+   ]
+  },
+  {
+   "ad": "F12 Blok",
+   "nokta": "F12",
+   "tarif": "F12 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "f12"
+   ]
+  },
+  {
+   "ad": "F11 Blok",
+   "nokta": "F11",
+   "tarif": "F11 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "f11"
+   ]
+  },
+  {
+   "ad": "F10 Blok",
+   "nokta": "F10",
+   "tarif": "F10 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "f10"
+   ]
+  },
+  {
+   "ad": "A5 Blok",
+   "nokta": "A5",
+   "tarif": "A5 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "a5"
+   ]
+  },
+  {
+   "ad": "D2 Blok",
+   "nokta": "D2",
+   "tarif": "D2 blok girişindesiniz. Blok kapısındaki QR kodu okutunca blok içinde, dairelere kadar yönlendirme başlar.",
+   "anahtarlar": [
+    "d2"
+   ]
+  },
+  {
+   "ad": "Basketbol sahası",
+   "nokta": "basket",
+   "tarif": "Basketbol sahasındasınız.",
+   "anahtarlar": [
+    "basketbol",
+    "basket",
+    "spor sahası"
+   ]
+  },
+  {
+   "ad": "Site çıkışı",
+   "nokta": "giris",
+   "tarif": "Site girişindesiniz.",
+   "anahtarlar": [
+    "çıkış",
+    "giriş",
+    "kapı",
+    "güvenlik"
+   ]
+  }
+ ]
+}

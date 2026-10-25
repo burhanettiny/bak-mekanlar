@@ -1,0 +1,235 @@
+{
+ "id": "gebze-e-tipi-3-1",
+ "ad": "E tipi 3+1 daire, Gebze Emlak Konutları 3. Etap",
+ "tur": "diger",
+ "surum": 1,
+ "giris": "kapi",
+ "noktalar": [
+  {
+   "id": "kapi",
+   "ad": "Daire giriş kapısı"
+  },
+  {
+   "id": "hol",
+   "ad": "Giriş holü"
+  },
+  {
+   "id": "salon",
+   "ad": "Salon kapısı"
+  },
+  {
+   "id": "koridor-mutfak",
+   "ad": "Mutfak kapısı"
+  },
+  {
+   "id": "kapali-balkon",
+   "ad": "Kapalı balkon kapısı"
+  },
+  {
+   "id": "koridor-ayrimi",
+   "ad": "Koridor ayrımı"
+  },
+  {
+   "id": "banyo",
+   "ad": "Banyo kapısı"
+  },
+  {
+   "id": "koridor-oda-2",
+   "ad": "Oda 2 kapısı"
+  },
+  {
+   "id": "koridor-ebeveyn-yatak-odasi",
+   "ad": "Ebeveyn yatak odası kapısı"
+  },
+  {
+   "id": "ebeveyn-banyosu",
+   "ad": "Ebeveyn banyosu kapısı"
+  },
+  {
+   "id": "soyunma-odasi",
+   "ad": "Soyunma odası kapısı"
+  },
+  {
+   "id": "koridor-oda-1",
+   "ad": "Oda 1 kapısı"
+  }
+ ],
+ "baglantilar": [
+  {
+   "a": "kapi",
+   "b": "hol",
+   "adim": 2,
+   "tarif": "Daireye girin ve giriş holünde düz ilerleyin",
+   "geriTarif": "Giriş kapısına yönelin"
+  },
+  {
+   "a": "hol",
+   "b": "salon",
+   "adim": 1,
+   "tarif": "Giriş kapısı arkanızdayken, sağınızdaki salon kapısına yönelin",
+   "geriTarif": "Kapıdan çıkın; giriş kapısı solunuzda"
+  },
+  {
+   "a": "hol",
+   "b": "koridor-mutfak",
+   "adim": 1,
+   "tarif": "Giriş kapısı arkanızdayken, düz devam edip koridora girin; mutfak kapısı sağınızda",
+   "geriTarif": "Koridorda girişe doğru ilerleyin; holde giriş kapısı karşınızda kalacak"
+  },
+  {
+   "a": "koridor-mutfak",
+   "b": "kapali-balkon",
+   "adim": 4,
+   "tarif": "Mutfak içine girin; kapalı balkon karşı duvarda",
+   "geriTarif": "Balkondan mutfağa girin; mutfak kapısı karşınızda"
+  },
+  {
+   "a": "koridor-mutfak",
+   "b": "koridor-ayrimi",
+   "adim": 1,
+   "tarif": "Koridorda ilerleyin; koridor ayrımına geleceksiniz",
+   "geriTarif": "Koridorda girişe doğru ilerleyin; mutfak kapısı solunuzda"
+  },
+  {
+   "a": "koridor-ayrimi",
+   "b": "banyo",
+   "adim": 1,
+   "tarif": "Giriş tarafı arkanızdayken, karşınızdaki banyo kapısına yönelin",
+   "geriTarif": "Kapıdan çıkın; giriş tarafı karşınızda"
+  },
+  {
+   "a": "koridor-ayrimi",
+   "b": "koridor-oda-2",
+   "adim": 4,
+   "tarif": "Giriş tarafı arkanızdayken, sola dönüp koridora girin; oda 2 kapısı sağınızda",
+   "geriTarif": "Koridorda koridor ayrımına doğru ilerleyin; ayrımda giriş tarafı sağınızda kalacak"
+  },
+  {
+   "a": "koridor-oda-2",
+   "b": "koridor-ebeveyn-yatak-odasi",
+   "adim": 1,
+   "tarif": "Koridorda ilerleyin; ebeveyn yatak odası kapısı solunuzda",
+   "geriTarif": "Koridorda koridor ayrımına doğru ilerleyin; oda 2 kapısı solunuzda"
+  },
+  {
+   "a": "koridor-ebeveyn-yatak-odasi",
+   "b": "ebeveyn-banyosu",
+   "adim": 3,
+   "tarif": "Ebeveyn yatak odası içine girin; ebeveyn banyosu sol tarafta",
+   "geriTarif": "Ebeveyn yatak odası kapısına geri dönün"
+  },
+  {
+   "a": "koridor-ebeveyn-yatak-odasi",
+   "b": "soyunma-odasi",
+   "adim": 4,
+   "tarif": "Ebeveyn yatak odası içine girin; soyunma odası sol tarafta, ebeveyn banyosunun yanında",
+   "geriTarif": "Ebeveyn yatak odası kapısına geri dönün"
+  },
+  {
+   "a": "koridor-ebeveyn-yatak-odasi",
+   "b": "koridor-oda-1",
+   "adim": 1,
+   "tarif": "Koridorda ilerleyin; oda 1 kapısı koridorun sonunda, karşınızda",
+   "geriTarif": "Koridorda koridor ayrımına doğru ilerleyin; ebeveyn yatak odası kapısı sağınızda"
+  }
+ ],
+ "hedefler": [
+  {
+   "ad": "Salon",
+   "nokta": "salon",
+   "tarif": "Salon kapısındasınız. İçeri girince yemek masası ileride, oturma grubu daha ileride.",
+   "anahtarlar": [
+    "salon",
+    "oturma"
+   ]
+  },
+  {
+   "ad": "Mutfak",
+   "nokta": "koridor-mutfak",
+   "tarif": "Mutfak kapısındasınız. İçeri girince tezgah ve ocak sol duvarda, kapalı balkon kapısı karşıda.",
+   "anahtarlar": [
+    "mutfak",
+    "ocak",
+    "buzdolabı"
+   ]
+  },
+  {
+   "ad": "Kapalı balkon",
+   "nokta": "kapali-balkon",
+   "tarif": "Kapalı balkon kapısındasınız.",
+   "anahtarlar": [
+    "balkon"
+   ]
+  },
+  {
+   "ad": "Banyo",
+   "nokta": "banyo",
+   "tarif": "Banyo kapısındasınız.",
+   "anahtarlar": [
+    "banyo",
+    "tuvalet",
+    "lavabo",
+    "wc",
+    "duş"
+   ]
+  },
+  {
+   "ad": "Oda 2",
+   "nokta": "koridor-oda-2",
+   "tarif": "Oda 2 kapısındasınız.",
+   "anahtarlar": [
+    "oda 2",
+    "oda"
+   ]
+  },
+  {
+   "ad": "Ebeveyn yatak odası",
+   "nokta": "koridor-ebeveyn-yatak-odasi",
+   "tarif": "Ebeveyn yatak odası kapısındasınız.",
+   "anahtarlar": [
+    "yatak",
+    "ebeveyn",
+    "büyük oda"
+   ]
+  },
+  {
+   "ad": "Ebeveyn banyosu",
+   "nokta": "ebeveyn-banyosu",
+   "tarif": "Ebeveyn banyosu kapısındasınız.",
+   "anahtarlar": [
+    "ebeveyn banyo",
+    "ikinci banyo"
+   ]
+  },
+  {
+   "ad": "Soyunma odası",
+   "nokta": "soyunma-odasi",
+   "tarif": "Soyunma odası kapısındasınız.",
+   "anahtarlar": [
+    "soyunma",
+    "giyinme",
+    "dolap odası"
+   ]
+  },
+  {
+   "ad": "Oda 1",
+   "nokta": "koridor-oda-1",
+   "tarif": "Oda 1 kapısındasınız.",
+   "anahtarlar": [
+    "oda 1",
+    "oda"
+   ]
+  },
+  {
+   "ad": "Giriş kapısı",
+   "nokta": "kapi",
+   "tarif": "Daire giriş kapısındasınız.",
+   "anahtarlar": [
+    "çıkış",
+    "giriş",
+    "kapı",
+    "dış kapı"
+   ]
+  }
+ ]
+}
