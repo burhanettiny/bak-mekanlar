@@ -24,6 +24,16 @@ Bina bilgisi QR'ın içinde taşınır. Sunucu, hesap ya da internet bağlantıs
   birlikte değiştirin. `__tests__/veri/kurum-qr-hastane.txt` bu uygulamanın ürettiği bir örnektir ve uygulama
   testleri onu çözer.
 
+## Girişte okunan yer listesi ve kısa adlar
+
+Ziyaretçi giriş QR'ını okutunca uygulama binadaki yerleri numaralı okur ("1, Danışma; 2, Vezne…") ve numarasını
+ya da adını söylemesini bekler. Liste 10'ar yer olarak okunur; ziyaretçi "devam" deyince sonraki 10 gelir.
+
+Uzun adlar listeyi uzatır. Her hedefe isteğe bağlı bir **kısa ad** verilebilir ("Kardiyoloji Polikliniği" →
+"Kardiyoloji"); listede o okunur ve ziyaretçi onu söyleyince de bulunur. **Kısa adları öner** düğmesi birden çok
+yerde tekrarlanan sözcükleri ("Polikliniği", "Müdürlüğü") atarak öneri doldurur. **Kontrol ve QR** sekmesi
+listenin nasıl ve yaklaşık kaç saniyede okunacağını gösterir.
+
 ## Şablonlar
 
 `sablonlar/` klasöründeki her JSON bir başlangıç şablonudur (`sablonAdi` alanı listede görünen addır):

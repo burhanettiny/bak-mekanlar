@@ -18,6 +18,8 @@ TUR_ADLARI = {"magaza": "Market / mağaza", "hastane": "Hastane / sağlık", "ku
 YOL_TURU_ADLARI = {"yuru": "Yürüme", "rampa": "Rampa", "kapi": "Kapı", "merdiven": "Merdiven",
                    "yuruyen-merdiven": "Yürüyen merdiven", "asansor": "Asansör"}
 
+HEDEF_SUTUNLARI = ["ad", "kisaAd", "nokta", "tarif", "anahtarlar", "kisiler", "oda", "no"]
+
 BOS_MEKAN = {"id": "", "ad": "", "tur": "kurum", "surum": 1, "giris": "giris",
              "noktalar": [{"id": "giris", "ad": "Ana giriş"}], "baglantilar": [], "hedefler": []}
 
@@ -45,8 +47,7 @@ def mekani_yukle(mekan: dict, yeni_kimlik: bool) -> None:
     st.session_state.kaynak = {"noktalar": pd.DataFrame(noktalar, columns=["ad", "kat", "id"]),
                                "yollar": pd.DataFrame(yollar, columns=["a", "b", "tur", "adim", "tarif", "geriTarif",
                                                                        "tekYon", "basamak"]),
-                               "hedefler": pd.DataFrame(hedefler, columns=["ad", "nokta", "tarif", "anahtarlar",
-                                                                           "kisiler", "oda", "no"])}
+                               "hedefler": pd.DataFrame(hedefler, columns=HEDEF_SUTUNLARI)}
     # Düzenleyicilerin anahtarı değişince eski düzenlemeler atılır, yeni veri gösterilir
     st.session_state.surum_anahtari = st.session_state.get("surum_anahtari", 0) + 1
 
@@ -180,6 +181,9 @@ with hedefler_sekmesi:
         alt="Ziyaretçilerin gidebileceği hedefler",
         column_config={
             "ad": st.column_config.TextColumn("Hedef adı", required=True),
+            "kisaAd": st.column_config.TextColumn(
+                "Kısa ad", help="Girişteki listede okunacak ad, ör. 'Kardiyoloji'. Boşsa hedef adı okunur. "
+                                "Ziyaretçi bu adı söyleyerek de bulur."),
             "nokta": st.column_config.SelectboxColumn("Nokta", options=nokta_idleri, required=True),
             "tarif": st.column_config.TextColumn("Varınca söylenecek", width="large",
                                                  help="ör. 'Kardiyoloji kapısı solunuzda, oda 112.'"),
@@ -188,6 +192,21 @@ with hedefler_sekmesi:
             "oda": st.column_config.TextColumn("Oda no"),
             "no": st.column_config.TextColumn("Kapı no"),
         })
+    oneriler = bm.kisa_ad_onerileri(hedefler_df.to_dict("records"))
+    with st.container(horizontal=True, vertical_alignment="center"):
+        if st.button("Kısa adları öner", icon=":material/auto_fix_high:", disabled=not oneriler,
+                     help="Birden çok yerde tekrarlanan 'Polikliniği', 'Müdürlüğü' gibi sözcükleri atar. "
+                          "Önerileri tabloda değiştirebilirsiniz."):
+            guncel = hedefler_df.copy()
+            for satir, oneri in oneriler.items():
+                guncel.iat[satir, guncel.columns.get_loc("kisaAd")] = oneri
+            # Diğer sekmelerdeki düzenlemeler kaybolmasın: hepsi kaynağa yazılıp düzenleyiciler yenilenir
+            st.session_state.kaynak = {"noktalar": noktalar_df, "yollar": yollar_df, "hedefler": guncel}
+            st.session_state.surum_anahtari += 1
+            st.rerun()
+        if oneriler:
+            st.caption(f"{len(oneriler)} yer için kısa ad önerisi var, ör. "
+                       f"{next(iter(oneriler.values()))!r}.")
 
 mekan = bm.satirlardan_mekan(st.session_state.bilgi, nokta_satirlari, yollar_df.to_dict("records"),
                              hedefler_df.to_dict("records"))
@@ -227,6 +246,19 @@ with sonuc:
             st.markdown(
                 "**Asarken:** Giriş etiketini kapının yanına, diğer etiketleri üzerlerinde yazan noktalara asın. "
                 "Hepsini yerden yaklaşık 120 cm yüksekliğe ve hep aynı tarafa yapıştırın.")
+
+        with st.container(border=True):
+            st.subheader(":material/record_voice_over: Girişte okunacak liste")
+            st.markdown("Ziyaretçi giriş QR'ını okutunca uygulama yerleri böyle okur, sonra numarasını ya da "
+                        "adını söylemesini bekler.")
+            sayfalar = bm.liste_sayfalari(mekan)
+            for i, sayfa in enumerate(sayfalar):
+                st.markdown(f"**{'Önce' if i == 0 else f'Ziyaretçi “devam” deyince ({i + 1}. bölüm)'}** · "
+                            f"yaklaşık {bm.okuma_suresi(sayfa)} saniye")
+                st.markdown(f"> {sayfa}")
+            if len(sayfalar) > 1:
+                st.caption(f"Liste {bm.SAYFA_BOYU}'ar yer olarak okunur. Kısa adlar listeyi kısaltır; ziyaretçi "
+                           "bir yerin adını biliyorsa listeyi beklemeden doğrudan söyleyebilir.")
 
         with st.container(border=True):
             st.subheader(":material/hearing: Tarifi deneyin")

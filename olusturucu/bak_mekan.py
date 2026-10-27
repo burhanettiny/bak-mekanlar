@@ -35,6 +35,11 @@ MEKAN_TURLERI = ("magaza", "hastane", "kurum", "diger")
 # Telefon kameraları bu boyuttan büyük QR'ları A4'e basılınca zor okur
 ONERILEN_EN_BUYUK_QR_SURUMU = 30
 
+# Girişte yer listesi uygulamada onar onar okunur (src/mekan/hedefListesi.ts SAYFA_BOYU)
+SAYFA_BOYU = 10
+# Bundan uzun adlar için kısa ad önerilir
+UZUN_AD = 22
+
 SABLON_KLASORU = Path(__file__).parent / "sablonlar"
 
 
@@ -197,6 +202,17 @@ def dogrula(mekan: dict) -> tuple[list[str], list[str]]:
             uyarilar.append(f"'{ad}' için anahtar kelime yok; kullanıcı yalnızca tam adını söyleyerek bulabilir.")
         if not str(h.get("tarif", "")).strip():
             uyarilar.append(f"'{ad}' için varınca söylenecek tarif boş (ör. 'Kapı solunuzda, oda 112').")
+        if len(ad) > UZUN_AD and not str(h.get("kisaAd", "")).strip():
+            uyarilar.append(f"'{ad}' adı uzun; girişteki listede böyle okunur. Kısa ad yazın "
+                            "(ör. 'Kardiyoloji Polikliniği' → 'Kardiyoloji').")
+
+    kisa_adlar: dict[str, set[str]] = {}
+    for h in hedefler:
+        if str(h.get("kisaAd", "")).strip():
+            kisa_adlar.setdefault(kisalt(h["kisaAd"]), set()).add(str(h.get("ad", "")))
+    for kisa, adlar in kisa_adlar.items():
+        if len(adlar) > 1:
+            uyarilar.append(f"Farklı yerler aynı kısa adı taşıyor ({', '.join(sorted(adlar))}); listede bir kez okunur.")
 
     if not hatalar:
         ulasilamayan = ulasilamayan_hedefler(mekan)
@@ -266,6 +282,78 @@ def rota_onizleme(mekan: dict, hedef_ad: str) -> list[str]:
     return [f"Giriş: {adlar[mekan['giris']]}", *reversed(adimlar), f"Varınca: {hedef['tarif']}"]
 
 
+# ── Girişte okunacak yer listesi ──────────────────────────
+# Uygulamadaki hedefListesi.ts ile aynı kurallar: aynı adlı yerler bir kez, katlara göre, onar onar.
+
+def liste_adi(h: dict) -> str:
+    return str(h.get("kisaAd") or "").strip() or h["ad"]
+
+
+def kat_adi(kat: int) -> str:
+    if kat == 0:
+        return "zemin kat"
+    if kat == -1:
+        return "bodrum kat"
+    return f"{kat}. kat" if kat > 0 else f"eksi {-kat}. kat"
+
+
+def liste_sayfalari(mekan: dict) -> list[str]:
+    katlar_sozlugu = {n["id"]: n.get("kat", 0) or 0 for n in mekan["noktalar"]}
+    gorulen: set[str] = set()
+    secenekler = []
+    for i, h in enumerate(mekan["hedefler"]):
+        anahtar = kisalt(liste_adi(h))
+        if anahtar not in gorulen:
+            gorulen.add(anahtar)
+            secenekler.append((katlar_sozlugu.get(h["nokta"], 0), i, h))
+    secenekler.sort(key=lambda x: (x[0], x[1]))
+    tum_katlar = {k for k, _, _ in secenekler}
+    sayfalar = []
+    for bas in range(0, len(secenekler), SAYFA_BOYU):
+        sayfa = secenekler[bas:bas + SAYFA_BOYU]
+        numarali = [(k, f"{bas + j + 1}, {liste_adi(h)}") for j, (k, _, h) in enumerate(sayfa)]
+        if len(tum_katlar) > 1:
+            parcalar = []
+            for kat in dict.fromkeys(k for k, _ in numarali):
+                ad = kat_adi(kat)
+                parcalar.append(f"{ad[0].upper() + ad[1:]}: " + "; ".join(m for k, m in numarali if k == kat) + ".")
+            liste = " ".join(parcalar)
+        else:
+            liste = "; ".join(m for _, m in numarali) + "."
+        kalan = len(secenekler) - bas - SAYFA_BOYU
+        giris = (f"Burada {len(secenekler)} yer var." + (f" İlk {SAYFA_BOYU} tanesi:" if kalan > 0 else "")
+                 if bas == 0 else f"{bas + 1}. yerden devam:")
+        kisi_var = bas == 0 and any(h.get("kisiler") for h in mekan["hedefler"])
+        sayfalar.append(f"{giris} {liste}" + (f" Diğer {kalan} yer için devam deyin." if kalan > 0 else "") +
+                        (" Çalışanların adıyla da sorabilirsiniz, örneğin doktorun adını söyleyin." if kisi_var else ""))
+    return sayfalar
+
+
+def okuma_suresi(metin: str) -> int:
+    """Telefonun normal hızda okuma süresi, saniye (uygulamadaki tahminiOkumaSuresi)."""
+    return max(1, round(len(metin) * 0.07))
+
+
+# Birden çok yerin adında tekrarlanan genel sözcükler kısa addan atılır:
+# "Kardiyoloji Polikliniği", "Dahiliye Polikliniği" → "Kardiyoloji", "Dahiliye"
+def kisa_ad_onerileri(hedefler: list[dict]) -> dict[int, str]:
+    """Satır sırası → önerilen kısa ad (yalnızca kısa adı boş ve önerisi olan satırlar)."""
+    kelimeler = [str(h.get("ad") or "").split() for h in hedefler]
+    son_sayilari: dict[str, int] = {}
+    for k in kelimeler:
+        if len(k) >= 2:
+            son_sayilari[kisalt(k[-1])] = son_sayilari.get(kisalt(k[-1]), 0) + 1
+    oneriler = {}
+    for i, (h, k) in enumerate(zip(hedefler, kelimeler)):
+        if str(h.get("kisaAd") or "").strip() or len(k) < 2 or son_sayilari.get(kisalt(k[-1]), 0) < 2:
+            continue
+        oneri = " ".join(k[:-1])
+        # "101 numaralı sınıf" gibi numara taşıyan adlar kısaltılmaz: listede "1, 101 numaralı" karışır
+        if not re.search(r"\d", oneri):
+            oneriler[i] = oneri
+    return oneriler
+
+
 # ── Tablolar ↔ düzen dosyası ──────────────────────────────
 
 def _metin(deger) -> str:
@@ -320,7 +408,7 @@ def satirlardan_mekan(bilgi: dict, noktalar: list[dict], yollar: list[dict], hed
             continue
         hedef = {"ad": ad, "nokta": _metin(h.get("nokta")), "tarif": _metin(h.get("tarif")),
                  "anahtarlar": _liste(h.get("anahtarlar"))}
-        for alan in ("oda", "no", "koridor", "raf"):
+        for alan in ("kisaAd", "oda", "no", "koridor", "raf"):
             if _metin(h.get(alan)):
                 hedef[alan] = _metin(h.get(alan))
         if _liste(h.get("kisiler")):
@@ -341,7 +429,7 @@ def mekandan_satirlar(mekan: dict) -> tuple[list[dict], list[dict], list[dict]]:
                "tarif": b.get("tarif", ""), "geriTarif": b.get("geriTarif", ""),
                "tekYon": bool(b.get("tekYon")), "basamak": b.get("basamak")}
               for b in mekan["baglantilar"]]
-    hedefler = [{"ad": h["ad"], "nokta": h["nokta"], "tarif": h.get("tarif", ""),
+    hedefler = [{"ad": h["ad"], "kisaAd": h.get("kisaAd", ""), "nokta": h["nokta"], "tarif": h.get("tarif", ""),
                  "anahtarlar": ", ".join(h.get("anahtarlar", [])), "kisiler": ", ".join(h.get("kisiler", [])),
                  "oda": h.get("oda", ""), "no": h.get("no", "")}
                 for h in mekan["hedefler"]]

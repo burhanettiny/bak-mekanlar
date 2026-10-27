@@ -110,3 +110,51 @@ def test_uretilen_qr_gercek_bir_okuyucuyla_okunur(hastane):
     for kutu in (3, 6):
         okunan = zxingcpp.read_barcodes(Image.open(io.BytesIO(bm.qr_png(veri, kutu=kutu))))
         assert okunan and okunan[0].text == veri
+
+
+def test_liste_uygulamadakiyle_ayni_okunur(hastane):
+    # Uygulama testindeki (__tests__/hedefSecimi.test.tsx) beklenen metinle aynı başlamalı
+    assert bm.liste_sayfalari(hastane) == [
+        "Burada 7 yer var. Zemin kat: 1, Danışma; 2, Vezne; 3, Laboratuvar; 4, Tuvalet. "
+        "1. kat: 5, Kardiyoloji Polikliniği; 6, Dahiliye Polikliniği; 7, Göz Polikliniği. "
+        "Çalışanların adıyla da sorabilirsiniz, örneğin doktorun adını söyleyin."]
+
+
+def test_uzun_liste_onar_onar():
+    mekan = {"noktalar": [{"id": "a", "ad": "A"}], "hedefler": [
+        {"ad": f"Oda {i}", "nokta": "a"} for i in range(1, 24)]}
+    sayfalar = bm.liste_sayfalari(mekan)
+    assert len(sayfalar) == 3
+    assert sayfalar[0].startswith("Burada 23 yer var. İlk 10 tanesi: 1, Oda 1;")
+    assert sayfalar[0].endswith("Diğer 13 yer için devam deyin.")
+    assert sayfalar[2] == "21. yerden devam: 21, Oda 21; 22, Oda 22; 23, Oda 23."
+
+
+def test_kisa_ad_onerisi_tekrarlanan_sozcugu_atar():
+    hedefler = [{"ad": "Kardiyoloji Polikliniği"}, {"ad": "Göz Polikliniği"}, {"ad": "Vezne"},
+                {"ad": "101 numaralı sınıf"}, {"ad": "102 numaralı sınıf"},
+                {"ad": "Dahiliye Polikliniği", "kisaAd": "Dahiliye"}]
+    assert bm.kisa_ad_onerileri(hedefler) == {0: "Kardiyoloji", 1: "Göz"}
+
+
+def test_kisa_ad_listede_okunur_ve_dosyaya_yazilir(hastane):
+    hastane["hedefler"][5]["kisaAd"] = "Kardiyoloji"
+    assert "5, Kardiyoloji; 6" in bm.liste_sayfalari(hastane)[0]
+    noktalar, yollar, hedefler = bm.mekandan_satirlar(hastane)
+    bilgi = {k: hastane.get(k) for k in ("id", "ad", "tur", "surum", "giris", "kasa")}
+    assert bm.satirlardan_mekan(bilgi, noktalar, yollar, hedefler)["hedefler"][5]["kisaAd"] == "Kardiyoloji"
+
+
+def test_uzun_ada_kisa_ad_uyarisi(hastane):
+    _, uyarilar = bm.dogrula(hastane)
+    assert any("Kardiyoloji Polikliniği" in u and "Kısa ad" in u for u in uyarilar)
+
+
+def test_kisa_ad_oner_dugmesi_tabloyu_doldurur():
+    at = AppTest.from_file("streamlit_app.py", default_timeout=30).run()
+    at.selectbox[0].select("Hastane / poliklinik (iki katlı, asansörlü)")
+    at.button[0].click().run()
+    oner = next(b for b in at.button if b.label == "Kısa adları öner")
+    oner.click().run()
+    assert not at.exception
+    assert "Kardiyoloji" in list(at.session_state["kaynak"]["hedefler"]["kisaAd"])
