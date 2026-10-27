@@ -21,6 +21,7 @@ import zlib
 from collections import deque
 from pathlib import Path
 
+import pandas as pd
 import qrcode
 from qrcode.constants import ERROR_CORRECT_M
 
@@ -434,6 +435,31 @@ def mekandan_satirlar(mekan: dict) -> tuple[list[dict], list[dict], list[dict]]:
                  "oda": h.get("oda", ""), "no": h.get("no", "")}
                 for h in mekan["hedefler"]]
     return noktalar, yollar, hedefler
+
+
+# ── Tablo düzenleyici ─────────────────────────────────────
+
+NOKTA_SUTUNLARI = ["ad", "kat", "id"]
+YOL_SUTUNLARI = ["a", "b", "tur", "adim", "tarif", "geriTarif", "tekYon", "basamak"]
+HEDEF_SUTUNLARI = ["ad", "kisaAd", "nokta", "tarif", "anahtarlar", "kisiler", "oda", "no"]
+SAYI_SUTUNLARI = {"kat", "adim", "basamak"}
+MANTIKSAL_SUTUNLAR = {"tekYon"}
+# Tablo yapısı değişince artırılır: önceki sürümden kalan tablo düzenlemeleri yeni sütunlara uygulanmasın
+TABLO_SEMASI = 2
+
+
+def tablo(veri, sutunlar: list[str]) -> pd.DataFrame:
+    """Her sütunu tek türe zorlar. Karışık türlü sütun (ör. oda numarası bir satırda 112, diğerinde "B-3")
+    tablo düzenleyicide hata verir; yazı sütunları yazıya, sayı sütunları sayıya çevrilir."""
+    df = pd.DataFrame(veri, columns=sutunlar)
+    for s in sutunlar:
+        if s in SAYI_SUTUNLARI:
+            df[s] = pd.to_numeric(df[s], errors="coerce").astype("float64")
+        elif s in MANTIKSAL_SUTUNLAR:
+            df[s] = df[s].fillna(False).astype(bool)
+        else:
+            df[s] = df[s].map(_metin).astype(object)
+    return df.reset_index(drop=True)
 
 
 # ── Şablonlar ─────────────────────────────────────────────

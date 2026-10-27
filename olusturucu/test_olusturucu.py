@@ -158,3 +158,25 @@ def test_kisa_ad_oner_dugmesi_tabloyu_doldurur():
     oner.click().run()
     assert not at.exception
     assert "Kardiyoloji" in list(at.session_state["kaynak"]["hedefler"]["kisaAd"])
+
+
+def test_karisik_turlu_sutunlar_tek_ture_cevrilir():
+    """Kurumun elle düzenlediği dosyada oda numarası sayı olabilir; tablo düzenleyici karışık türde hata veriyordu."""
+    mekan = json.loads(json.dumps(bm.sablonlar()["Hastane / poliklinik (iki katlı, asansörlü)"]))
+    mekan["hedefler"][5]["oda"] = 112
+    mekan["noktalar"][3]["kat"] = "0"
+    noktalar, _, hedefler = bm.mekandan_satirlar(mekan)
+    assert set(map(type, bm.tablo(hedefler, bm.HEDEF_SUTUNLARI)["oda"])) == {str}
+    assert bm.tablo(noktalar, bm.NOKTA_SUTUNLARI)["kat"].dtype == "float64"
+
+
+def test_eski_oturumdaki_tablolar_yeni_yapiya_cevrilir():
+    """Sayfa açıkken uygulama güncellenince eski oturumda 'kisaAd' sütunu yoktu."""
+    at = AppTest.from_file("streamlit_app.py", default_timeout=30).run()
+    eski = at.session_state["kaynak"]
+    eski["hedefler"] = eski["hedefler"].drop(columns=["kisaAd"])
+    at.session_state["kaynak"] = eski
+    at.session_state["tablo_semasi"] = 1
+    at.run()
+    assert not at.exception
+    assert "kisaAd" in at.session_state["kaynak"]["hedefler"].columns

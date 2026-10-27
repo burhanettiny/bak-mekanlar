@@ -6,7 +6,6 @@ girip görme engelli ziyaretçiler için BAK giriş QR'ını ve nokta etiketleri
 
 import json
 
-import pandas as pd
 import streamlit as st
 
 import bak_mekan as bm
@@ -17,8 +16,6 @@ TUR_ADLARI = {"magaza": "Market / mağaza", "hastane": "Hastane / sağlık", "ku
               "diger": "Diğer"}
 YOL_TURU_ADLARI = {"yuru": "Yürüme", "rampa": "Rampa", "kapi": "Kapı", "merdiven": "Merdiven",
                    "yuruyen-merdiven": "Yürüyen merdiven", "asansor": "Asansör"}
-
-HEDEF_SUTUNLARI = ["ad", "kisaAd", "nokta", "tarif", "anahtarlar", "kisiler", "oda", "no"]
 
 BOS_MEKAN = {"id": "", "ad": "", "tur": "kurum", "surum": 1, "giris": "giris",
              "noktalar": [{"id": "giris", "ad": "Ana giriş"}], "baglantilar": [], "hedefler": []}
@@ -44,16 +41,21 @@ def mekani_yukle(mekan: dict, yeni_kimlik: bool) -> None:
         mekan["surum"] = int(mekan.get("surum") or 1) + 1
     noktalar, yollar, hedefler = bm.mekandan_satirlar(mekan)
     st.session_state.bilgi = {k: mekan.get(k) for k in ("id", "ad", "tur", "surum", "giris", "kasa")}
-    st.session_state.kaynak = {"noktalar": pd.DataFrame(noktalar, columns=["ad", "kat", "id"]),
-                               "yollar": pd.DataFrame(yollar, columns=["a", "b", "tur", "adim", "tarif", "geriTarif",
-                                                                       "tekYon", "basamak"]),
-                               "hedefler": pd.DataFrame(hedefler, columns=HEDEF_SUTUNLARI)}
+    st.session_state.kaynak = {"noktalar": bm.tablo(noktalar, bm.NOKTA_SUTUNLARI),
+                               "yollar": bm.tablo(yollar, bm.YOL_SUTUNLARI),
+                               "hedefler": bm.tablo(hedefler, bm.HEDEF_SUTUNLARI)}
     # Düzenleyicilerin anahtarı değişince eski düzenlemeler atılır, yeni veri gösterilir
     st.session_state.surum_anahtari = st.session_state.get("surum_anahtari", 0) + 1
 
 
 if "bilgi" not in st.session_state:
     mekani_yukle(BOS_MEKAN, yeni_kimlik=True)
+elif st.session_state.get("tablo_semasi") != bm.TABLO_SEMASI:
+    # Sayfa açıkken uygulama güncellendi: oturumdaki tablolar yeni yapıya çevrilir, girilenler korunur
+    eski = st.session_state.kaynak
+    st.session_state.kaynak = {ad: bm.tablo(eski[ad], sutunlar) for ad, sutunlar in
+                               (("noktalar", bm.NOKTA_SUTUNLARI), ("yollar", bm.YOL_SUTUNLARI), ("hedefler", bm.HEDEF_SUTUNLARI))}
+st.session_state.tablo_semasi = bm.TABLO_SEMASI
 
 sablonlar = bm.sablonlar()
 anahtar = st.session_state.surum_anahtari
@@ -101,7 +103,7 @@ with noktalar_sekmesi:
         "asansör önü, merdiven başı, oda kapıları. Her katta asansör ve merdiven için ayrı nokta ekleyin. "
         "Her noktaya bir etiket asılacak.")
     noktalar_df = st.data_editor(
-        st.session_state.kaynak["noktalar"], key=f"noktalar-{anahtar}", num_rows="dynamic", hide_index=True,
+        st.session_state.kaynak["noktalar"], key=f"noktalar-{bm.TABLO_SEMASI}-{anahtar}", num_rows="dynamic", hide_index=True,
         alt="Binadaki noktalar",
         column_config={
             "ad": st.column_config.TextColumn("Nokta adı", required=True, width="large",
@@ -152,7 +154,7 @@ with yollar_sekmesi:
         "\"Sağa dönün\" geliş yönüne göre değiştiği için dönüş tarifi ayrı yazılır. Merdiven ve asansörde "
         "kat bilgisi otomatik söylenir; tarife yalnızca ek bilgi yazın (ör. \"korkuluk sağınızda\").")
     yollar_df = st.data_editor(
-        st.session_state.kaynak["yollar"], key=f"yollar-{anahtar}", num_rows="dynamic", hide_index=True,
+        st.session_state.kaynak["yollar"], key=f"yollar-{bm.TABLO_SEMASI}-{anahtar}", num_rows="dynamic", hide_index=True,
         alt="Noktalar arasındaki yollar",
         column_config={
             "a": st.column_config.SelectboxColumn("Nereden", options=nokta_idleri, required=True),
@@ -177,7 +179,7 @@ with hedefler_sekmesi:
         "kelimelere** insanların söyleyebileceği sözcükleri virgülle yazın (ör. \"kalp, kardiyoloji\"). "
         "Orada çalışan kişileri yazarsanız \"Doktor Ayşe Yılmaz nerede\" diye de bulunur.")
     hedefler_df = st.data_editor(
-        st.session_state.kaynak["hedefler"], key=f"hedefler-{anahtar}", num_rows="dynamic", hide_index=True,
+        st.session_state.kaynak["hedefler"], key=f"hedefler-{bm.TABLO_SEMASI}-{anahtar}", num_rows="dynamic", hide_index=True,
         alt="Ziyaretçilerin gidebileceği hedefler",
         column_config={
             "ad": st.column_config.TextColumn("Hedef adı", required=True),
@@ -201,7 +203,9 @@ with hedefler_sekmesi:
             for satir, oneri in oneriler.items():
                 guncel.iat[satir, guncel.columns.get_loc("kisaAd")] = oneri
             # Diğer sekmelerdeki düzenlemeler kaybolmasın: hepsi kaynağa yazılıp düzenleyiciler yenilenir
-            st.session_state.kaynak = {"noktalar": noktalar_df, "yollar": yollar_df, "hedefler": guncel}
+            st.session_state.kaynak = {"noktalar": bm.tablo(noktalar_df, bm.NOKTA_SUTUNLARI),
+                                       "yollar": bm.tablo(yollar_df, bm.YOL_SUTUNLARI),
+                                       "hedefler": bm.tablo(guncel, bm.HEDEF_SUTUNLARI)}
             st.session_state.surum_anahtari += 1
             st.rerun()
         if oneriler:
