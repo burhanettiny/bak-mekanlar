@@ -355,3 +355,23 @@ def test_buyuk_binada_adres_secenegi_kendiliginden_secilir():
     at.text_input(key="duzen_adresi").input("https://buyuk-avm.com.tr/bak.json").run()
     assert not at.exception
     assert any(b.label.startswith("Etiketleri indir") for b in at.get("download_button"))
+
+
+def test_elle_eklenen_nokta_plani_bozmaz():
+    mekan, p = sihirbaz.market_olustur("M", [{"sol": "Süt"}, {"sag": "Ekmek"}])
+    mekan["noktalar"].append({"id": "yeni", "ad": "Yeni nokta"})
+    mekan["baglantilar"].append({"a": "k2", "b": "yeni", "adim": 4, "tarif": "x", "geriTarif": "y"})
+    dot = plan.plan_dot(mekan, p)
+    assert "layout=neato" in dot                                   # düzenli yerleşim korunur
+    assert 'pos="' in dot.split('"k1"')[1].split("\n")[0]          # bilinen nokta sabit
+    assert 'pos="' not in dot.split('"yeni" [')[1].split("\n")[0]  # yeni nokta serbest
+
+
+def test_raf_kutusu_guncel_reyonlari_gosterir():
+    mekan, p = sihirbaz.market_olustur("M", [{"sol": "Süt, Peynir", "sag": "Ekmek"}])
+    mekan["hedefler"] = [h for h in mekan["hedefler"] if h["ad"] != "Peynir"]       # Düzenle'de silindi
+    mekan["hedefler"].append({"ad": "Yumurta", "nokta": "k1", "tarif": "1. koridora girin. Yumurta sağınızda.",
+                              "anahtarlar": ["yumurta"]})
+    dot = plan.plan_dot(mekan, p)
+    raf = dot.split('"raf-k1"')[1].split("\n")[0]
+    assert "Süt" in raf and "Peynir" not in raf and "Ekmek, Yumurta" in raf

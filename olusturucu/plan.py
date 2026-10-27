@@ -32,7 +32,10 @@ def plan_dot(mekan: dict, plan: dict | None = None) -> str:
     hedef_adlari: dict[str, list[str]] = {}
     for h in mekan["hedefler"]:
         hedef_adlari.setdefault(h["nokta"], []).append(h.get("kisaAd") or h["ad"])
-    sabit = bool(konum) and all(n["id"] in konum for n in mekan["noktalar"])
+    # Sihirbaz konumları varsa onlar sabitlenir. Sonradan elle eklenen birkaç nokta konumsuz kalır; çizim
+    # programı onları komşularının yanına yerleştirir. Noktaların çoğu konumsuzsa katlara ayrılmış düzen kullanılır.
+    bilinen = [n["id"] for n in mekan["noktalar"] if n["id"] in konum]
+    sabit = bool(mekan["noktalar"]) and len(bilinen) >= 0.6 * len(mekan["noktalar"])
 
     satirlar = [
         "digraph plan {",
@@ -64,7 +67,7 @@ def plan_dot(mekan: dict, plan: dict | None = None) -> str:
         else:
             ozellik = 'fillcolor="#FFFFFF"'
         konum_ozelligi = ""
-        if sabit:
+        if sabit and nid in konum:
             x, y = konum[nid]
             konum_ozelligi = f', pos="{x * OLCEK:.2f},{y * OLCEK:.2f}!"'
         return f'  "{_kacis(nid)}" [label={etiket}, {ozellik}{konum_ozelligi}];'
@@ -75,7 +78,9 @@ def plan_dot(mekan: dict, plan: dict | None = None) -> str:
         # Birden çok katta her katın soluna kat adı
         if len(set(katlar.values())) > 1:
             for kat in sorted(set(katlar.values())):
-                kat_konumlari = [konum[i] for i, k in katlar.items() if k == kat]
+                kat_konumlari = [konum[i] for i, k in katlar.items() if k == kat and i in konum]
+                if not kat_konumlari:
+                    continue
                 x = min(k[0] for k in kat_konumlari) - 7
                 y = sum(k[1] for k in kat_konumlari) / len(kat_konumlari)
                 satirlar.append(f'  "kat-etiketi-{kat}" [shape=plaintext, style="", label=<<B>{_kat_adi(kat)}</B>>, '
@@ -92,6 +97,13 @@ def plan_dot(mekan: dict, plan: dict | None = None) -> str:
     for nid, raf in raflar.items():
         if nid not in katlar:
             continue
+        # Reyonlar Düzenle sayfasında değişmiş olabilir: kutu, o koridordaki güncel hedeflerin tarifinden kurulur
+        # ("… solunuzda." / "… sağınızda."). Tarif elle değiştirildiyse sihirbazın yazdığı kullanılır.
+        burada = [h for h in mekan["hedefler"] if h["nokta"] == nid]
+        sol_liste = [h.get("kisaAd") or h["ad"] for h in burada if h.get("tarif", "").endswith("solunuzda.")]
+        sag_liste = [h.get("kisaAd") or h["ad"] for h in burada if h.get("tarif", "").endswith("sağınızda.")]
+        if sol_liste or sag_liste:
+            raf = {"sol": ", ".join(sol_liste), "sag": ", ".join(sag_liste)}
         sol, sag = _kacis(raf.get("sol") or "—"), _kacis(raf.get("sag") or "—")
         rid = f"raf-{nid}"
         konum_ozelligi = ""
