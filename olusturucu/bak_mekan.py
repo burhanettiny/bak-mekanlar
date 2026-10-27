@@ -96,6 +96,8 @@ def sade_json(mekan: dict) -> str:
 
 
 def qr_verisi(mekan: dict) -> str:
+    # 2D plan bilgisi uygulamanın işine yaramaz, QR'ı büyütür: dışarıda bırakılır
+    mekan = {k: v for k, v in mekan.items() if k != "plan"}
     sikistirici = zlib.compressobj(9, zlib.DEFLATED, -15)
     sikisik = sikistirici.compress(sade_json(mekan).encode("utf-8")) + sikistirici.flush()
     return VERI_QR_ONEKI + base45(sikisik)

@@ -24,6 +24,22 @@ Bina bilgisi QR'ın içinde taşınır. Sunucu, hesap ya da internet bağlantıs
   birlikte değiştirin. `__tests__/veri/kurum-qr-hastane.txt` bu uygulamanın ürettiği bir örnektir ve uygulama
   testleri onu çözer.
 
+## Sayfalar ve dosyalar
+
+| Sayfa | Ne yapar |
+|---|---|
+| Başla | Sihirbaz, hazır şablon ya da kayıtlı düzen dosyası ile başlama |
+| Sihirbaz | **Market:** her koridorun solunda ve sağında hangi reyonlar var. **Koridorlu bina:** her katta koridor boyunca kapılar sırayla. Noktalar, yollar ve sesli tarifler kendiliğinden üretilir |
+| Düzenle | Noktalar, yollar ve hedefler tabloları; her şey elle değiştirilebilir |
+| Plan | Binanın 2D planı (katlar, merdiven, asansör, adım sayıları) ve tarif önizleme |
+| QR ve etiketler | Kontrol, giriş QR'ı, yazdırılabilir etiketler, düzen dosyası |
+
+`bak_mekan.py` (doğrulama, QR, etiketler), `sihirbaz.py` (düzen üretimi) ve `plan.py` (Graphviz planı)
+Streamlit'ten bağımsızdır; `durum.py` sayfalar arasındaki oturum verisini tutar.
+
+Sihirbazla oluşturulan binalarda planın yerleşimi bilinir ve düzen dosyasının `plan` alanında saklanır.
+Bu alan QR'a girmez; QR yalnızca uygulamanın ihtiyaç duyduğu veriyi taşır.
+
 ## Girişte okunan yer listesi ve kısa adlar
 
 Ziyaretçi giriş QR'ını okutunca uygulama binadaki yerleri numaralı okur ("1, Danışma; 2, Vezne…") ve numarasını

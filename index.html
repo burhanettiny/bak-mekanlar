@@ -3,30 +3,139 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BAK Mekânları</title>
+<title>BAK – Görme engelliler için sesli yol tarifi</title>
+<meta name="description" content="BAK, görme engellilerin hastane, market, okul ve kamu binalarında sesli ve adım adım yol bulmasını sağlar. Kurumlar kendi BAK QR kodunu ücretsiz oluşturur.">
+<link rel="icon" href="logo.png">
 <style>
-  body { font-family: system-ui, sans-serif; margin: 24px; max-width: 720px; color: #111; background: #fff; line-height: 1.5; }
-  h1 { font-size: 22px; }
-  li { margin: 8px 0; }
-  .tur { color: #666; font-size: 14px; }
-  .hata { color: #b00020; }
+  :root {
+    --zemin: #ffffff; --yazi: #12202f; --ikincil: #4a5a6a; --kart: #f4f7fb; --cizgi: #dbe3ec;
+    --lacivert: #0b1f3a; --sari: #ffd400; --vurgu: #0d47a1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --zemin: #0a1220; --yazi: #eef3f8; --ikincil: #b6c3d1; --kart: #121e30; --cizgi: #24344a; --vurgu: #8fb3ff; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--zemin); color: var(--yazi); font: 17px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  a { color: var(--vurgu); }
+  .kapsam { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+  header { background: var(--lacivert); color: #fff; }
+  .ust { display: flex; align-items: center; gap: 14px; padding: 18px 0; }
+  .ust img { width: 44px; height: 44px; border-radius: 10px; }
+  .ust b { font-size: 22px; letter-spacing: .5px; color: var(--sari); }
+  .kahraman { padding: 40px 0 56px; display: grid; gap: 32px; grid-template-columns: 1.4fr 1fr; align-items: center; }
+  .kahraman h1 { font-size: clamp(28px, 4vw, 44px); line-height: 1.15; margin: 0 0 16px; }
+  .kahraman h1 span { color: var(--sari); }
+  .kahraman p { color: #d6e2f0; font-size: 18px; margin: 0 0 24px; }
+  .dugmeler { display: flex; flex-wrap: wrap; gap: 12px; }
+  .dugme { display: inline-block; padding: 13px 22px; border-radius: 10px; font-weight: 600; text-decoration: none; }
+  .birincil { background: var(--sari); color: var(--lacivert); }
+  .ikincil { border: 2px solid #ffffff55; color: #fff; }
+  .kahraman img { width: 100%; max-width: 340px; justify-self: center; border-radius: 28px; box-shadow: 0 20px 60px #0008; }
+  section { padding: 48px 0; }
+  h2 { font-size: 28px; margin: 0 0 8px; }
+  .alt { color: var(--ikincil); margin: 0 0 28px; }
+  .izgara { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+  .kart { background: var(--kart); border: 1px solid var(--cizgi); border-radius: 14px; padding: 20px; }
+  .kart h3 { margin: 4px 0 6px; font-size: 18px; }
+  .kart p { margin: 0; color: var(--ikincil); font-size: 15.5px; }
+  .no { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%;
+        background: var(--lacivert); color: var(--sari); font-weight: 700; }
+  @media (prefers-color-scheme: dark) { .no { background: var(--sari); color: var(--lacivert); } }
+  ul.mekanlar { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  ul.mekanlar li { background: var(--kart); border: 1px solid var(--cizgi); border-radius: 12px; padding: 14px 16px;
+                   display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+  .tur { color: var(--ikincil); font-size: 14px; }
+  .tumu { margin-top: 14px; background: none; border: 2px solid var(--cizgi); color: var(--yazi); cursor: pointer; font: inherit; }
+  .hata { color: #c62828; }
+  footer { border-top: 1px solid var(--cizgi); color: var(--ikincil); font-size: 15px; padding: 24px 0 40px; }
+  @media (max-width: 760px) { .kahraman { grid-template-columns: 1fr; } .kahraman img { max-width: 200px; } }
 </style>
 </head>
 <body>
-<h1>BAK — Bina İçi Yönlendirme Mekânları</h1>
-<p>BAK uygulaması, girişteki QR okutulduğunda binanın düzenini buradan indirir.
-   Her mekân için JSON dosyasına ve yazdırılabilir QR etiketlerine aşağıdan ulaşabilirsiniz.</p>
-<ul id="liste"><li>Yükleniyor…</li></ul>
+<header>
+  <div class="kapsam">
+    <div class="ust"><img src="logo.png" alt=""><b>BAK</b></div>
+    <div class="kahraman">
+      <div>
+        <h1>Görme engelliler için <span>sesli, adım adım</span> yol tarifi</h1>
+        <p>BAK uygulaması girişteki QR kodu okuyunca binadaki yerleri sayar ve ziyaretçiyi danışmaya, polikliniğe,
+           sınıfa ya da reyona götürür. Kurumunuzun QR kodunu birkaç dakikada, ücretsiz oluşturabilirsiniz.</p>
+        <div class="dugmeler">
+          <a class="dugme birincil" id="olusturucu" href="#kurumlar">Kurumunuzun QR'ını oluşturun</a>
+          <a class="dugme ikincil" href="#nasil">Nasıl çalışır?</a>
+        </div>
+      </div>
+      <img src="logo.png" alt="BAK logosu: göz ve ses dalgaları">
+    </div>
+  </div>
+</header>
+
+<main class="kapsam">
+  <section id="nasil">
+    <h2>Ziyaretçi ne yaşar?</h2>
+    <p class="alt">Telefonu açık, ekranı karanlık olsa bile her şey sesle ve titreşimle.</p>
+    <div class="izgara">
+      <div class="kart"><span class="no">1</span><h3>Girişte QR</h3><p>BAK ile kapıdaki QR okutulur. Bina bilgisi QR'ın içindedir; internet gerekmez.</p></div>
+      <div class="kart"><span class="no">2</span><h3>Yerler okunur</h3><p>"1, Danışma; 2, Vezne; 3, Kardiyoloji…" Ziyaretçi numarayı ya da adı söyler.</p></div>
+      <div class="kart"><span class="no">3</span><h3>Adım adım tarif</h3><p>Adımlar sayılır; dönüş, merdiven ve asansör zamanında söylenir.</p></div>
+      <div class="kart"><span class="no">4</span><h3>Yol boyunca etiketler</h3><p>Koridorlardaki etiketler konumu düzeltir; kaybolan ziyaretçi en yakınını okutur.</p></div>
+    </div>
+  </section>
+
+  <section id="kurumlar">
+    <h2>Kurumlar için</h2>
+    <p class="alt">Hastane, market, okul, belediye… Teknik bilgi gerekmez; sihirbaz sorar, siz yazarsınız.</p>
+    <div class="izgara">
+      <div class="kart"><h3>Market sihirbazı</h3><p>Her koridorun solunda ve sağında hangi reyonlar var? Gerisi kendiliğinden hazırlanır.</p></div>
+      <div class="kart"><h3>Bina sihirbazı</h3><p>Her katta koridor boyunca kapıları sırayla yazın; merdiven ve asansör eklenir.</p></div>
+      <div class="kart"><h3>2D plan ve tarif önizleme</h3><p>Binanızın planını görün, ziyaretçiye okunacak tarifi önceden dinleyin.</p></div>
+      <div class="kart"><h3>Yazdır ve as</h3><p>Giriş QR'ı ve nokta etiketleri tek sayfada. Kapı yanına, 120 cm yüksekliğe.</p></div>
+    </div>
+    <p id="olusturucu-yok" class="alt" style="margin-top:20px">QR oluşturucu, bu deponun <code>olusturucu/</code> klasöründeki
+       Streamlit uygulamasıdır.</p>
+  </section>
+
+  <section id="mekanlar">
+    <h2>Doğrulanmış binalar</h2>
+    <p class="alt">BAK ekibinin incelediği binalar. Uygulama bunların bilgisini buradan indirir.</p>
+    <ul class="mekanlar" id="liste"><li>Yükleniyor…</li></ul>
+  </section>
+</main>
+
+<footer>
+  <div class="kapsam">
+    BAK · Görme engelliler için sesli alışveriş ve yol tarifi asistanı ·
+    <a href="gizlilik.html">Gizlilik politikası</a> · <a href="mailto:mailtoburhanettin@gmail.com">İletişim</a>
+  </div>
+</footer>
+
 <script>
+  // Streamlit'te yayınlanan QR oluşturucunun adresi. Boşsa düğme "Kurumlar için" bölümüne gider.
+  const OLUSTURUCU_ADRESI = '';
+  if (OLUSTURUCU_ADRESI) {
+    document.getElementById('olusturucu').href = OLUSTURUCU_ADRESI;
+    document.getElementById('olusturucu-yok').hidden = true;
+  }
+
   const kacis = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
   const TURLER = {magaza: 'Mağaza', hastane: 'Hastane', kurum: 'Kamu kurumu', diger: 'Diğer'};
   fetch('mekanlar/index.json')
     .then(y => y.json())
     .then(({mekanlar}) => {
-      document.getElementById('liste').innerHTML = mekanlar.map(m =>
-        `<li><strong>${kacis(m.ad)}</strong> <span class="tur">(${kacis(TURLER[m.tur] || m.tur)})</span><br>` +
-        `<a href="etiketler.html?mekan=${encodeURIComponent(m.id)}">QR etiketleri</a> · ` +
-        `<a href="mekanlar/${encodeURIComponent(m.id)}.json">Düzen dosyası</a></li>`).join('');
+      const liste = document.getElementById('liste');
+      const ILK = 6;
+      liste.innerHTML = mekanlar.map((m, i) =>
+        `<li${i >= ILK ? ' hidden' : ''}><span><strong>${kacis(m.ad)}</strong> ` +
+        `<span class="tur">${kacis(TURLER[m.tur] || m.tur)}</span></span>` +
+        `<span><a href="etiketler.html?mekan=${encodeURIComponent(m.id)}">QR etiketleri</a> · ` +
+        `<a href="mekanlar/${encodeURIComponent(m.id)}.json">Düzen dosyası</a></span></li>`).join('');
+      if (mekanlar.length > ILK) {
+        const dugme = document.createElement('button');
+        dugme.className = 'dugme tumu';
+        dugme.textContent = `Tümünü göster (${mekanlar.length})`;
+        dugme.onclick = () => { liste.querySelectorAll('li[hidden]').forEach(li => { li.hidden = false; }); dugme.remove(); };
+        liste.after(dugme);
+      }
     })
     .catch(() => {
       document.getElementById('liste').innerHTML = '<li class="hata">Mekân listesi okunamadı.</li>';

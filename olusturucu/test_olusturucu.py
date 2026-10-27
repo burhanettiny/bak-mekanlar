@@ -83,18 +83,30 @@ def test_etiket_sayfasi_her_nokta_icin_qr_icerir(hastane):
     assert "Örnek Devlet Hastanesi" in sayfa
 
 
-def test_uygulama_sablonla_acilir_ve_qr_uretir():
-    at = AppTest.from_file("streamlit_app.py", default_timeout=30).run()
+def uygulama():
+    return AppTest.from_file("streamlit_app.py", default_timeout=30).run()
+
+
+def sablon_ac(at, ad="Hastane / poliklinik (iki katlı, asansörlü)"):
+    at.selectbox[0].select(ad)
+    next(b for b in at.button if b.label == "Şablonu aç").click().run()
+    return at
+
+
+def test_uygulama_sablonla_acilir_plan_ve_qr_uretir():
+    at = sablon_ac(uygulama())
     assert not at.exception
-    at.selectbox[0].select("Hastane / poliklinik (iki katlı, asansörlü)")
-    at.button[0].click().run()
+    assert at.get("graphviz_chart")                  # şablon açılınca plan sayfasına geçilir
+    at.switch_page("app_pages/yazdir.py").run()
     assert not at.exception
-    assert any("Düzen geçerli" in str(s.value) or "QR hazır" in str(s.value) for s in at.success)
+    assert any("15 nokta, 15 yol, 8 hedef" in str(s.value) for s in at.success)
+    at.switch_page("app_pages/duzenle.py").run()
+    assert not at.exception
     assert at.text_input[0].value == "Örnek Devlet Hastanesi"
 
 
 def test_bos_sayfada_eksikler_soylenir():
-    at = AppTest.from_file("streamlit_app.py", default_timeout=30).run()
+    at = uygulama().switch_page("app_pages/yazdir.py").run()
     assert not at.exception
     assert any("Kurumun adını yazın" in str(e.value) for e in at.error)
 
@@ -151,9 +163,7 @@ def test_uzun_ada_kisa_ad_uyarisi(hastane):
 
 
 def test_kisa_ad_oner_dugmesi_tabloyu_doldurur():
-    at = AppTest.from_file("streamlit_app.py", default_timeout=30).run()
-    at.selectbox[0].select("Hastane / poliklinik (iki katlı, asansörlü)")
-    at.button[0].click().run()
+    at = sablon_ac(uygulama()).switch_page("app_pages/duzenle.py").run()
     oner = next(b for b in at.button if b.label == "Kısa adları öner")
     oner.click().run()
     assert not at.exception
@@ -180,3 +190,108 @@ def test_eski_oturumdaki_tablolar_yeni_yapiya_cevrilir():
     at.run()
     assert not at.exception
     assert "kisaAd" in at.session_state["kaynak"]["hedefler"].columns
+
+
+# ── Sihirbazlar ve plan ──────────────────────────────────
+
+import plan  # noqa: E402
+import sihirbaz  # noqa: E402
+
+
+def test_market_sihirbazi_sag_sol_reyonlari_tarif_eder():
+    mekan, p = sihirbaz.market_olustur("Deneme Market", [
+        {"sol": "Meyve, Sebze", "sag": "Ekmek"},
+        {"sol": "Süt, Peynir, Yoğurt", "sag": "Deterjan"}])
+    mekan["id"] = "q-deneme-market"
+    assert bm.dogrula(mekan) == ([], [])
+    tarifler = {h["ad"]: h["tarif"] for h in mekan["hedefler"]}
+    assert tarifler["Ekmek"] == "1. koridora girin. Ekmek sağınızda."
+    assert tarifler["Süt"] == "2. koridora girin. Süt koridorun başında, solunuzda."
+    assert tarifler["Yoğurt"] == "2. koridora girin. Yoğurt koridorun sonunda, solunuzda."
+    assert "süt" in next(h for h in mekan["hedefler"] if h["ad"] == "Süt")["anahtarlar"]
+    assert p["raflar"]["k2"]["sol"] == "Süt, Peynir, Yoğurt"
+    assert set(p["konum"]) == {n["id"] for n in mekan["noktalar"]}
+    # Plan QR'a girmez
+    assert "plan" not in bm.qr_verisini_coz(bm.qr_verisi({**mekan, "plan": p}))
+
+
+def test_market_koridorlar_sola_sirali_olabilir():
+    mekan, _ = sihirbaz.market_olustur("M", [{"sol": "A"}, {"sag": "B"}], siralama="sol")
+    yol = next(b for b in mekan["baglantilar"] if b["a"] == "k1" and b["b"] == "k2")
+    assert yol["tarif"] == "Ön koridorda sola doğru ilerleyin"
+    assert yol["geriTarif"] == "Ön koridorda sağa doğru ilerleyin"
+
+
+def test_bina_sihirbazi_katlari_merdiven_ve_asansorle_baglar():
+    mekan, p = sihirbaz.bina_olustur("Okul", "kurum", [
+        [{"ad": "Müdür odası", "taraf": "sag", "adim": 4}],
+        [{"ad": "101 numaralı sınıf", "taraf": "sol", "adim": 5, "oda": "101", "kisiler": "Ayşe Öğretmen"}],
+        [{"ad": "Kütüphane", "taraf": "sag", "adim": 7}]], basamak=20)
+    mekan["id"] = "q-okul"
+    assert bm.dogrula(mekan) == ([], [])
+    turler = [b.get("tur") for b in mekan["baglantilar"] if b.get("tur")]
+    assert turler.count("merdiven") == 2 and turler.count("asansor") == 2
+    assert all(b.get("basamak") == 20 for b in mekan["baglantilar"] if b.get("tur") == "merdiven")
+    sinif = next(h for h in mekan["hedefler"] if h["ad"] == "101 numaralı sınıf")
+    assert sinif["tarif"] == "101 numaralı sınıf kapısı solunuzda, oda 101."
+    assert sinif["kisiler"] == ["Ayşe Öğretmen"]
+    yol = bm.rota_onizleme(mekan, "Kütüphane")
+    assert any("Merdiven" in a or "Asansor" in a for a in yol) and yol[-1] == "Varınca: Kütüphane kapısı sağınızda."
+
+
+def test_tek_katli_binada_merdiven_asansor_yok():
+    mekan, _ = sihirbaz.bina_olustur("Ofis", "kurum", [[{"ad": "Vezne", "taraf": "sol", "adim": 5}]])
+    assert not any(b.get("tur") for b in mekan["baglantilar"])
+
+
+def test_plan_sihirbaz_konumlariyla_sabit_cizilir_elle_girilende_katlara_ayrilir(hastane):
+    mekan, p = sihirbaz.market_olustur("M", [{"sol": "Süt", "sag": "Ekmek"}])
+    dot = plan.plan_dot(mekan, p)
+    assert "layout=neato" in dot and 'pos="' in dot and "raf-k1" in dot
+    dot2 = plan.plan_dot(hastane)
+    assert "layout=dot" in dot2 and 'cluster_0' in dot2 and 'cluster_1' in dot2
+    assert "24 basamak" in dot2 and "asansör" in dot2
+
+
+def test_sihirbaz_sayfasindan_market_olusturulur():
+    at = uygulama().switch_page("app_pages/sihirbaz.py").run()
+    assert not at.exception
+    at.text_input[0].input("Çarşı Market").run()
+    next(b for b in at.button if b.label == "Market düzenini oluştur").click().run()
+    assert not at.exception
+    assert at.session_state["bilgi"]["ad"] == "Çarşı Market"
+    assert at.session_state["plan"]["raflar"]
+    assert at.get("graphviz_chart")
+
+
+def test_bina_sihirbazi_sayfasi_calisir():
+    at = uygulama()
+    at.session_state["sihirbaz_turu"] = "Koridorlu bina"
+    at.switch_page("app_pages/sihirbaz.py").run()
+    assert not at.exception
+    at.text_input[0].input("Deneme Hastanesi").run()
+    next(b for b in at.button if b.label == "Bina düzenini oluştur").click().run()
+    assert not at.exception
+    assert at.session_state["bilgi"]["tur"] == "hastane"
+
+
+def test_duzen_dosyasi_plani_saklar_ve_geri_yukler(hastane):
+    mekan, p = sihirbaz.market_olustur("M", [{"sol": "Süt"}])
+    mekan["id"] = "q-m-0001"
+    at = uygulama()
+    import durum  # noqa: F401
+    dosya = json.dumps({**mekan, "plan": p}, ensure_ascii=False)
+    at.session_state["yuklenecek"] = dosya
+    # Dosya yükleme bileşeni AppTest'te doğrudan beslenemediği için yükleme işlevi ayrıca sınanır
+    from streamlit.testing.v1 import AppTest as _A
+    yukleme = _A.from_string("""
+import json, streamlit as st, durum
+durum.baslat()
+durum.mekani_yukle(json.loads(st.session_state.yuklenecek), yeni_kimlik=False)
+st.write(durum.dosya_icerigi(durum.guncel_mekan()))
+""", default_timeout=30)
+    yukleme.session_state["yuklenecek"] = dosya
+    yukleme.run()
+    assert not yukleme.exception
+    yazilan = json.loads(yukleme.markdown[0].value)
+    assert yazilan["surum"] == 2 and yazilan["plan"]["raflar"]["k1"]["sol"] == "Süt"
