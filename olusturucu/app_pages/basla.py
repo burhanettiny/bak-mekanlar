@@ -23,21 +23,26 @@ with st.container(horizontal=True):
             st.caption(metin)
 
 st.subheader("Nereden başlamak istersiniz?")
-market, bina, sablon, dosya = st.columns(4)
 
-with market, st.container(border=True, height="stretch"):
-    st.markdown("#### :material/shopping_cart: Market")
-    st.markdown("Koridor koridor, **sağda ve solda** hangi reyonlar var? Gerisini sihirbaz hazırlar.")
-    if st.button("Market sihirbazı", type="primary", width="stretch", key="market-git"):
-        st.session_state.sihirbaz_turu = "Market"
-        st.switch_page("app_pages/sihirbaz.py")
 
-with bina, st.container(border=True, height="stretch"):
-    st.markdown("#### :material/local_hospital: Hastane, okul, kurum")
-    st.markdown("Her katta koridor boyunca **sağdaki ve soldaki** odaları sırayla yazın; merdiven ve asansör eklenir.")
-    if st.button("Bina sihirbazı", type="primary", width="stretch", key="bina-git"):
-        st.session_state.sihirbaz_turu = "Koridorlu bina"
-        st.switch_page("app_pages/sihirbaz.py")
+def sihirbaz_karti(ikon: str, baslik: str, metin: str, dugme: str, tur: str) -> None:
+    with st.container(border=True, height="stretch"):
+        st.markdown(f"#### {ikon} {baslik}")
+        st.markdown(metin)
+        if st.button(dugme, type="primary", width="stretch", key=f"{tur}-git"):
+            st.session_state.sihirbaz_turu = tur
+            st.switch_page("app_pages/sihirbaz.py")
+
+
+with st.container(horizontal=True):
+    sihirbaz_karti(":material/shopping_cart:", "Market", "Koridor koridor, **sağda ve solda** hangi reyonlar var? "
+                   "Gerisini sihirbaz hazırlar.", "Market sihirbazı", "Market")
+    sihirbaz_karti(":material/storefront:", "AVM", "Her katta koridor boyunca **sağdaki ve soldaki** mağazalar; "
+                   "yürüyen merdiven, asansör ve otopark.", "AVM sihirbazı", "AVM")
+    sihirbaz_karti(":material/local_hospital:", "Hastane, okul, kurum", "Her katta koridor boyunca odalar sırayla; "
+                   "merdiven ve asansör eklenir.", "Bina sihirbazı", "Koridorlu bina")
+
+sablon, dosya = st.columns(2)
 
 with sablon, st.container(border=True, height="stretch"):
     st.markdown("#### :material/dashboard_customize: Hazır şablon")

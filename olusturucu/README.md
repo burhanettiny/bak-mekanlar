@@ -13,6 +13,7 @@ Bina bilgisi QR'ın içinde taşınır. Sunucu, hesap ya da internet bağlantıs
 |---|---|---|
 | Giriş | `BAK:VERI:1:<base45(deflate(düzen JSON))>` | Bu uygulama |
 | Nokta | `BAK:NOKTA:<kurum kimliği>:<nokta kimliği>` | Bu uygulama |
+| Büyük bina girişi | `BAK:URL:https://…` (düzen dosyası kurumun sitesinde; QR'a sığmayan AVM gibi binalar) | Bu uygulama |
 | Doğrulanmış giriş | `BAK:MEKAN:<kimlik>` (düzen BAK deposundan indirilir) | BAK ekibi |
 
 - Kurum kimlikleri `q-` ile başlar ve rastgele bir ek alır (`q-ornek-ilkokulu-3fa2`). Uygulama `q-` ile başlayan
@@ -29,7 +30,7 @@ Bina bilgisi QR'ın içinde taşınır. Sunucu, hesap ya da internet bağlantıs
 | Sayfa | Ne yapar |
 |---|---|
 | Başla | Sihirbaz, hazır şablon ya da kayıtlı düzen dosyası ile başlama |
-| Sihirbaz | **Market:** her koridorun solunda ve sağında hangi reyonlar var. **Koridorlu bina:** her katta koridor boyunca kapılar sırayla. Noktalar, yollar ve sesli tarifler kendiliğinden üretilir |
+| Sihirbaz | **Market:** her koridorun solunda ve sağında hangi reyonlar var. **AVM:** her katta mağazalar, bodrum/otopark, yürüyen merdiven. **Koridorlu bina:** her katta koridor boyunca kapılar sırayla. Noktalar, yollar ve sesli tarifler kendiliğinden üretilir |
 | Düzenle | Noktalar, yollar ve hedefler tabloları; her şey elle değiştirilebilir |
 | Plan | Binanın 2D planı (katlar, merdiven, asansör, adım sayıları) ve tarif önizleme |
 | QR ve etiketler | Kontrol, giriş QR'ı, yazdırılabilir etiketler, düzen dosyası |

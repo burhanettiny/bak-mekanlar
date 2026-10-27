@@ -295,3 +295,63 @@ st.write(durum.dosya_icerigi(durum.guncel_mekan()))
     assert not yukleme.exception
     yazilan = json.loads(yukleme.markdown[0].value)
     assert yazilan["surum"] == 2 and yazilan["plan"]["raflar"]["k1"]["sol"] == "Süt"
+
+
+def test_avm_sihirbazi_bodrum_yuruyen_merdiven_ve_kategoriler():
+    kat = lambda *s: [{"taraf": t, "ad": a, "adim": 5, "anahtarlar": k} for t, a, k in s]  # noqa: E731
+    mekan, _ = sihirbaz.bina_olustur("AVM", "diger", [
+        kat(("sol", "Otopark", "araba")),
+        kat(("sag", "Danışma", "bilgi"), ("sol", "A Giyim", "giyim")),
+        kat(("sol", "B Giyim", "giyim, kot"))], dikey="yuruyen", ilk_kat=-1)
+    mekan["id"] = "q-avm"
+    assert bm.dogrula(mekan) == ([], [])
+    giris_yolu = next(b for b in mekan["baglantilar"] if b["a"] == "giris")
+    assert next(n for n in mekan["noktalar"] if n["id"] == giris_yolu["b"]).get("kat", 0) == 0   # giriş zemin katta
+    assert {n.get("kat", 0) for n in mekan["noktalar"]} == {-1, 0, 1}
+    assert any(b.get("tur") == "yuruyen-merdiven" for b in mekan["baglantilar"])
+    # Yürüyen merdiven asansörden önce tercih edilir; not inerken de okunur
+    assert ("Yürüyen merdiven ile 1 kat aşağı → Yürüyen merdiven başı. Binmeden önce yan tutamağı bulun; "
+            "inişte bant bitince adımınızı uzatın.") in bm.rota_onizleme(mekan, "Otopark")
+    # "giyim" iki mağazada: uygulama seçenek sunar
+    assert sum("giyim" in h["anahtarlar"] for h in mekan["hedefler"]) == 2
+
+
+def test_adres_qr_ve_etiketler():
+    assert bm.adres_gecerli("https://avm.com.tr/bak/duzen.json")
+    assert not bm.adres_gecerli("http://avm.com.tr/duzen.json")
+    assert not bm.adres_gecerli("https://avm.com.tr/a b.json")
+    veri = bm.adres_qr_verisi("https://avm.com.tr/bak/duzen.json")
+    assert veri == "BAK:URL:https://avm.com.tr/bak/duzen.json"
+    mekan, _ = sihirbaz.market_olustur("M", [{"sol": "Süt"}])
+    mekan["id"] = "q-m"
+    assert bm.etiket_sayfasi(mekan, veri) != bm.etiket_sayfasi(mekan)
+
+
+def test_buyuk_binada_adres_secenegi_kendiliginden_secilir():
+    at = uygulama()
+    at.session_state["sihirbaz_turu"] = "AVM"
+    at.switch_page("app_pages/sihirbaz.py").run()
+    assert not at.exception
+    at.text_input[0].input("Büyük AVM").run()
+    next(b for b in at.button if b.label == "AVM düzenini oluştur").click().run()
+    assert not at.exception
+    # Bina büyütülür: 40 mağaza ekle
+    kaynak = at.session_state["kaynak"]
+    noktalar = kaynak["noktalar"].to_dict("records")
+    yollar = kaynak["yollar"].to_dict("records")
+    hedefler = kaynak["hedefler"].to_dict("records")
+    for i in range(40):
+        noktalar.append({"ad": f"Mağaza {i} kapısı", "kat": 0, "id": f"m{i}"})
+        yollar.append({"a": "koridor-1", "b": f"m{i}", "tur": "yuru", "adim": 5 + i,
+                       "tarif": "Koridorda düz ilerleyin", "geriTarif": "Koridorda geri dönün", "tekYon": False})
+        hedefler.append({"ad": f"Mağaza {i}", "nokta": f"m{i}", "tarif": f"Mağaza {i} sağınızda.",
+                         "anahtarlar": "giyim"})
+    at.session_state["kaynak"] = {"noktalar": bm.tablo(noktalar, bm.NOKTA_SUTUNLARI),
+                                  "yollar": bm.tablo(yollar, bm.YOL_SUTUNLARI),
+                                  "hedefler": bm.tablo(hedefler, bm.HEDEF_SUTUNLARI)}
+    at.switch_page("app_pages/yazdir.py").run()
+    assert not at.exception
+    assert at.segmented_control(key="qr_yontemi").value == "adres"
+    at.text_input(key="duzen_adresi").input("https://buyuk-avm.com.tr/bak.json").run()
+    assert not at.exception
+    assert any(b.label.startswith("Etiketleri indir") for b in at.get("download_button"))

@@ -4,7 +4,7 @@ import bak_mekan as bm
 import durum
 
 TUR_ADLARI = {"magaza": "Market / mağaza", "hastane": "Hastane / sağlık", "kurum": "Kamu kurumu / okul / ofis",
-              "diger": "Diğer"}
+              "diger": "AVM, çarşı, diğer"}
 YOL_TURU_ADLARI = {"yuru": "Yürüme", "rampa": "Rampa", "kapi": "Kapı", "merdiven": "Merdiven",
                    "yuruyen-merdiven": "Yürüyen merdiven", "asansor": "Asansör"}
 

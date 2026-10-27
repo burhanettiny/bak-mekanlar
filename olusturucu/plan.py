@@ -19,7 +19,9 @@ def _kacis(metin: str) -> str:
 
 
 def _kat_adi(kat: int) -> str:
-    return "Zemin kat" if kat == 0 else ("Bodrum kat" if kat == -1 else f"{kat}. kat")
+    if kat == 0:
+        return "Zemin kat"
+    return "Bodrum kat" if kat == -1 else (f"Eksi {-kat}. kat" if kat < 0 else f"{kat}. kat")
 
 
 def plan_dot(mekan: dict, plan: dict | None = None) -> str:

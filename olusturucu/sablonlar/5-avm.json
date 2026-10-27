@@ -1,0 +1,502 @@
+{
+ "sablonAdi": "AVM (bodrum otopark, 4 kat, yürüyen merdiven)",
+ "id": "q-sablon",
+ "ad": "Örnek AVM",
+ "tur": "diger",
+ "surum": 1,
+ "giris": "giris",
+ "noktalar": [
+  {
+   "id": "giris",
+   "ad": "Ana giriş"
+  },
+  {
+   "id": "koridor-0",
+   "ad": "Bodrum kat koridor başı",
+   "kat": -1
+  },
+  {
+   "id": "yuruyen-merdiven-0",
+   "ad": "Yürüyen merdiven başı",
+   "kat": -1
+  },
+  {
+   "id": "asansor-0",
+   "ad": "Asansör önü",
+   "kat": -1
+  },
+  {
+   "id": "otopark-asansorleri",
+   "ad": "Otopark asansörleri kapısı",
+   "kat": -1
+  },
+  {
+   "id": "supermarket",
+   "ad": "Süpermarket kapısı",
+   "kat": -1
+  },
+  {
+   "id": "koridor-1",
+   "ad": "Zemin kat koridor başı"
+  },
+  {
+   "id": "yuruyen-merdiven-1",
+   "ad": "Yürüyen merdiven başı"
+  },
+  {
+   "id": "asansor-1",
+   "ad": "Asansör önü"
+  },
+  {
+   "id": "danisma",
+   "ad": "Danışma kapısı"
+  },
+  {
+   "id": "giyim-magazasi",
+   "ad": "Giyim mağazası kapısı"
+  },
+  {
+   "id": "ayakkabi-magazasi",
+   "ad": "Ayakkabı mağazası kapısı"
+  },
+  {
+   "id": "tuvalet",
+   "ad": "Tuvalet kapısı"
+  },
+  {
+   "id": "koridor-2",
+   "ad": "1. kat koridor başı",
+   "kat": 1
+  },
+  {
+   "id": "yuruyen-merdiven-2",
+   "ad": "Yürüyen merdiven başı",
+   "kat": 1
+  },
+  {
+   "id": "asansor-2",
+   "ad": "Asansör önü",
+   "kat": 1
+  },
+  {
+   "id": "kot-magazasi",
+   "ad": "Kot mağazası kapısı",
+   "kat": 1
+  },
+  {
+   "id": "elektronik-magazasi",
+   "ad": "Elektronik mağazası kapısı",
+   "kat": 1
+  },
+  {
+   "id": "koridor-3",
+   "ad": "2. kat koridor başı",
+   "kat": 2
+  },
+  {
+   "id": "yuruyen-merdiven-3",
+   "ad": "Yürüyen merdiven başı",
+   "kat": 2
+  },
+  {
+   "id": "asansor-3",
+   "ad": "Asansör önü",
+   "kat": 2
+  },
+  {
+   "id": "yemek-kati",
+   "ad": "Yemek katı kapısı",
+   "kat": 2
+  },
+  {
+   "id": "sinema",
+   "ad": "Sinema kapısı",
+   "kat": 2
+  }
+ ],
+ "baglantilar": [
+  {
+   "a": "koridor-0",
+   "b": "yuruyen-merdiven-0",
+   "adim": 3,
+   "tarif": "Koridorun başında solunuzdaki yürüyen merdivene yönelin",
+   "geriTarif": "Yürüyen merdivenden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "koridor-0",
+   "b": "asansor-0",
+   "adim": 3,
+   "tarif": "Koridorun başında sağınızdaki asansöre yönelin",
+   "geriTarif": "Asansörden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "koridor-0",
+   "b": "otopark-asansorleri",
+   "adim": 4,
+   "tarif": "Koridorda düz ilerleyin, Otopark asansörleri solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "otopark-asansorleri",
+   "b": "supermarket",
+   "adim": 8,
+   "tarif": "Koridorda düz ilerleyin, Süpermarket sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "giris",
+   "b": "koridor-1",
+   "adim": 8,
+   "tarif": "Girişten düz ilerleyin, koridorun başına ulaşın",
+   "geriTarif": "Çıkışa doğru düz ilerleyin"
+  },
+  {
+   "a": "koridor-1",
+   "b": "yuruyen-merdiven-1",
+   "adim": 3,
+   "tarif": "Koridorun başında solunuzdaki yürüyen merdivene yönelin",
+   "geriTarif": "Yürüyen merdivenden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "yuruyen-merdiven-0",
+   "b": "yuruyen-merdiven-1",
+   "adim": 25,
+   "tur": "yuruyen-merdiven",
+   "tarif": "Binmeden önce yan tutamağı bulun; inişte bant bitince adımınızı uzatın.",
+   "geriTarif": "Binmeden önce yan tutamağı bulun; inişte bant bitince adımınızı uzatın."
+  },
+  {
+   "a": "koridor-1",
+   "b": "asansor-1",
+   "adim": 3,
+   "tarif": "Koridorun başında sağınızdaki asansöre yönelin",
+   "geriTarif": "Asansörden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "asansor-0",
+   "b": "asansor-1",
+   "adim": 35,
+   "tur": "asansor",
+   "tarif": "Düğmelerde kabartma yazı olabilir; sorabilirsiniz.",
+   "geriTarif": "Düğmelerde kabartma yazı olabilir; sorabilirsiniz."
+  },
+  {
+   "a": "koridor-1",
+   "b": "danisma",
+   "adim": 4,
+   "tarif": "Koridorda düz ilerleyin, Danışma sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "danisma",
+   "b": "giyim-magazasi",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Giyim mağazası solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "giyim-magazasi",
+   "b": "ayakkabi-magazasi",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Ayakkabı mağazası sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "ayakkabi-magazasi",
+   "b": "tuvalet",
+   "adim": 8,
+   "tarif": "Koridorda düz ilerleyin, Tuvalet solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "koridor-2",
+   "b": "yuruyen-merdiven-2",
+   "adim": 3,
+   "tarif": "Koridorun başında solunuzdaki yürüyen merdivene yönelin",
+   "geriTarif": "Yürüyen merdivenden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "yuruyen-merdiven-1",
+   "b": "yuruyen-merdiven-2",
+   "adim": 25,
+   "tur": "yuruyen-merdiven",
+   "tarif": "Binmeden önce yan tutamağı bulun; inişte bant bitince adımınızı uzatın.",
+   "geriTarif": "Binmeden önce yan tutamağı bulun; inişte bant bitince adımınızı uzatın."
+  },
+  {
+   "a": "koridor-2",
+   "b": "asansor-2",
+   "adim": 3,
+   "tarif": "Koridorun başında sağınızdaki asansöre yönelin",
+   "geriTarif": "Asansörden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "asansor-1",
+   "b": "asansor-2",
+   "adim": 35,
+   "tur": "asansor",
+   "tarif": "Düğmelerde kabartma yazı olabilir; sorabilirsiniz.",
+   "geriTarif": "Düğmelerde kabartma yazı olabilir; sorabilirsiniz."
+  },
+  {
+   "a": "koridor-2",
+   "b": "kot-magazasi",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Kot mağazası solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "kot-magazasi",
+   "b": "elektronik-magazasi",
+   "adim": 7,
+   "tarif": "Koridorda düz ilerleyin, Elektronik mağazası sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "koridor-3",
+   "b": "yuruyen-merdiven-3",
+   "adim": 3,
+   "tarif": "Koridorun başında solunuzdaki yürüyen merdivene yönelin",
+   "geriTarif": "Yürüyen merdivenden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "yuruyen-merdiven-2",
+   "b": "yuruyen-merdiven-3",
+   "adim": 25,
+   "tur": "yuruyen-merdiven",
+   "tarif": "Binmeden önce yan tutamağı bulun; inişte bant bitince adımınızı uzatın.",
+   "geriTarif": "Binmeden önce yan tutamağı bulun; inişte bant bitince adımınızı uzatın."
+  },
+  {
+   "a": "koridor-3",
+   "b": "asansor-3",
+   "adim": 3,
+   "tarif": "Koridorun başında sağınızdaki asansöre yönelin",
+   "geriTarif": "Asansörden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "asansor-2",
+   "b": "asansor-3",
+   "adim": 35,
+   "tur": "asansor",
+   "tarif": "Düğmelerde kabartma yazı olabilir; sorabilirsiniz.",
+   "geriTarif": "Düğmelerde kabartma yazı olabilir; sorabilirsiniz."
+  },
+  {
+   "a": "koridor-3",
+   "b": "yemek-kati",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Yemek katı sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "yemek-kati",
+   "b": "sinema",
+   "adim": 10,
+   "tarif": "Koridorda düz ilerleyin, Sinema solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  }
+ ],
+ "hedefler": [
+  {
+   "ad": "Otopark asansörleri",
+   "nokta": "otopark-asansorleri",
+   "tarif": "Otopark asansörleri kapısı solunuzda.",
+   "anahtarlar": [
+    "otopark asansörleri",
+    "otopark",
+    "asansörleri",
+    "araba"
+   ]
+  },
+  {
+   "ad": "Süpermarket",
+   "nokta": "supermarket",
+   "tarif": "Süpermarket kapısı sağınızda.",
+   "anahtarlar": [
+    "süpermarket",
+    "market",
+    "gıda"
+   ]
+  },
+  {
+   "ad": "Danışma",
+   "nokta": "danisma",
+   "tarif": "Danışma kapısı sağınızda.",
+   "anahtarlar": [
+    "danışma",
+    "bilgi",
+    "kayıp eşya"
+   ]
+  },
+  {
+   "ad": "Giyim mağazası",
+   "nokta": "giyim-magazasi",
+   "tarif": "Giyim mağazası kapısı solunuzda.",
+   "anahtarlar": [
+    "giyim mağazası",
+    "giyim",
+    "mağazası",
+    "elbise"
+   ]
+  },
+  {
+   "ad": "Ayakkabı mağazası",
+   "nokta": "ayakkabi-magazasi",
+   "tarif": "Ayakkabı mağazası kapısı sağınızda.",
+   "anahtarlar": [
+    "ayakkabı mağazası",
+    "ayakkabı",
+    "mağazası"
+   ]
+  },
+  {
+   "ad": "Tuvalet",
+   "nokta": "tuvalet",
+   "tarif": "Tuvalet kapısı solunuzda.",
+   "anahtarlar": [
+    "tuvalet",
+    "wc",
+    "lavabo"
+   ]
+  },
+  {
+   "ad": "Kot mağazası",
+   "nokta": "kot-magazasi",
+   "tarif": "Kot mağazası kapısı solunuzda.",
+   "anahtarlar": [
+    "kot mağazası",
+    "kot",
+    "mağazası",
+    "giyim"
+   ]
+  },
+  {
+   "ad": "Elektronik mağazası",
+   "nokta": "elektronik-magazasi",
+   "tarif": "Elektronik mağazası kapısı sağınızda.",
+   "anahtarlar": [
+    "elektronik mağazası",
+    "elektronik",
+    "mağazası",
+    "telefon"
+   ]
+  },
+  {
+   "ad": "Yemek katı",
+   "nokta": "yemek-kati",
+   "tarif": "Yemek katı kapısı sağınızda.",
+   "anahtarlar": [
+    "yemek katı",
+    "yemek",
+    "katı",
+    "restoran"
+   ]
+  },
+  {
+   "ad": "Sinema",
+   "nokta": "sinema",
+   "tarif": "Sinema kapısı solunuzda.",
+   "anahtarlar": [
+    "sinema",
+    "film"
+   ]
+  }
+ ],
+ "plan": {
+  "konum": {
+   "giris": [
+    0,
+    4
+   ],
+   "koridor-0": [
+    0,
+    0
+   ],
+   "yuruyen-merdiven-0": [
+    -9,
+    0
+   ],
+   "asansor-0": [
+    -18,
+    0
+   ],
+   "otopark-asansorleri": [
+    9,
+    3.5
+   ],
+   "supermarket": [
+    18,
+    -3.5
+   ],
+   "koridor-1": [
+    0,
+    11
+   ],
+   "yuruyen-merdiven-1": [
+    -9,
+    11
+   ],
+   "asansor-1": [
+    -18,
+    11
+   ],
+   "danisma": [
+    9,
+    7.5
+   ],
+   "giyim-magazasi": [
+    18,
+    14.5
+   ],
+   "ayakkabi-magazasi": [
+    27,
+    7.5
+   ],
+   "tuvalet": [
+    36,
+    14.5
+   ],
+   "koridor-2": [
+    0,
+    22
+   ],
+   "yuruyen-merdiven-2": [
+    -9,
+    22
+   ],
+   "asansor-2": [
+    -18,
+    22
+   ],
+   "kot-magazasi": [
+    9,
+    25.5
+   ],
+   "elektronik-magazasi": [
+    18,
+    18.5
+   ],
+   "koridor-3": [
+    0,
+    33
+   ],
+   "yuruyen-merdiven-3": [
+    -9,
+    33
+   ],
+   "asansor-3": [
+    -18,
+    33
+   ],
+   "yemek-kati": [
+    9,
+    29.5
+   ],
+   "sinema": [
+    18,
+    36.5
+   ]
+  }
+ }
+}

@@ -8,7 +8,7 @@ st.title("Sihirbaz")
 st.caption("Binanızı tarif edin; noktalar, yollar ve sesli tarifler kendiliğinden hazırlanır. "
            "Sonra Düzenle sayfasında her şeyi değiştirebilirsiniz.")
 
-tur = st.segmented_control("Bina türü", ["Market", "Koridorlu bina"], required=True,
+tur = st.segmented_control("Bina türü", ["Market", "AVM", "Koridorlu bina"], required=True,
                            default=st.session_state.get("sihirbaz_turu", "Market"), key="sihirbaz_turu")
 
 ORNEK_KORIDORLAR = pd.DataFrame([
@@ -27,6 +27,23 @@ ORNEK_UST_KAT = pd.DataFrame([
      "anahtarlar": "kalp"},
     {"taraf": "sağ", "ad": "Dahiliye Polikliniği", "adim": 6, "oda": "118", "kisiler": "", "anahtarlar": ""},
 ])
+
+# AVM örneği: kat numarası → mağazalar (koridor boyunca sırayla)
+def _avm_kat(*satirlar):
+    return pd.DataFrame([{"taraf": t, "ad": a, "adim": adim, "oda": "", "kisiler": "", "anahtarlar": k}
+                         for t, a, adim, k in satirlar])
+
+
+ORNEK_AVM = {
+    -1: _avm_kat(("sol", "Otopark asansörleri", 4, "otopark, araba"), ("sağ", "Süpermarket", 8, "market, gıda")),
+    0: _avm_kat(("sağ", "Danışma", 4, "bilgi, kayıp eşya"), ("sol", "Giyim mağazası", 6, "giyim, elbise"),
+                ("sağ", "Ayakkabı mağazası", 6, "ayakkabı, spor ayakkabı"), ("sol", "Tuvalet", 8, "wc, lavabo"),
+                ("sağ", "Eczane", 5, "ilaç")),
+    1: _avm_kat(("sol", "Kot mağazası", 6, "giyim, kot, pantolon"), ("sağ", "Elektronik mağazası", 7,
+                                                                     "elektronik, telefon, bilgisayar"),
+                ("sol", "Kozmetik mağazası", 6, "kozmetik, parfüm, makyaj")),
+    2: _avm_kat(("sağ", "Yemek katı", 6, "yemek, restoran, kafe"), ("sol", "Sinema", 10, "film, bilet")),
+}
 
 
 def olustur(mekan: dict, plan: dict) -> None:
@@ -64,46 +81,65 @@ if tur == "Market":
         st.caption("Devam etmek için marketin adını yazın.")
 
 else:
+    avm = tur == "AVM"
     with st.container(border=True):
-        ad = st.text_input("Binanın adı", placeholder="ör. Kadıköy Devlet Hastanesi, Atatürk İlkokulu")
+        ad = st.text_input("AVM'nin adı" if avm else "Binanın adı",
+                           placeholder="ör. Gebze Center AVM" if avm else
+                           "ör. Kadıköy Devlet Hastanesi, Atatürk İlkokulu", key=f"sihirbaz_{tur}_ad")
         with st.container(horizontal=True, vertical_alignment="bottom"):
-            bina_turu = st.segmented_control("Tür", ["hastane", "kurum"], required=True, default="hastane",
-                                             format_func={"hastane": "Hastane / sağlık",
-                                                          "kurum": "Okul / kamu / ofis"}.get)
-            kat_sayisi = st.number_input("Kat sayısı", 1, 8, 2)
+            if avm:
+                bina_turu = "diger"
+            else:
+                bina_turu = st.segmented_control("Tür", ["hastane", "kurum"], required=True, default="hastane",
+                                                 format_func={"hastane": "Hastane / sağlık",
+                                                              "kurum": "Okul / kamu / ofis"}.get)
+            kat_sayisi = st.number_input("Kat sayısı", 1, 10, 4 if avm else 2, key=f"sihirbaz_{tur}_katsayisi")
+            ilk_kat = st.number_input("En alt kat", -5, 0, -1 if avm else 0, key=f"sihirbaz_{tur}_ilkkat",
+                                      help="Bodrum ya da otopark katı varsa -1, -2… Giriş zemin kata (0) bağlanır.")
         with st.container(horizontal=True, vertical_alignment="bottom"):
-            dikey = st.segmented_control("Katlar arası", ["ikisi", "asansor", "merdiven"], required=True,
-                                         default="ikisi", disabled=kat_sayisi == 1,
-                                         format_func={"ikisi": "Merdiven ve asansör", "asansor": "Yalnız asansör",
-                                                      "merdiven": "Yalnız merdiven"}.get)
-            giris_adim = st.number_input("Girişten koridor başına (adım)", 1, 100, 8)
+            dikey = st.segmented_control(
+                "Katlar arası", ["yuruyen", "ikisi", "asansor", "merdiven"], required=True,
+                default="yuruyen" if avm else "ikisi", disabled=kat_sayisi == 1, key=f"sihirbaz_{tur}_dikey",
+                format_func={"yuruyen": "Yürüyen merdiven ve asansör", "ikisi": "Merdiven ve asansör",
+                             "asansor": "Yalnız asansör", "merdiven": "Yalnız merdiven"}.get)
+            giris_adim = st.number_input("Girişten koridor başına (adım)", 1, 100, 8, key=f"sihirbaz_{tur}_giris")
             basamak = st.number_input("Merdiven basamak sayısı (kat başına)", 1, 80, 22,
-                                      disabled=kat_sayisi == 1 or dikey == "asansor")
-    st.markdown("##### :material/door_front: Katlar")
-    st.caption("Koridorun başından sonuna doğru yürürken karşılaştığınız kapıları **sırayla** yazın. "
-               "**Adım**: bir önceki kapıdan (ilk kapı için koridor başından) bu kapıya kaç adım.")
-    sekmeler = st.tabs(["Zemin kat" if k == 0 else f"{k}. kat" for k in range(kat_sayisi)])
+                                      disabled=kat_sayisi == 1 or dikey != "ikisi" and dikey != "merdiven",
+                                      key=f"sihirbaz_{tur}_basamak")
+    st.markdown("##### :material/storefront: Katlar ve mağazalar" if avm else "##### :material/door_front: Katlar")
+    st.caption(("Her katta koridorun başından sonuna doğru yürürken karşılaştığınız mağazaları **sırayla** yazın. "
+                "**Kategori** sütununa ziyaretçinin söyleyebileceği sözcükleri yazın (giyim, ayakkabı, elektronik…); "
+                "\"giyim nerede\" diyene uygun mağazalar sayılıp seçtirilir. ") if avm else
+               "Koridorun başından sonuna doğru yürürken karşılaştığınız kapıları **sırayla** yazın. ")
+    st.caption("**Adım**: bir önceki kapıdan (ilk kapı için koridor başından) bu kapıya kaç adım.")
+    kat_numaralari = [ilk_kat + k for k in range(kat_sayisi)]
+    sekmeler = st.tabs([sihirbaz.kat_adi(k) for k in kat_numaralari])
     katlar = []
-    for k, sekme in enumerate(sekmeler):
+    for kat, sekme in zip(kat_numaralari, sekmeler):
         with sekme:
+            ornek = (ORNEK_AVM.get(kat, ORNEK_KAT.iloc[0:0]) if avm else
+                     ORNEK_KAT if kat == 0 else ORNEK_UST_KAT if kat == 1 else ORNEK_KAT.iloc[0:0])
             tablo = st.data_editor(
-                ORNEK_KAT if k == 0 else ORNEK_UST_KAT if k == 1 else ORNEK_KAT.iloc[0:0],
-                num_rows="dynamic", hide_index=True, width="stretch", key=f"sihirbaz_kat_{k}",
-                alt=f"{k}. kattaki kapılar",
+                ornek, num_rows="dynamic", hide_index=True, width="stretch", key=f"sihirbaz_{tur}_kat_{kat}",
+                alt=f"{sihirbaz.kat_adi(kat)} kapıları",
+                column_order=["taraf", "ad", "adim", "anahtarlar", "oda", "kisiler"] if avm else None,
                 column_config={
                     "taraf": st.column_config.SelectboxColumn("Taraf", options=["sol", "sağ"], default="sol",
                                                               required=True),
-                    "ad": st.column_config.TextColumn("Ad", required=True, width="medium"),
+                    "ad": st.column_config.TextColumn("Mağaza" if avm else "Ad", required=True, width="medium"),
                     "adim": st.column_config.NumberColumn("Adım", min_value=1, step=1, default=5, format="%d"),
-                    "oda": st.column_config.TextColumn("Oda no"),
+                    "oda": st.column_config.TextColumn("Mağaza no" if avm else "Oda no"),
                     "kisiler": st.column_config.TextColumn("Çalışanlar", help="Virgülle, ör. 'Dr. Ayşe Yılmaz'"),
-                    "anahtarlar": st.column_config.TextColumn("Diğer söyleyişler", help="ör. 'kalp' (kardiyoloji için)"),
+                    "anahtarlar": st.column_config.TextColumn(
+                        "Kategori, diğer söyleyişler" if avm else "Diğer söyleyişler",
+                        width="medium" if avm else None,
+                        help="Virgülle, ör. 'giyim, kot'" if avm else "ör. 'kalp' (kardiyoloji için)"),
                 })
             katlar.append([{**r, "taraf": "sag" if r["taraf"] == "sağ" else "sol"}
                            for r in tablo.fillna("").to_dict("records") if str(r["ad"]).strip()])
-    if st.button("Bina düzenini oluştur", type="primary", icon=":material/auto_fix_high:",
-                 disabled=not (ad.strip() and any(katlar))):
+    if st.button("AVM düzenini oluştur" if avm else "Bina düzenini oluştur", type="primary",
+                 icon=":material/auto_fix_high:", disabled=not (ad.strip() and any(katlar))):
         olustur(*sihirbaz.bina_olustur(ad.strip(), bina_turu, katlar, giris_adim=giris_adim, dikey=dikey,
-                                       basamak=basamak))
+                                       basamak=basamak, ilk_kat=ilk_kat))
     if not ad.strip():
-        st.caption("Devam etmek için binanın adını yazın.")
+        st.caption("Devam etmek için adı yazın.")

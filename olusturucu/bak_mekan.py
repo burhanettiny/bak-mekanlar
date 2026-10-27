@@ -30,6 +30,7 @@ KURUM_ONEKI = "q-"
 BASE45 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:"
 
 DIKEY_GECISLER = ("merdiven", "yuruyen-merdiven", "asansor")
+DIKEY_ADLARI = {"merdiven": "Merdiven", "yuruyen-merdiven": "Yürüyen merdiven", "asansor": "Asansör"}
 BAGLANTI_TURLERI = ("yuru", "rampa", "kapi", *DIKEY_GECISLER)
 MEKAN_TURLERI = ("magaza", "hastane", "kurum", "diger")
 
@@ -107,6 +108,19 @@ def qr_verisini_coz(metin: str) -> dict:
     if not metin.startswith(VERI_QR_ONEKI):
         raise ValueError("BAK giriş QR verisi değil")
     return json.loads(zlib.decompress(base45_coz(metin[len(VERI_QR_ONEKI):]), -15).decode("utf-8"))
+
+
+# Büyük binalar: düzen dosyası kurumun sitesinde durur, giriş QR'ı yalnızca adresi taşır.
+# Uygulamadaki karşılığı: src/mekan/qrVeri.ts adresQrCoz
+ADRES_QR_ONEKI = "BAK:URL:"
+
+
+def adres_gecerli(adres: str) -> bool:
+    return bool(re.fullmatch(r"https://\S+", adres)) and len(adres) <= 500
+
+
+def adres_qr_verisi(adres: str) -> str:
+    return ADRES_QR_ONEKI + adres
 
 
 def nokta_qr_verisi(mekan_id: str, nokta_id: str) -> str:
@@ -271,18 +285,33 @@ def rota_onizleme(mekan: dict, hedef_ad: str) -> list[str]:
                 heapq.heappush(kuyruk, (yeni, komsu))
     if hedef["nokta"] not in uzaklik:
         return ["Girişten bu hedefe yol yok."]
-    adimlar = []
+    yol = []
     nokta = hedef["nokta"]
     while nokta in onceki:
         kaynak, b, ters = onceki[nokta]
-        tur = b.get("tur", "yuru")
-        tarif = (b.get("geriTarif") if ters else b.get("tarif")) or ""
-        if tur in DIKEY_GECISLER:
-            adimlar.append(f"{tur.replace('-', ' ').capitalize()} ile {adlar[nokta]} noktasına. {tarif}".strip())
-        else:
-            adimlar.append(f"{tarif}, yaklaşık {b['adim']} adım → {adlar[nokta]}")
+        yol.append((kaynak, nokta, b, ters))
         nokta = kaynak
-    return [f"Giriş: {adlar[mekan['giris']]}", *reversed(adimlar), f"Varınca: {hedef['tarif']}"]
+    yol.reverse()
+    katlar = {n["id"]: n.get("kat", 0) or 0 for n in mekan["noktalar"]}
+    adimlar = []
+    i = 0
+    while i < len(yol):
+        kaynak, varis, b, ters = yol[i]
+        tur = b.get("tur", "yuru")
+        if tur in DIKEY_GECISLER:
+            # Uygulama gibi: art arda aynı türde kat geçişleri tek adımda söylenir ("2 kat yukarı")
+            while i + 1 < len(yol) and yol[i + 1][2].get("tur") == tur:
+                i += 1
+                varis = yol[i][1]
+            fark = katlar[varis] - katlar[kaynak]
+            yon = f"{abs(fark)} kat {'yukarı' if fark > 0 else 'aşağı'}" if fark else "aynı katta"
+            ek = (b.get("geriTarif") if ters else b.get("tarif")) or ""
+            adimlar.append(f"{DIKEY_ADLARI[tur]} ile {yon} → {adlar[varis]}. {ek}".strip())
+        else:
+            tarif = (b.get("geriTarif") if ters else b.get("tarif")) or ""
+            adimlar.append(f"{tarif}, yaklaşık {b['adim']} adım → {adlar[varis]}")
+        i += 1
+    return [f"Giriş: {adlar[mekan['giris']]}", *adimlar, f"Varınca: {hedef['tarif']}"]
 
 
 # ── Girişte okunacak yer listesi ──────────────────────────
@@ -481,10 +510,10 @@ def _png_veri_adresi(metin: str) -> str:
     return "data:image/png;base64," + base64.b64encode(qr_png(metin, kutu=10)).decode()
 
 
-def etiket_sayfasi(mekan: dict) -> str:
+def etiket_sayfasi(mekan: dict, giris_verisi: str | None = None) -> str:
     """A4'e yazdırılacak HTML: önce büyük giriş etiketi, sonra her nokta için küçük etiket."""
     ad = html.escape(mekan["ad"])
-    giris = _png_veri_adresi(qr_verisi(mekan))
+    giris = _png_veri_adresi(giris_verisi or qr_verisi(mekan))
     noktalar = "".join(
         f"""<div class="etiket"><img src="{_png_veri_adresi(nokta_qr_verisi(mekan['id'], n['id']))}" alt="">
         <b>{html.escape(n['ad'])}</b><small>BAK · {ad}</small></div>"""

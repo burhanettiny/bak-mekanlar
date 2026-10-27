@@ -101,49 +101,68 @@ def market_olustur(ad: str, koridorlar: list[dict], giris_adim: int = 8, koridor
 
 # ── Koridorlu bina (hastane, okul, kamu) ──────────────────
 
+# Katlar arası geçiş seçenekleri. AVM'lerde çoğunlukla yürüyen merdiven ve asansör olur.
+DIKEY_SECENEKLERI = {"ikisi": ["merdiven", "asansor"], "merdiven": ["merdiven"], "asansor": ["asansor"],
+                     "yuruyen": ["yuruyen-merdiven", "asansor"]}
+DIKEY_ADLARI = {"merdiven": ("Merdiven başı", "merdivene", "Merdivenden"),
+                "asansor": ("Asansör önü", "asansöre", "Asansörden"),
+                "yuruyen-merdiven": ("Yürüyen merdiven başı", "yürüyen merdivene", "Yürüyen merdivenden")}
+
+
+def kat_adi(kat: int) -> str:
+    if kat == 0:
+        return "Zemin kat"
+    return "Bodrum kat" if kat == -1 else (f"Eksi {-kat}. kat" if kat < 0 else f"{kat}. kat")
+
+
 def bina_olustur(ad: str, tur: str, katlar: list[list[dict]], giris_adim: int = 8, dikey: str = "ikisi",
-                 basamak: int = 22, kat_adlari: list[int] | None = None) -> tuple[dict, PLAN]:
+                 basamak: int = 22, ilk_kat: int = 0) -> tuple[dict, PLAN]:
     """katlar: her kat için koridor boyunca sırayla kapılar:
         [{"ad": "Kardiyoloji", "taraf": "sol"|"sag", "adim": 6, "oda": "112", "kisiler": "Dr. A, Dr. B",
           "anahtarlar": "kalp"}...]
     "adim": bir önceki kapıdan (ilk kapı için koridor başından) bu kapıya adım sayısı.
-    dikey: "merdiven", "asansor", "ikisi" (kat sayısı 1 ise yok sayılır).
-    kat_adlari: katların numarası (varsayılan 0, 1, 2...)."""
-    kat_no = kat_adlari or list(range(len(katlar)))
+    dikey: DIKEY_SECENEKLERI anahtarlarından biri (kat sayısı 1 ise yok sayılır).
+    ilk_kat: listedeki ilk katın numarası; bodrumlu binada -1 ya da -2. Giriş zemin kata (yoksa ilk kata) bağlanır."""
+    kat_no = [ilk_kat + i for i in range(len(katlar))]
+    giris_kati = kat_no.index(0) if 0 in kat_no else 0
     kullanilan: set[str] = {"giris"}
-    noktalar = [{"id": "giris", "ad": "Ana giriş", **({"kat": kat_no[0]} if kat_no[0] else {})}]
+    noktalar = [{"id": "giris", "ad": "Ana giriş", **({"kat": kat_no[giris_kati]} if kat_no[giris_kati] else {})}]
     yollar = []
     hedefler = []
-    konum: KONUM = {"giris": (0, -7)}
     cok_katli = len(katlar) > 1
-    dikeyler = [] if not cok_katli else (["merdiven", "asansor"] if dikey == "ikisi" else [dikey])
-    KAT_ARALIGI = 16   # plan çiziminde katlar arası boşluk
+    dikeyler = DIKEY_SECENEKLERI.get(dikey, ["merdiven"]) if cok_katli else []
+    KAT_ARALIGI = 11   # plan çiziminde katlar arası boşluk
+    konum: KONUM = {"giris": (0, giris_kati * KAT_ARALIGI - 7)}
     onceki_dikey: dict[str, str] = {}
 
     for f, kapilar in enumerate(katlar):
         kat = kat_no[f]
         ust = f * KAT_ARALIGI
         kat_ek = {"kat": kat} if kat else {}
-        kat_yazi = "Zemin kat" if kat == 0 else f"{kat}. kat"
+        kat_yazi = kat_adi(kat)
         bas = _benzersiz(f"koridor-{f}", kullanilan)
         noktalar.append({"id": bas, "ad": f"{kat_yazi} koridor başı" if cok_katli else "Koridor başı", **kat_ek})
         konum[bas] = (0, ust)
-        if f == 0:
+        if f == giris_kati:
             yollar.append({"a": "giris", "b": bas, "adim": giris_adim,
                            "tarif": "Girişten düz ilerleyin, koridorun başına ulaşın",
                            "geriTarif": "Çıkışa doğru düz ilerleyin"})
         for d_i, d in enumerate(dikeyler):
             did = _benzersiz(f"{d}-{f}", kullanilan)
-            noktalar.append({"id": did, "ad": "Merdiven başı" if d == "merdiven" else "Asansör önü", **kat_ek})
+            nokta_adi, yonelme, cikis = DIKEY_ADLARI[d]
+            noktalar.append({"id": did, "ad": nokta_adi, **kat_ek})
             konum[did] = (-ARALIK * (d_i + 1), ust)
             taraf = "solunuzdaki" if d_i == 0 else "sağınızdaki"
             yollar.append({"a": bas, "b": did, "adim": 3,
-                           "tarif": f"Koridorun başında {taraf} {'merdivene' if d == 'merdiven' else 'asansöre'} yönelin",
-                           "geriTarif": f"{'Merdivenden' if d == 'merdiven' else 'Asansörden'} çıkınca koridora doğru ilerleyin"})
+                           "tarif": f"Koridorun başında {taraf} {yonelme} yönelin",
+                           "geriTarif": f"{cikis} çıkınca koridora doğru ilerleyin"})
             if d in onceki_dikey:
-                yollar.append({"a": onceki_dikey[d], "b": did, "adim": 30 if d == "merdiven" else 35, "tur": d,
-                               **({"basamak": basamak} if d == "merdiven" else
-                                  {"tarif": "Düğmelerde kabartma yazı olabilir; sorabilirsiniz."})})
+                not_ = {"asansor": "Düğmelerde kabartma yazı olabilir; sorabilirsiniz.",
+                        "yuruyen-merdiven": "Binmeden önce yan tutamağı bulun; inişte bant bitince "
+                                            "adımınızı uzatın."}.get(d)
+                # Not iki yönde de okunsun: inerken de gerekli
+                ek = {"basamak": basamak} if d == "merdiven" else {"tarif": not_, "geriTarif": not_}
+                yollar.append({"a": onceki_dikey[d], "b": did, "adim": {"merdiven": 30, "asansor": 35, "yuruyen-merdiven": 25}[d], "tur": d, **ek})
             onceki_dikey[d] = did
 
         onceki, sira = bas, 0
