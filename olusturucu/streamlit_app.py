@@ -5,9 +5,24 @@ Sayfalar app_pages/ altında: Başla → Sihirbaz → Düzenle → Plan → QR v
 Çalıştırma:  streamlit run streamlit_app.py
 """
 
+import importlib
+import os
+import sys
+
 import streamlit as st
 
-import durum
+# Streamlit Cloud yeni bir push'ta sayfa dosyalarını yeniden çalıştırır ama önceden içe aktarılmış yardımcı
+# modülleri bellekte eski haliyle tutar (yeni sayfa eski modülde olmayan bir fonksiyonu çağırıp çöker).
+# Dosyası değişen yardımcı modül burada yeniden yüklenir.
+for _ad in ("bak_mekan", "plan", "sihirbaz", "durum"):
+    _modul = sys.modules.get(_ad)
+    _dosya = getattr(_modul, "__file__", None)
+    if _dosya and os.path.exists(_dosya) and os.path.getmtime(_dosya) != getattr(_modul, "_yukleme_zamani", None):
+        _modul = importlib.reload(_modul)
+    if _modul is not None and _dosya:
+        _modul._yukleme_zamani = os.path.getmtime(_dosya)
+
+import durum  # noqa: E402
 
 st.set_page_config(page_title="BAK QR oluşturucu", page_icon=":material/qr_code_2:", layout="wide")
 st.logo("logo.png", size="large", icon_image="logo.png")
