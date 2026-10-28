@@ -1,0 +1,290 @@
+{
+ "sablonAdi": "Ardahan Üniversitesi Yenisey Kampüsü (OpenStreetMap yol ağından – sahada doğrulayın)",
+ "id": "q-sablon",
+ "ad": "Ardahan Üniversitesi Yenisey Kampüsü",
+ "tur": "kurum",
+ "surum": 1,
+ "giris": "giris",
+ "noktalar": [
+  {
+   "id": "giris",
+   "ad": "Kampüs giriş kapısı"
+  },
+  {
+   "id": "cami",
+   "ad": "Hoca Ahmet Yesevi Camii önü"
+  },
+  {
+   "id": "rektorluk",
+   "ad": "Rektörlük önü"
+  },
+  {
+   "id": "kultur-merkezi",
+   "ad": "Âşık Şenlik Kültür Merkezi önü"
+  },
+  {
+   "id": "insani-bilimler",
+   "ad": "İnsani Bilimler Fakültesi önü"
+  },
+  {
+   "id": "iibf",
+   "ad": "İktisadi ve İdari Bilimler Fakültesi önü"
+  },
+  {
+   "id": "muhendislik",
+   "ad": "Mühendislik Fakültesi önü"
+  },
+  {
+   "id": "konukevi",
+   "ad": "Konukevi önü"
+  },
+  {
+   "id": "kavsak-1",
+   "ad": "1. kavşak"
+  },
+  {
+   "id": "kavsak-2",
+   "ad": "2. kavşak"
+  },
+  {
+   "id": "kavsak-3",
+   "ad": "3. kavşak"
+  },
+  {
+   "id": "kavsak-4",
+   "ad": "4. kavşak"
+  },
+  {
+   "id": "kavsak-5",
+   "ad": "5. kavşak"
+  }
+ ],
+ "baglantilar": [
+  {
+   "a": "giris",
+   "b": "kavsak-1",
+   "adim": 20,
+   "tarif": "Kapıdan kampüse girin, yol boyunca ilerleyin, kampüs yolları araç yoludur, yol kenarından yürüyün",
+   "geriTarif": "Giriş kapısı yönüne yürüyün"
+  },
+  {
+   "a": "kavsak-1",
+   "b": "kavsak-2",
+   "adim": 974,
+   "tarif": "Kavşakta İnsani Bilimler, Mühendislik, Konukevi ve diğerleri yönündeki yola girin (girişten gelirken sağa dönün), yol iki kez sola kıvrılır",
+   "geriTarif": "1. kavşak yönüne yürüyün, yol iki kez sağa kıvrılır"
+  },
+  {
+   "a": "kavsak-1",
+   "b": "kavsak-3",
+   "adim": 15,
+   "tarif": "Kavşakta Rektörlük, Kültür Merkezi ve İİBF yönündeki yola girin (girişten gelirken düz devam edin)",
+   "geriTarif": "1. kavşak yönüne yürüyün"
+  },
+  {
+   "a": "kavsak-2",
+   "b": "kavsak-4",
+   "adim": 31,
+   "tarif": "Kavşakta Mühendislik, Konukevi ve Cami yönündeki yola girin (girişten gelirken düz devam edin)",
+   "geriTarif": "2. kavşak yönüne yürüyün"
+  },
+  {
+   "a": "kavsak-2",
+   "b": "insani-bilimler",
+   "adim": 100,
+   "tarif": "Kavşakta İnsani Bilimler Fakültesi yönündeki yola girin (girişten gelirken sağa dönün), yol sağa kıvrılır, İnsani Bilimler Fakültesi solunuzda",
+   "geriTarif": "2. kavşak yönüne yürüyün, yol sola kıvrılır"
+  },
+  {
+   "a": "kavsak-3",
+   "b": "rektorluk",
+   "adim": 742,
+   "tarif": "Kavşakta Rektörlük yönündeki yola girin (girişten gelirken sağa dönün), yol iki kez sola kıvrılır, Rektörlük solunuzda",
+   "geriTarif": "3. kavşak yönüne yürüyün, yol iki kez sağa kıvrılır"
+  },
+  {
+   "a": "kavsak-3",
+   "b": "kavsak-5",
+   "adim": 874,
+   "tarif": "Kavşakta Kültür Merkezi ve İİBF yönündeki yola girin (girişten gelirken sola dönün), yol iki kez sağa kıvrılır",
+   "geriTarif": "3. kavşak yönüne yürüyün, yol iki kez sola kıvrılır"
+  },
+  {
+   "a": "kavsak-4",
+   "b": "muhendislik",
+   "adim": 345,
+   "tarif": "Kavşakta Mühendislik Fakültesi yönündeki yola girin (girişten gelirken düz devam edin), Mühendislik Fakültesi sağınızda",
+   "geriTarif": "4. kavşak yönüne yürüyün"
+  },
+  {
+   "a": "kavsak-4",
+   "b": "konukevi",
+   "adim": 369,
+   "tarif": "Kavşakta Konukevi yönündeki yola girin (girişten gelirken hafif sağa yönelin), yol sağa kıvrılır, Konukevi solunuzda",
+   "geriTarif": "4. kavşak yönüne yürüyün, yol sola kıvrılır"
+  },
+  {
+   "a": "kavsak-5",
+   "b": "iibf",
+   "adim": 342,
+   "tarif": "Kavşakta İktisadi ve İdari Bilimler Fakültesi yönündeki yola girin (girişten gelirken düz devam edin), yol sola kıvrılır, İktisadi ve İdari Bilimler Fakültesi sağınızda",
+   "geriTarif": "5. kavşak yönüne yürüyün, yol sağa kıvrılır"
+  },
+  {
+   "a": "kavsak-5",
+   "b": "kultur-merkezi",
+   "adim": 158,
+   "tarif": "Kavşakta Âşık Şenlik Kültür Merkezi yönündeki yola girin (girişten gelirken sola dönün), Âşık Şenlik Kültür Merkezi solunuzda",
+   "geriTarif": "5. kavşak yönüne yürüyün"
+  },
+  {
+   "a": "muhendislik",
+   "b": "cami",
+   "adim": 318,
+   "tarif": "Mühendislik Fakültesi önünden Hoca Ahmet Yesevi Camii yönündeki yola girin (girişten gelirken düz devam edin), Hoca Ahmet Yesevi Camii sağınızda",
+   "geriTarif": "Mühendislik Fakültesi önü yönüne yürüyün"
+  }
+ ],
+ "hedefler": [
+  {
+   "ad": "Rektörlük",
+   "nokta": "rektorluk",
+   "tarif": "Rektörlük yolun solunda, yaklaşık 40 metre içeride. Bina kapısının yerini sorabilirsiniz.",
+   "anahtarlar": [
+    "rektörlük",
+    "rektör",
+    "genel sekreterlik",
+    "personel daire",
+    "öğrenci işleri"
+   ]
+  },
+  {
+   "ad": "Âşık Şenlik Kültür Merkezi",
+   "nokta": "kultur-merkezi",
+   "tarif": "Âşık Şenlik Kültür Merkezi yolun solunda, yaklaşık 30 metre içeride. Bina kapısının yerini sorabilirsiniz.",
+   "anahtarlar": [
+    "kültür merkezi",
+    "aşık şenlik",
+    "konferans salonu",
+    "salon",
+    "tören"
+   ],
+   "kisaAd": "Kültür Merkezi"
+  },
+  {
+   "ad": "İnsani Bilimler Fakültesi",
+   "nokta": "insani-bilimler",
+   "tarif": "İnsani Bilimler Fakültesi yolun solunda, yaklaşık 80 metre içeride. Bina kapısının yerini sorabilirsiniz.",
+   "anahtarlar": [
+    "insani bilimler",
+    "edebiyat",
+    "fen edebiyat",
+    "tarih",
+    "türk dili"
+   ],
+   "kisaAd": "İnsani Bilimler"
+  },
+  {
+   "ad": "İktisadi ve İdari Bilimler Fakültesi",
+   "nokta": "iibf",
+   "tarif": "İktisadi ve İdari Bilimler Fakültesi yolun sağında, yaklaşık 40 metre içeride. Bina kapısının yerini sorabilirsiniz.",
+   "anahtarlar": [
+    "iktisadi",
+    "idari bilimler",
+    "iibf",
+    "işletme",
+    "iktisat"
+   ],
+   "kisaAd": "İİBF"
+  },
+  {
+   "ad": "Mühendislik Fakültesi",
+   "nokta": "muhendislik",
+   "tarif": "Mühendislik Fakültesi yolun sağında, yaklaşık 90 metre içeride. Bina kapısının yerini sorabilirsiniz.",
+   "anahtarlar": [
+    "mühendislik",
+    "mühendislik fakültesi",
+    "bilgisayar mühendisliği"
+   ],
+   "kisaAd": "Mühendislik"
+  },
+  {
+   "ad": "Konukevi",
+   "nokta": "konukevi",
+   "tarif": "Konukevi yolun solunda, yaklaşık 60 metre içeride. Bina kapısının yerini sorabilirsiniz.",
+   "anahtarlar": [
+    "konukevi",
+    "misafirhane",
+    "otel"
+   ]
+  },
+  {
+   "ad": "Hoca Ahmet Yesevi Camii",
+   "nokta": "cami",
+   "tarif": "Hoca Ahmet Yesevi Camii yolun sağında, yaklaşık 40 metre içeride. Bina kapısının yerini sorabilirsiniz.",
+   "anahtarlar": [
+    "cami",
+    "camii",
+    "mescit",
+    "namaz"
+   ],
+   "kisaAd": "Cami"
+  }
+ ],
+ "plan": {
+  "konum": {
+   "giris": [
+    59.2,
+    -10.4
+   ],
+   "cami": [
+    -61.8,
+    30.5
+   ],
+   "rektorluk": [
+    28.8,
+    0.9
+   ],
+   "kultur-merkezi": [
+    -9.2,
+    -1.5
+   ],
+   "insani-bilimler": [
+    -4.0,
+    24.6
+   ],
+   "iibf": [
+    -18.9,
+    7.1
+   ],
+   "muhendislik": [
+    -38.0,
+    19.6
+   ],
+   "konukevi": [
+    -10.8,
+    42.0
+   ],
+   "kavsak-1": [
+    57.5,
+    -10.4
+   ],
+   "kavsak-2": [
+    -5.5,
+    18.2
+   ],
+   "kavsak-3": [
+    56.2,
+    -10.3
+   ],
+   "kavsak-4": [
+    -8.1,
+    18.8
+   ],
+   "kavsak-5": [
+    4.7,
+    -1.7
+   ]
+  }
+ }
+}

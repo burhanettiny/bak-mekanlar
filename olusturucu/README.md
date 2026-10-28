@@ -58,6 +58,12 @@ Market, AVM, devlet hastanesi, şehir hastanesi ana caddesi, okul ve belediye bi
 sıra ve sağ/sol sitede yazmadığı için örnek dizildi. QR'a sığmadığından bina bilgisini kurumun sitesinde tutma yolunu
 gösterir (`"buyuk": true`).
 
+**Ardahan Üniversitesi Yenisey Kampüsü** şablonu OpenStreetMap'teki kampüs yol ağından ve bina konumlarından
+hesaplandı (`scripts/osm_kampus_sablonu.py`): mesafeler yol boyunca ölçüldü (adım = metre / 0,7), kavşaklardaki sağ/sol
+ve yolun kıvrımları haritadaki açılardan, binanın yolun hangi yanında olduğu bina konumundan çıkarıldı. Bina kapıları
+haritada olmadığı için hedef nokta binanın önündeki yoldur; kapıya giden yol, kaldırım ve yaya geçitleri sahada
+eklenmeli. Harita verisi © OpenStreetMap katkıda bulunanlar (ODbL).
+
 **Kat listesini yapıştırma:** Bina ve AVM sihirbazında kurum, sitesindeki "Kat Planı" metnini yapıştırır ("Zemin Kat:
 Danışma, Vezne", "-1. Kat", alt alta maddeler…); katlar ve birimler dolar. Sıra, sağ/sol ve adım sahada düzeltilir.
 
