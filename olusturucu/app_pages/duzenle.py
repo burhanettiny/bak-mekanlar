@@ -139,6 +139,25 @@ with hedefler_sekmesi:
 # Diğer sayfalar (Plan, QR) bu tabloların son halini kullanır
 st.session_state.guncel = {"noktalar": noktalar_df, "yollar": yollar_df, "hedefler": hedefler_df}
 
+
+# Bir noktanın kimliği tabloda değiştirildiyse (ya da silinip addan yeniden üretildiyse) o noktayı kullanan
+# yollar, hedefler, giriş ve kasa da yeni kimliğe geçer; yoksa hepsi "Noktalar listesinde yok" hatası verir.
+# Satırlar tablo düzenleyicide sıra numarasını korur: aynı satırın eski ve yeni kimliği karşılaştırılır.
+def _kimlik(satir) -> str:
+    return bm._metin(satir.get("id")) or bm.kisalt(bm._metin(satir.get("ad")))
+
+
+eski_kimlikler = {i: _kimlik(r) for i, r in kaynak["noktalar"].iterrows()}
+yeni_kimlikler = {i: _kimlik(r) for i, r in noktalar_df.iterrows()}
+degisen = {eski_kimlikler[i]: yeni for i, yeni in yeni_kimlikler.items()
+           if i in eski_kimlikler and eski_kimlikler[i] and yeni and eski_kimlikler[i] != yeni
+           and eski_kimlikler[i] not in yeni_kimlikler.values()}
+if degisen:
+    durum.mekani_tablolara_yaz(bm.kimlikleri_degistir(durum.guncel_mekan(), degisen))
+    st.toast("Nokta kimliği değişti; bu noktayı kullanan yollar ve hedefler de güncellendi: " +
+             ", ".join(f"{a} → {b}" for a, b in degisen.items()), icon=":material/link:")
+    st.rerun()
+
 hatalar, _ = bm.dogrula(durum.guncel_mekan())
 with st.container(horizontal=True, vertical_alignment="center"):
     if hatalar:

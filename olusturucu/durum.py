@@ -61,6 +61,17 @@ def duzenlemeleri_isle() -> None:
         st.session_state.surum_anahtari += 1
 
 
+def mekani_tablolara_yaz(mekan: dict) -> None:
+    """Sayfadan yapılan toplu düzeltmeyi (ör. kimlik değişikliği) tablolara yazar; kimlik ve sürüm değişmez."""
+    noktalar, yollar, hedefler = bm.mekandan_satirlar(mekan)
+    st.session_state.bilgi.update(giris=mekan.get("giris"), kasa=mekan.get("kasa"))
+    st.session_state.kaynak = {"noktalar": bm.tablo(noktalar, bm.NOKTA_SUTUNLARI),
+                               "yollar": bm.tablo(yollar, bm.YOL_SUTUNLARI),
+                               "hedefler": bm.tablo(hedefler, bm.HEDEF_SUTUNLARI)}
+    st.session_state.pop("guncel", None)
+    st.session_state.surum_anahtari += 1
+
+
 def tablolar() -> dict:
     return st.session_state.get("guncel") or st.session_state.kaynak
 

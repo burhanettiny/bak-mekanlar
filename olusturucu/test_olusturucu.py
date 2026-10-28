@@ -59,7 +59,7 @@ def test_kimlik_q_ile_baslar_ve_turkce_harfleri_sadelestirir():
     (lambda m: m.update(giris="yok"), "Giriş noktasını"),
     (lambda m: m["baglantilar"][0].pop("geriTarif"), "dönüş tarifini"),
     (lambda m: m["baglantilar"][0].update(adim=0), "adım sayısı"),
-    (lambda m: m["hedefler"][0].update(nokta="yok"), "noktası listede yok"),
+    (lambda m: m["hedefler"][0].update(nokta="yok"), "Noktalar listesinde yok"),
 ])
 def test_hatalar_turkce_anlatilir(hastane, bozma, beklenen):
     bozma(hastane)
@@ -431,3 +431,29 @@ def test_yapistirilan_kat_listesi_sihirbazi_doldurur():
     assert not at.exception
     hedefler = list(at.session_state["kaynak"]["hedefler"]["ad"])
     assert "Radyoloji Birimi" in hedefler and "Onkoloji Polikliniği" in hedefler
+
+
+def test_kimligi_degisen_noktanin_yollari_ve_hedefleri_onerilir_ve_duzeltilir(hastane):
+    m = json.loads(json.dumps(hastane))
+    eski = m["hedefler"][0]["nokta"]
+    yeni = f"{eski}-kapi"
+    next(n for n in m["noktalar"] if n["id"] == eski)["id"] = yeni
+    hatalar, _ = bm.dogrula(m)
+    assert any(f"'{eski}'" in h and "Noktalar listesinde yok" in h for h in hatalar)
+    assert bm.kopuk_kimlikler(m) == [eski]
+    assert bm.kimlik_onerileri(m) == {eski: yeni}
+    assert bm.dogrula(bm.kimlikleri_degistir(m, {eski: yeni}))[0] == []
+
+
+def test_qr_sayfasi_kopuk_baglantilari_tek_tikla_duzeltir():
+    at = sablon_ac(uygulama())
+    noktalar = at.session_state["kaynak"]["noktalar"].copy()
+    hedefler = at.session_state["kaynak"]["hedefler"]
+    eski = hedefler.loc[0, "nokta"]
+    yeni = f"{eski}-kapi"
+    noktalar.loc[noktalar["id"] == eski, "id"] = yeni
+    at.session_state["kaynak"] = {**at.session_state["kaynak"], "noktalar": noktalar}
+    at.switch_page("app_pages/yazdir.py").run()
+    assert at.error
+    next(b for b in at.button if b.label == "Bağlantıları düzelt").click().run()
+    assert not at.exception and not at.error

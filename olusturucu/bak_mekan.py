@@ -11,6 +11,7 @@ Nokta etiketleri: "BAK:NOKTA:<mekan kimliği>:<nokta kimliği>"
 from __future__ import annotations
 
 import base64
+import difflib
 import html
 import io
 import json
@@ -199,8 +200,10 @@ def dogrula(mekan: dict) -> tuple[list[str], list[str]]:
         etiket = f"{i}. yol ({b.get('a', '?')} → {b.get('b', '?')})"
         if tur not in BAGLANTI_TURLERI:
             hatalar.append(f"{etiket}: yol türü geçersiz.")
-        if b.get("a") not in idler_kume or b.get("b") not in idler_kume:
-            hatalar.append(f"{etiket}: başlangıç ve bitiş noktası listede olmalı.")
+        eksik_uclar = [u for u in (b.get("a"), b.get("b")) if u not in idler_kume]
+        if eksik_uclar:
+            hatalar.append(f"{etiket}: " + " ve ".join(f"'{u or '?'}'" for u in eksik_uclar) +
+                           " noktası Noktalar listesinde yok.")
         elif b.get("a") == b.get("b"):
             hatalar.append(f"{etiket}: başlangıç ve bitiş aynı nokta.")
         adim = b.get("adim")
@@ -225,7 +228,7 @@ def dogrula(mekan: dict) -> tuple[list[str], list[str]]:
         if not ad:
             hatalar.append("Adı boş bir hedef var.")
         if h.get("nokta") not in idler_kume:
-            hatalar.append(f"'{ad or '?'}' hedefinin noktası listede yok.")
+            hatalar.append(f"'{ad or '?'}' hedefinin noktası ('{h.get('nokta') or '?'}') Noktalar listesinde yok.")
         if not isinstance(h.get("anahtarlar"), list):
             hatalar.append(f"'{ad or '?'}' hedefinin anahtar kelimeleri liste olmalı.")
         elif not h["anahtarlar"]:
@@ -255,6 +258,56 @@ def dogrula(mekan: dict) -> tuple[list[str], list[str]]:
             uyarilar.append("Hiçbir yola bağlı olmayan noktalar: " + ", ".join(sahipsiz))
 
     return hatalar, uyarilar
+
+
+def kopuk_kimlikler(mekan: dict) -> list[str]:
+    """Yolların, hedeflerin, giriş ve kasanın kullandığı ama Noktalar listesinde olmayan kimlikler."""
+    idler = {n.get("id") for n in mekan.get("noktalar") or []}
+    kullanilan = [mekan.get("giris"), mekan.get("kasa")]
+    for b in mekan.get("baglantilar") or []:
+        kullanilan += [b.get("a"), b.get("b")]
+    kullanilan += [h.get("nokta") for h in mekan.get("hedefler") or []]
+    return list(dict.fromkeys(k for k in kullanilan if k and k not in idler))
+
+
+def kimlik_onerileri(mekan: dict) -> dict[str, str]:
+    """Kopuk kimlik → büyük olasılıkla kastedilen nokta. Nokta kimliği tabloda değiştirilince (ör.
+    'mandamarina-dogal-yasam-aktar' → 'mandamarina') yollar ve hedefler eski kimlikte kalır. Hiçbir yolun ya da
+    hedefin kullanmadığı noktalar arasından en benzer kimlik ya da ad seçilir."""
+    noktalar = mekan.get("noktalar") or []
+    kopuk = kopuk_kimlikler(mekan)
+    kullanilan = {b.get(u) for b in mekan.get("baglantilar") or [] for u in ("a", "b")}
+    kullanilan |= {h.get("nokta") for h in mekan.get("hedefler") or []}
+    bos = [n for n in noktalar if n.get("id") not in kullanilan] or noktalar
+    oneriler: dict[str, str] = {}
+    for k in kopuk:
+        adaylar = {n["id"]: n["id"] for n in bos if n.get("id")}
+        adaylar |= {kisalt(str(n.get("ad", ""))): n["id"] for n in bos if n.get("id")}
+        # Önce önek ilişkisi ('mandamarina' ↔ 'mandamarina-dogal-yasam-aktar'), sonra yazım benzerliği
+        onekli = [i for a, i in adaylar.items() if a and (k.startswith(a + "-") or a.startswith(k + "-"))]
+        if len(set(onekli)) == 1:
+            oneriler[k] = onekli[0]
+            continue
+        yakin = difflib.get_close_matches(k, list(adaylar), n=1, cutoff=0.6)
+        if yakin and adaylar[yakin[0]] not in oneriler.values():
+            oneriler[k] = adaylar[yakin[0]]
+    return oneriler
+
+
+def kimlikleri_degistir(mekan: dict, harita: dict[str, str]) -> dict:
+    """Yollar, hedefler, giriş ve kasadaki nokta kimliklerini haritaya göre değiştirir (kopya döndürür)."""
+    yeni = json.loads(json.dumps(mekan))
+    for alan in ("giris", "kasa"):
+        if yeni.get(alan) in harita:
+            yeni[alan] = harita[yeni[alan]]
+    for b in yeni.get("baglantilar") or []:
+        for u in ("a", "b"):
+            if b.get(u) in harita:
+                b[u] = harita[b[u]]
+    for h in yeni.get("hedefler") or []:
+        if h.get("nokta") in harita:
+            h["nokta"] = harita[h["nokta"]]
+    return yeni
 
 
 def ulasilamayan_hedefler(mekan: dict) -> list[str]:

@@ -42,6 +42,17 @@ st.title("QR ve etiketler")
 
 if hatalar:
     st.error("\n".join(f"- {h}" for h in hatalar), title="QR oluşturmadan önce düzeltin", icon=":material/error:")
+    oneriler = bm.kimlik_onerileri(mekan)
+    if oneriler:
+        adlar = {n["id"]: n["ad"] for n in mekan["noktalar"]}
+        with st.container(border=True):
+            st.markdown("Bazı yollar ve hedefler, Noktalar tablosunda kimliği değiştirilmiş noktaları gösteriyor. "
+                        "Bunları şu noktalara bağlayabilirim:\n" +
+                        "\n".join(f"- `{eski}` → **{adlar.get(yeni, yeni)}** (`{yeni}`)"
+                                  for eski, yeni in oneriler.items()))
+            if st.button("Bağlantıları düzelt", icon=":material/link:", type="primary"):
+                durum.mekani_tablolara_yaz(bm.kimlikleri_degistir(mekan, oneriler))
+                st.rerun()
     st.page_link("app_pages/duzenle.py", label="Düzenle sayfasına git", icon=":material/edit_note:")
 for u in uyarilar:
     st.warning(u, icon=":material/info:")
