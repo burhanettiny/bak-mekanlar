@@ -82,6 +82,41 @@ if tur == "Market":
 
 else:
     avm = tur == "AVM"
+    # Kat sayısı ve en alt kat, yapıştırılan listeden doldurulabilsin diye oturumda tutulur
+    st.session_state.setdefault(f"sihirbaz_{tur}_katsayisi", 4 if avm else 2)
+    st.session_state.setdefault(f"sihirbaz_{tur}_ilkkat", -1 if avm else 0)
+    yapistirilan = st.session_state.get(f"sihirbaz_{tur}_yapistirilan", {})
+
+    # Kat listesi, kat sayısı kutularından ÖNCE okunur: kutuların değeri ancak oluşturulmadan değiştirilebilir
+    with st.expander("Kurumun sitesindeki kat listesini yapıştırın", icon=":material/content_paste:",
+                     expanded=not yapistirilan):
+        st.markdown("Birçok hastane ve AVM sitesinde **Kat Planı** ya da **Kat Rehberi** sayfası hangi birimin "
+                    "hangi katta olduğunu yazar. O metni buraya yapıştırın; katlar ve birimler aşağıya dolar.")
+        metin = st.text_area("Kat listesi", height=180, key=f"sihirbaz_{tur}_yapistir",
+                             placeholder="Zemin Kat: Danışma, Vezne, Kan alma\n1. Kat: Dahiliye, Kardiyoloji\n"
+                                         "-1. Kat: Radyoloji, MR")
+        if st.button("Katları doldur", icon=":material/playlist_add:", key=f"sihirbaz_{tur}_doldur",
+                     disabled=not metin.strip()):
+            katlar_listesi = sihirbaz.kat_listesi_coz(metin)
+            if not katlar_listesi:
+                st.error("Kat başlığı bulunamadı. Satırlar \"Zemin Kat\", \"1. Kat\", \"-1. Kat\" gibi "
+                         "başlamalı.", icon=":material/error:")
+            else:
+                st.session_state[f"sihirbaz_{tur}_ilkkat"] = max(-5, min(katlar_listesi))
+                st.session_state[f"sihirbaz_{tur}_katsayisi"] = min(10, max(katlar_listesi) - min(katlar_listesi) + 1)
+                # Sağ/sol bu sayfalarda yazmaz: geçici olarak dönüşümlü yerleştirilir, sahada düzeltilir
+                yapistirilan = {k: pd.DataFrame([{"taraf": "sol" if i % 2 == 0 else "sağ", "ad": ad, "adim": 5,
+                                                  "oda": "", "kisiler": "", "anahtarlar": ""}
+                                                 for i, ad in enumerate(adlar)])
+                                for k, adlar in katlar_listesi.items()}
+                st.session_state[f"sihirbaz_{tur}_yapistirilan"] = yapistirilan
+                st.session_state[f"sihirbaz_{tur}_surum"] = st.session_state.get(f"sihirbaz_{tur}_surum", 0) + 1
+        if yapistirilan:
+            st.warning(f"{sum(len(t) for t in yapistirilan.values())} birim {len(yapistirilan)} kata yerleştirildi. "
+                       "Sitelerde birimlerin koridordaki **sırası, sağda mı solda mı olduğu ve adım sayısı yazmaz**: "
+                       "şimdilik sırayla ve bir sol bir sağ dizildi. Binada yürüyerek her katı düzeltin; görme engelli "
+                       "ziyaretçi bu bilgiye güvenerek yürür.", icon=":material/warning:")
+
     with st.container(border=True):
         ad = st.text_input("AVM'nin adı" if avm else "Binanın adı",
                            placeholder="ör. Gebze Center AVM" if avm else
@@ -93,8 +128,8 @@ else:
                 bina_turu = st.segmented_control("Tür", ["hastane", "kurum"], required=True, default="hastane",
                                                  format_func={"hastane": "Hastane / sağlık",
                                                               "kurum": "Okul / kamu / ofis"}.get)
-            kat_sayisi = st.number_input("Kat sayısı", 1, 10, 4 if avm else 2, key=f"sihirbaz_{tur}_katsayisi")
-            ilk_kat = st.number_input("En alt kat", -5, 0, -1 if avm else 0, key=f"sihirbaz_{tur}_ilkkat",
+            kat_sayisi = st.number_input("Kat sayısı", 1, 10, key=f"sihirbaz_{tur}_katsayisi")
+            ilk_kat = st.number_input("En alt kat", -5, 0, key=f"sihirbaz_{tur}_ilkkat",
                                       help="Bodrum ya da otopark katı varsa -1, -2… Giriş zemin kata (0) bağlanır.")
         with st.container(horizontal=True, vertical_alignment="bottom"):
             dikey = st.segmented_control(
@@ -117,10 +152,13 @@ else:
     katlar = []
     for kat, sekme in zip(kat_numaralari, sekmeler):
         with sekme:
-            ornek = (ORNEK_AVM.get(kat, ORNEK_KAT.iloc[0:0]) if avm else
-                     ORNEK_KAT if kat == 0 else ORNEK_UST_KAT if kat == 1 else ORNEK_KAT.iloc[0:0])
+            if yapistirilan:
+                ornek = yapistirilan.get(kat, ORNEK_KAT.iloc[0:0])
+            else:
+                ornek = (ORNEK_AVM.get(kat, ORNEK_KAT.iloc[0:0]) if avm else
+                         ORNEK_KAT if kat == 0 else ORNEK_UST_KAT if kat == 1 else ORNEK_KAT.iloc[0:0])
             tablo = st.data_editor(
-                ornek, num_rows="dynamic", hide_index=True, width="stretch", key=f"sihirbaz_{tur}_kat_{kat}",
+                ornek, num_rows="dynamic", hide_index=True, width="stretch", key=f"sihirbaz_{tur}_kat_{kat}_{st.session_state.get(f'sihirbaz_{tur}_surum', 0)}",
                 alt=f"{sihirbaz.kat_adi(kat)} kapıları",
                 column_order=["taraf", "ad", "adim", "anahtarlar", "oda", "kisiler"] if avm else None,
                 column_config={

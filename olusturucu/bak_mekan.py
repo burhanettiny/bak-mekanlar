@@ -134,6 +134,19 @@ def qr_olustur(metin: str) -> qrcode.QRCode:
     return qr
 
 
+def qr_surumu(metin: str) -> int | None:
+    """QR'ın boyut sürümü (1–40); en büyük QR'a bile sığmıyorsa None (yüzlerce mağazalı AVM gibi)."""
+    try:
+        return qr_olustur(metin).version
+    except ValueError:
+        return None
+
+
+def qr_sigar_mi(metin: str) -> bool:
+    surum = qr_surumu(metin)
+    return surum is not None and surum <= ONERILEN_EN_BUYUK_QR_SURUMU
+
+
 def qr_png(metin: str, kutu: int = 8) -> bytes:
     qr = qr_olustur(metin)
     qr.box_size = kutu
@@ -500,8 +513,15 @@ def sablonlar() -> dict[str, dict]:
     sonuc = {}
     for dosya in sorted(SABLON_KLASORU.glob("*.json")):
         veri = json.loads(dosya.read_text(encoding="utf-8"))
+        veri.pop("buyuk", None)
         sonuc[veri.pop("sablonAdi")] = veri
     return sonuc
+
+
+def buyuk_sablonlar() -> set[str]:
+    """QR'a sığmayan, bina bilgisini kurumun sitesinde tutması gereken şablonlar (ör. 146 mağazalı AVM)."""
+    return {json.loads(d.read_text(encoding="utf-8"))["sablonAdi"] for d in SABLON_KLASORU.glob("*.json")
+            if json.loads(d.read_text(encoding="utf-8")).get("buyuk")}
 
 
 # ── Yazdırılabilir etiketler ──────────────────────────────

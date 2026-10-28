@@ -1,0 +1,493 @@
+{
+ "sablonAdi": "Devlet hastanesi (bodrum + 3 kat, poliklinik katları)",
+ "id": "q-sablon",
+ "ad": "Örnek Devlet Hastanesi",
+ "tur": "hastane",
+ "surum": 1,
+ "giris": "giris",
+ "noktalar": [
+  {
+   "id": "giris",
+   "ad": "Ana giriş"
+  },
+  {
+   "id": "koridor-0",
+   "ad": "Bodrum kat koridor başı",
+   "kat": -1
+  },
+  {
+   "id": "merdiven-0",
+   "ad": "Merdiven başı",
+   "kat": -1
+  },
+  {
+   "id": "asansor-0",
+   "ad": "Asansör önü",
+   "kat": -1
+  },
+  {
+   "id": "radyoloji",
+   "ad": "Radyoloji kapısı",
+   "kat": -1
+  },
+  {
+   "id": "koridor-1",
+   "ad": "Zemin kat koridor başı"
+  },
+  {
+   "id": "merdiven-1",
+   "ad": "Merdiven başı"
+  },
+  {
+   "id": "asansor-1",
+   "ad": "Asansör önü"
+  },
+  {
+   "id": "danisma",
+   "ad": "Danışma kapısı"
+  },
+  {
+   "id": "hasta-kabul-ve-vezne",
+   "ad": "Hasta kabul ve vezne kapısı"
+  },
+  {
+   "id": "kan-alma",
+   "ad": "Kan alma kapısı"
+  },
+  {
+   "id": "koridor-2",
+   "ad": "1. kat koridor başı",
+   "kat": 1
+  },
+  {
+   "id": "merdiven-2",
+   "ad": "Merdiven başı",
+   "kat": 1
+  },
+  {
+   "id": "asansor-2",
+   "ad": "Asansör önü",
+   "kat": 1
+  },
+  {
+   "id": "dahiliye-poliklinigi",
+   "ad": "Dahiliye Polikliniği kapısı",
+   "kat": 1
+  },
+  {
+   "id": "kardiyoloji-poliklinigi",
+   "ad": "Kardiyoloji Polikliniği kapısı",
+   "kat": 1
+  },
+  {
+   "id": "koridor-3",
+   "ad": "2. kat koridor başı",
+   "kat": 2
+  },
+  {
+   "id": "merdiven-3",
+   "ad": "Merdiven başı",
+   "kat": 2
+  },
+  {
+   "id": "asansor-3",
+   "ad": "Asansör önü",
+   "kat": 2
+  },
+  {
+   "id": "ortopedi-poliklinigi",
+   "ad": "Ortopedi Polikliniği kapısı",
+   "kat": 2
+  },
+  {
+   "id": "goz-poliklinigi",
+   "ad": "Göz Polikliniği kapısı",
+   "kat": 2
+  },
+  {
+   "id": "kulak-burun-bogaz-poliklinigi",
+   "ad": "Kulak Burun Boğaz Polikliniği kapısı",
+   "kat": 2
+  }
+ ],
+ "baglantilar": [
+  {
+   "a": "koridor-0",
+   "b": "merdiven-0",
+   "adim": 3,
+   "tarif": "Koridorun başında solunuzdaki merdivene yönelin",
+   "geriTarif": "Merdivenden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "koridor-0",
+   "b": "asansor-0",
+   "adim": 3,
+   "tarif": "Koridorun başında sağınızdaki asansöre yönelin",
+   "geriTarif": "Asansörden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "koridor-0",
+   "b": "radyoloji",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Radyoloji solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "giris",
+   "b": "koridor-1",
+   "adim": 8,
+   "tarif": "Girişten düz ilerleyin, koridorun başına ulaşın",
+   "geriTarif": "Çıkışa doğru düz ilerleyin"
+  },
+  {
+   "a": "koridor-1",
+   "b": "merdiven-1",
+   "adim": 3,
+   "tarif": "Koridorun başında solunuzdaki merdivene yönelin",
+   "geriTarif": "Merdivenden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "merdiven-0",
+   "b": "merdiven-1",
+   "adim": 30,
+   "tur": "merdiven",
+   "basamak": 22
+  },
+  {
+   "a": "koridor-1",
+   "b": "asansor-1",
+   "adim": 3,
+   "tarif": "Koridorun başında sağınızdaki asansöre yönelin",
+   "geriTarif": "Asansörden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "asansor-0",
+   "b": "asansor-1",
+   "adim": 35,
+   "tur": "asansor",
+   "tarif": "Düğmelerde kabartma yazı olabilir; sorabilirsiniz.",
+   "geriTarif": "Düğmelerde kabartma yazı olabilir; sorabilirsiniz."
+  },
+  {
+   "a": "koridor-1",
+   "b": "danisma",
+   "adim": 4,
+   "tarif": "Koridorda düz ilerleyin, Danışma sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "danisma",
+   "b": "hasta-kabul-ve-vezne",
+   "adim": 5,
+   "tarif": "Koridorda düz ilerleyin, Hasta kabul ve vezne solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "hasta-kabul-ve-vezne",
+   "b": "kan-alma",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Kan alma sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "koridor-2",
+   "b": "merdiven-2",
+   "adim": 3,
+   "tarif": "Koridorun başında solunuzdaki merdivene yönelin",
+   "geriTarif": "Merdivenden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "merdiven-1",
+   "b": "merdiven-2",
+   "adim": 30,
+   "tur": "merdiven",
+   "basamak": 22
+  },
+  {
+   "a": "koridor-2",
+   "b": "asansor-2",
+   "adim": 3,
+   "tarif": "Koridorun başında sağınızdaki asansöre yönelin",
+   "geriTarif": "Asansörden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "asansor-1",
+   "b": "asansor-2",
+   "adim": 35,
+   "tur": "asansor",
+   "tarif": "Düğmelerde kabartma yazı olabilir; sorabilirsiniz.",
+   "geriTarif": "Düğmelerde kabartma yazı olabilir; sorabilirsiniz."
+  },
+  {
+   "a": "koridor-2",
+   "b": "dahiliye-poliklinigi",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Dahiliye Polikliniği solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "dahiliye-poliklinigi",
+   "b": "kardiyoloji-poliklinigi",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Kardiyoloji Polikliniği sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "koridor-3",
+   "b": "merdiven-3",
+   "adim": 3,
+   "tarif": "Koridorun başında solunuzdaki merdivene yönelin",
+   "geriTarif": "Merdivenden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "merdiven-2",
+   "b": "merdiven-3",
+   "adim": 30,
+   "tur": "merdiven",
+   "basamak": 22
+  },
+  {
+   "a": "koridor-3",
+   "b": "asansor-3",
+   "adim": 3,
+   "tarif": "Koridorun başında sağınızdaki asansöre yönelin",
+   "geriTarif": "Asansörden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "asansor-2",
+   "b": "asansor-3",
+   "adim": 35,
+   "tur": "asansor",
+   "tarif": "Düğmelerde kabartma yazı olabilir; sorabilirsiniz.",
+   "geriTarif": "Düğmelerde kabartma yazı olabilir; sorabilirsiniz."
+  },
+  {
+   "a": "koridor-3",
+   "b": "ortopedi-poliklinigi",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Ortopedi Polikliniği sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "ortopedi-poliklinigi",
+   "b": "goz-poliklinigi",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Göz Polikliniği solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "goz-poliklinigi",
+   "b": "kulak-burun-bogaz-poliklinigi",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Kulak Burun Boğaz Polikliniği sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  }
+ ],
+ "hedefler": [
+  {
+   "ad": "Radyoloji",
+   "nokta": "radyoloji",
+   "tarif": "Radyoloji kapısı solunuzda.",
+   "anahtarlar": [
+    "radyoloji",
+    "röntgen",
+    "ultrason",
+    "tomografi",
+    "mr"
+   ]
+  },
+  {
+   "ad": "Danışma",
+   "nokta": "danisma",
+   "tarif": "Danışma kapısı sağınızda.",
+   "anahtarlar": [
+    "danışma",
+    "bilgi",
+    "randevu"
+   ]
+  },
+  {
+   "ad": "Hasta kabul ve vezne",
+   "nokta": "hasta-kabul-ve-vezne",
+   "tarif": "Hasta kabul ve vezne kapısı solunuzda.",
+   "anahtarlar": [
+    "hasta kabul ve vezne",
+    "hasta",
+    "kabul",
+    "vezne",
+    "kayıt",
+    "ödeme"
+   ]
+  },
+  {
+   "ad": "Kan alma",
+   "nokta": "kan-alma",
+   "tarif": "Kan alma kapısı sağınızda.",
+   "anahtarlar": [
+    "kan alma",
+    "kan",
+    "alma",
+    "tahlil",
+    "laboratuvar"
+   ]
+  },
+  {
+   "ad": "Dahiliye Polikliniği",
+   "nokta": "dahiliye-poliklinigi",
+   "tarif": "Dahiliye Polikliniği kapısı solunuzda, oda 101.",
+   "anahtarlar": [
+    "dahiliye polikliniği",
+    "dahiliye",
+    "polikliniği",
+    "iç hastalıkları"
+   ],
+   "oda": "101",
+   "kisaAd": "Dahiliye"
+  },
+  {
+   "ad": "Kardiyoloji Polikliniği",
+   "nokta": "kardiyoloji-poliklinigi",
+   "tarif": "Kardiyoloji Polikliniği kapısı sağınızda, oda 104.",
+   "anahtarlar": [
+    "kardiyoloji polikliniği",
+    "kardiyoloji",
+    "polikliniği",
+    "kalp"
+   ],
+   "oda": "104",
+   "kisaAd": "Kardiyoloji"
+  },
+  {
+   "ad": "Ortopedi Polikliniği",
+   "nokta": "ortopedi-poliklinigi",
+   "tarif": "Ortopedi Polikliniği kapısı sağınızda, oda 201.",
+   "anahtarlar": [
+    "ortopedi polikliniği",
+    "ortopedi",
+    "polikliniği",
+    "kemik"
+   ],
+   "oda": "201",
+   "kisaAd": "Ortopedi"
+  },
+  {
+   "ad": "Göz Polikliniği",
+   "nokta": "goz-poliklinigi",
+   "tarif": "Göz Polikliniği kapısı solunuzda, oda 204.",
+   "anahtarlar": [
+    "göz polikliniği",
+    "göz",
+    "polikliniği"
+   ],
+   "oda": "204",
+   "kisaAd": "Göz"
+  },
+  {
+   "ad": "Kulak Burun Boğaz Polikliniği",
+   "nokta": "kulak-burun-bogaz-poliklinigi",
+   "tarif": "Kulak Burun Boğaz Polikliniği kapısı sağınızda, oda 207.",
+   "anahtarlar": [
+    "kulak burun boğaz polikliniği",
+    "kulak",
+    "burun",
+    "boğaz",
+    "polikliniği",
+    "kbb"
+   ],
+   "oda": "207",
+   "kisaAd": "Kulak Burun Boğaz"
+  }
+ ],
+ "plan": {
+  "konum": {
+   "giris": [
+    0,
+    4
+   ],
+   "koridor-0": [
+    0,
+    0
+   ],
+   "merdiven-0": [
+    -9,
+    0
+   ],
+   "asansor-0": [
+    -18,
+    0
+   ],
+   "radyoloji": [
+    9,
+    3.5
+   ],
+   "koridor-1": [
+    0,
+    11
+   ],
+   "merdiven-1": [
+    -9,
+    11
+   ],
+   "asansor-1": [
+    -18,
+    11
+   ],
+   "danisma": [
+    9,
+    7.5
+   ],
+   "hasta-kabul-ve-vezne": [
+    18,
+    14.5
+   ],
+   "kan-alma": [
+    27,
+    7.5
+   ],
+   "koridor-2": [
+    0,
+    22
+   ],
+   "merdiven-2": [
+    -9,
+    22
+   ],
+   "asansor-2": [
+    -18,
+    22
+   ],
+   "dahiliye-poliklinigi": [
+    9,
+    25.5
+   ],
+   "kardiyoloji-poliklinigi": [
+    18,
+    18.5
+   ],
+   "koridor-3": [
+    0,
+    33
+   ],
+   "merdiven-3": [
+    -9,
+    33
+   ],
+   "asansor-3": [
+    -18,
+    33
+   ],
+   "ortopedi-poliklinigi": [
+    9,
+    29.5
+   ],
+   "goz-poliklinigi": [
+    18,
+    36.5
+   ],
+   "kulak-burun-bogaz-poliklinigi": [
+    27,
+    29.5
+   ]
+  }
+ }
+}

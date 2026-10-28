@@ -29,11 +29,24 @@ def test_qr_verisi_geri_cozulur_ve_harf_rakam_kipinde(hastane):
 
 
 def test_tum_sablonlar_gecerli_ve_qr_okunabilir_boyutta():
+    buyukler = bm.buyuk_sablonlar()
     for ad, mekan in bm.sablonlar().items():
         mekan = {**mekan, "id": bm.kimlik_uret(mekan["ad"])}
         hatalar, _ = bm.dogrula(mekan)
         assert hatalar == [], ad
-        assert bm.qr_olustur(bm.qr_verisi(mekan)).version <= bm.ONERILEN_EN_BUYUK_QR_SURUMU, ad
+        # Büyük binalar QR'a sığmaz; onlar bina bilgisini kurumun sitesinde tutar
+        assert bm.qr_sigar_mi(bm.qr_verisi(mekan)) != (ad in buyukler), ad
+
+
+def test_hicbir_qra_sigmayan_bina_sayfayi_cokertmez():
+    """146 mağazalı AVM en büyük QR'ı (sürüm 40) da aşar; QR sayfası çökmemeli, adres yolunu önermeli."""
+    ad = next(iter(bm.buyuk_sablonlar()))
+    at = sablon_ac(uygulama(), ad).switch_page("app_pages/yazdir.py").run()
+    assert not at.exception
+    assert bm.qr_surumu(bm.qr_verisi(bm.sablonlar()[ad])) is None
+    assert at.segmented_control(key="qr_yontemi").value == "adres"
+    at.segmented_control(key="qr_yontemi").set_value("icinde").run()   # kurum yine de "QR'ın içinde" seçerse
+    assert not at.exception
 
 
 def test_kimlik_q_ile_baslar_ve_turkce_harfleri_sadelestirir():
@@ -375,3 +388,46 @@ def test_raf_kutusu_guncel_reyonlari_gosterir():
     dot = plan.plan_dot(mekan, p)
     raf = dot.split('"raf-k1"')[1].split("\n")[0]
     assert "Süt" in raf and "Peynir" not in raf and "Ekmek, Yumurta" in raf
+
+
+HASTANE_SITESI = """A BLOK
+4. KAT
+Hematoloji Polikliniği
+Onkoloji Polikliniği
+Zemin Kat
+Danışma ve Vezne
+Kan Alma Ünitesi
+-1. Kat
+Radyoloji Birimi
+MR (Emar)
+-2. Kat
+Otopark"""
+
+
+@pytest.mark.parametrize("metin, beklenen", [
+    (HASTANE_SITESI, {-2: ["Otopark"], -1: ["Radyoloji Birimi", "MR (Emar)"],
+                      0: ["Danışma ve Vezne", "Kan Alma Ünitesi"], 4: ["Hematoloji Polikliniği", "Onkoloji Polikliniği"]}),
+    ("Zemin Kat: Psikiyatri, Nöroloji\n1. Kat: Genel Cerrahi; Üroloji\nBodrum Kat - Arşiv",
+     {-1: ["Arşiv"], 0: ["Psikiyatri", "Nöroloji"], 1: ["Genel Cerrahi", "Üroloji"]}),
+    ("• 2. Bodrum Kat: Otopark\n- 3. kat – Yoğun bakım", {-2: ["Otopark"], 3: ["Yoğun bakım"]}),
+    ("Bu metinde kat yok", {}),
+])
+def test_kat_listesi_cozulur(metin, beklenen):
+    assert sihirbaz.kat_listesi_coz(metin) == beklenen
+
+
+def test_yapistirilan_kat_listesi_sihirbazi_doldurur():
+    at = uygulama()
+    at.session_state["sihirbaz_turu"] = "Koridorlu bina"
+    at.switch_page("app_pages/sihirbaz.py").run()
+    at.text_area(key="sihirbaz_Koridorlu bina_yapistir").input(HASTANE_SITESI).run()
+    next(b for b in at.button if b.label == "Katları doldur").click().run()
+    assert not at.exception
+    assert at.number_input(key="sihirbaz_Koridorlu bina_ilkkat").value == -2
+    assert at.number_input(key="sihirbaz_Koridorlu bina_katsayisi").value == 7      # -2 … 4
+    assert any("Binada yürüyerek her katı düzeltin" in w.value for w in at.warning)
+    at.text_input[0].input("Deneme Devlet Hastanesi").run()
+    next(b for b in at.button if b.label == "Bina düzenini oluştur").click().run()
+    assert not at.exception
+    hedefler = list(at.session_state["kaynak"]["hedefler"]["ad"])
+    assert "Radyoloji Birimi" in hedefler and "Onkoloji Polikliniği" in hedefler

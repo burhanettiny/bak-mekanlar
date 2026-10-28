@@ -1,0 +1,255 @@
+{
+ "sablonAdi": "Şehir hastanesi ana caddesi (her blok ayrı QR)",
+ "id": "q-sablon",
+ "ad": "Örnek Şehir Hastanesi – Ana Cadde",
+ "tur": "hastane",
+ "surum": 1,
+ "giris": "giris",
+ "noktalar": [
+  {
+   "id": "giris",
+   "ad": "Ana giriş"
+  },
+  {
+   "id": "koridor-0",
+   "ad": "Koridor başı"
+  },
+  {
+   "id": "danisma",
+   "ad": "Danışma kapısı"
+  },
+  {
+   "id": "hasta-kabul-ve-vezne",
+   "ad": "Hasta kabul ve vezne kapısı"
+  },
+  {
+   "id": "a-blok-genel-hastane",
+   "ad": "A Blok – Genel Hastane kapısı"
+  },
+  {
+   "id": "b-blok-kadin-dogum",
+   "ad": "B Blok – Kadın Doğum kapısı"
+  },
+  {
+   "id": "c-blok-cocuk",
+   "ad": "C Blok – Çocuk kapısı"
+  },
+  {
+   "id": "d-blok-kalp-damar",
+   "ad": "D Blok – Kalp Damar kapısı"
+  },
+  {
+   "id": "kan-alma",
+   "ad": "Kan alma kapısı"
+  },
+  {
+   "id": "eczane",
+   "ad": "Eczane kapısı"
+  }
+ ],
+ "baglantilar": [
+  {
+   "a": "giris",
+   "b": "koridor-0",
+   "adim": 8,
+   "tarif": "Girişten düz ilerleyin, koridorun başına ulaşın",
+   "geriTarif": "Çıkışa doğru düz ilerleyin"
+  },
+  {
+   "a": "koridor-0",
+   "b": "danisma",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Danışma sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "danisma",
+   "b": "hasta-kabul-ve-vezne",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Hasta kabul ve vezne solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "hasta-kabul-ve-vezne",
+   "b": "a-blok-genel-hastane",
+   "adim": 10,
+   "tarif": "Koridorda düz ilerleyin, A Blok – Genel Hastane sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "a-blok-genel-hastane",
+   "b": "b-blok-kadin-dogum",
+   "adim": 12,
+   "tarif": "Koridorda düz ilerleyin, B Blok – Kadın Doğum solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "b-blok-kadin-dogum",
+   "b": "c-blok-cocuk",
+   "adim": 12,
+   "tarif": "Koridorda düz ilerleyin, C Blok – Çocuk sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "c-blok-cocuk",
+   "b": "d-blok-kalp-damar",
+   "adim": 12,
+   "tarif": "Koridorda düz ilerleyin, D Blok – Kalp Damar solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "d-blok-kalp-damar",
+   "b": "kan-alma",
+   "adim": 8,
+   "tarif": "Koridorda düz ilerleyin, Kan alma sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "kan-alma",
+   "b": "eczane",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Eczane solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  }
+ ],
+ "hedefler": [
+  {
+   "ad": "Danışma",
+   "nokta": "danisma",
+   "tarif": "Danışma kapısı sağınızda.",
+   "anahtarlar": [
+    "danışma",
+    "bilgi",
+    "randevu"
+   ]
+  },
+  {
+   "ad": "Hasta kabul ve vezne",
+   "nokta": "hasta-kabul-ve-vezne",
+   "tarif": "Hasta kabul ve vezne kapısı solunuzda.",
+   "anahtarlar": [
+    "hasta kabul ve vezne",
+    "hasta",
+    "kabul",
+    "vezne",
+    "kayıt",
+    "ödeme"
+   ]
+  },
+  {
+   "ad": "A Blok – Genel Hastane",
+   "nokta": "a-blok-genel-hastane",
+   "tarif": "A Blok girişi sağınızda. Bloğun içindeki yol tarifi için girişteki A Blok QR etiketini okutun.",
+   "anahtarlar": [
+    "a blok – genel hastane",
+    "blok",
+    "genel",
+    "hastane",
+    "dahiliye",
+    "genel cerrahi",
+    "ortopedi"
+   ]
+  },
+  {
+   "ad": "B Blok – Kadın Doğum",
+   "nokta": "b-blok-kadin-dogum",
+   "tarif": "B Blok girişi solunuzda. Bloğun içindeki yol tarifi için girişteki B Blok QR etiketini okutun.",
+   "anahtarlar": [
+    "b blok – kadın doğum",
+    "blok",
+    "kadın",
+    "doğum",
+    "kadın doğum",
+    "gebe"
+   ]
+  },
+  {
+   "ad": "C Blok – Çocuk",
+   "nokta": "c-blok-cocuk",
+   "tarif": "C Blok girişi sağınızda. Bloğun içindeki yol tarifi için girişteki C Blok QR etiketini okutun.",
+   "anahtarlar": [
+    "c blok – çocuk",
+    "blok",
+    "çocuk",
+    "pediatri"
+   ]
+  },
+  {
+   "ad": "D Blok – Kalp Damar",
+   "nokta": "d-blok-kalp-damar",
+   "tarif": "D Blok girişi solunuzda. Bloğun içindeki yol tarifi için girişteki D Blok QR etiketini okutun.",
+   "anahtarlar": [
+    "d blok – kalp damar",
+    "blok",
+    "kalp",
+    "damar",
+    "kardiyoloji"
+   ]
+  },
+  {
+   "ad": "Kan alma",
+   "nokta": "kan-alma",
+   "tarif": "Kan alma kapısı sağınızda.",
+   "anahtarlar": [
+    "kan alma",
+    "kan",
+    "alma",
+    "tahlil",
+    "laboratuvar"
+   ]
+  },
+  {
+   "ad": "Eczane",
+   "nokta": "eczane",
+   "tarif": "Eczane kapısı solunuzda.",
+   "anahtarlar": [
+    "eczane",
+    "ilaç"
+   ]
+  }
+ ],
+ "plan": {
+  "konum": {
+   "giris": [
+    0,
+    -7
+   ],
+   "koridor-0": [
+    0,
+    0
+   ],
+   "danisma": [
+    9,
+    -3.5
+   ],
+   "hasta-kabul-ve-vezne": [
+    18,
+    3.5
+   ],
+   "a-blok-genel-hastane": [
+    27,
+    -3.5
+   ],
+   "b-blok-kadin-dogum": [
+    36,
+    3.5
+   ],
+   "c-blok-cocuk": [
+    45,
+    -3.5
+   ],
+   "d-blok-kalp-damar": [
+    54,
+    3.5
+   ],
+   "kan-alma": [
+    63,
+    -3.5
+   ],
+   "eczane": [
+    72,
+    3.5
+   ]
+  }
+ }
+}

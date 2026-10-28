@@ -49,7 +49,7 @@ for u in uyarilar:
 veri = None   # giriş QR'ının içeriği: düzenin kendisi ya da kurumun sitesindeki adresi
 if not hatalar:
     gomulu = bm.qr_verisi(mekan)
-    sigmiyor = bm.qr_olustur(gomulu).version > bm.ONERILEN_EN_BUYUK_QR_SURUMU
+    sigmiyor = not bm.qr_sigar_mi(gomulu)
     with st.container(border=True):
         yontem = st.segmented_control(
             "Bina bilgisi nerede dursun?", ["icinde", "adres"], required=True,
@@ -62,7 +62,8 @@ if not hatalar:
             if sigmiyor:
                 st.warning("Bina bilgisi tek QR'a sığmayacak kadar büyük; QR çok sık kareli oluyor ve telefon zor "
                            "okur. **Kurumun sitesinde** seçeneğini kullanın.", icon=":material/warning:")
-            veri = gomulu
+            # Hiçbir QR'a sığmıyorsa (en büyük QR sürümünü de aşıyorsa) QR çizilemez
+            veri = gomulu if bm.qr_surumu(gomulu) is not None else None
         else:
             st.markdown(
                 "1. Aşağıdan **düzen dosyasını** indirin.\n"
@@ -83,7 +84,6 @@ if not hatalar:
                                icon=":material/download:")
 
 if not hatalar and veri:
-    surum = bm.qr_olustur(veri).version
     sol, sag = st.columns([1, 2])
     with sol, st.container(border=True):
         st.image(qr_resmi(veri), caption="Giriş QR'ı", alt=f"{mekan['ad']} için BAK giriş QR kodu")

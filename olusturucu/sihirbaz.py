@@ -8,6 +8,8 @@ Yön kuralı: kullanıcı girişten içeri bakarken "sağ" ve "sol". Koridorda i
 
 from __future__ import annotations
 
+import re
+
 from bak_mekan import kisalt
 
 KONUM = dict[str, tuple[float, float]]
@@ -107,6 +109,52 @@ DIKEY_SECENEKLERI = {"ikisi": ["merdiven", "asansor"], "merdiven": ["merdiven"],
 DIKEY_ADLARI = {"merdiven": ("Merdiven başı", "merdivene", "Merdivenden"),
                 "asansor": ("Asansör önü", "asansöre", "Asansörden"),
                 "yuruyen-merdiven": ("Yürüyen merdiven başı", "yürüyen merdivene", "Yürüyen merdivenden")}
+
+
+# ── Hastane sitelerindeki kat listesini okuma ─────────────
+# Birçok hastane "Kat Planı" sayfasında hangi birimin hangi katta olduğunu yazıyor. Kurum bu metni yapıştırır;
+# katlar ve birimler sihirbaza dolar. Sağ/sol ve adım sayısı bu sayfalarda yoktur, sahada girilmelidir.
+
+_KAT_BASLIGI = re.compile(
+    r"^\s*(?:[-–•*·]\s+)?(?P<kat>zemin|giriş|giris|bodrum|(?:eksi\s*)?[-–]?\s*\d+\s*\.?\s*(?:bodrum)?)\s*kat[ıi]?\b"
+    r"\s*[:\-–.]?\s*(?P<kalan>.*)$", re.IGNORECASE)
+_BLOK_BASLIGI = re.compile(r"^\s*[A-ZÇĞİÖŞÜ0-9]{1,3}\s*[- ]?\s*blok\w*\s*:?\s*$", re.IGNORECASE)
+_MADDE_ISARETI = re.compile(r"^\s*(?:[-–•*·▪►]|\d+[.)])\s*")
+
+
+def _kat_numarasi(metin: str) -> int:
+    m = metin.lower().replace("–", "-").replace(" ", "")
+    if m in ("zemin", "giriş", "giris"):
+        return 0
+    if m == "bodrum":
+        return -1
+    sayi = int(re.search(r"\d+", m).group())
+    return -sayi if m.startswith("-") or m.startswith("eksi") or "bodrum" in m else sayi
+
+
+def kat_listesi_coz(metin: str) -> dict[int, list[str]]:
+    """"Zemin Kat: Danışma, Vezne" ya da başlık altında alt alta maddeler → {0: ["Danışma", "Vezne"], ...}.
+    Blok başlıkları ("A BLOK") atlanır; aynı katta tekrar eden birim bir kez alınır."""
+    katlar: dict[int, list[str]] = {}
+    gecerli: int | None = None
+
+    def ekle(parca: str) -> None:
+        for ad in re.split(r"[,;]| - ", parca):
+            ad = _MADDE_ISARETI.sub("", ad).strip(" .:\t")
+            if gecerli is not None and len(ad) >= 2 and ad not in katlar[gecerli] and ad != "-":
+                katlar[gecerli].append(ad)
+
+    for satir in metin.splitlines():
+        if not satir.strip() or _BLOK_BASLIGI.match(satir):
+            continue
+        baslik = _KAT_BASLIGI.match(satir)
+        if baslik:
+            gecerli = _kat_numarasi(baslik.group("kat"))
+            katlar.setdefault(gecerli, [])
+            ekle(baslik.group("kalan"))
+        else:
+            ekle(satir)
+    return {k: v for k, v in sorted(katlar.items())}
 
 
 def kat_adi(kat: int) -> str:

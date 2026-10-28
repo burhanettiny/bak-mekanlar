@@ -53,6 +53,15 @@ listenin nasıl ve yaklaşık kaç saniyede okunacağını gösterir.
 
 ## Şablonlar
 
+Market, AVM, devlet hastanesi, şehir hastanesi ana caddesi, okul ve belediye binası şablonları var.
+**Gebze Center AVM** şablonu AVM'nin sitesindeki 145 mağazanın gerçek adı, kategorisi ve katıyla kuruldu; koridordaki
+sıra ve sağ/sol sitede yazmadığı için örnek dizildi. QR'a sığmadığından bina bilgisini kurumun sitesinde tutma yolunu
+gösterir (`"buyuk": true`).
+
+**Kat listesini yapıştırma:** Bina ve AVM sihirbazında kurum, sitesindeki "Kat Planı" metnini yapıştırır ("Zemin Kat:
+Danışma, Vezne", "-1. Kat", alt alta maddeler…); katlar ve birimler dolar. Sıra, sağ/sol ve adım sahada düzeltilir.
+
+
 `sablonlar/` klasöründeki her JSON bir başlangıç şablonudur (`sablonAdi` alanı listede görünen addır):
 market, iki katlı hastane, okul, belediye hizmet binası. Yeni şablon eklemek için aynı biçimde bir dosya ekleyin;
 testler tüm şablonların geçerli olduğunu ve QR'ının okunabilir boyutta kaldığını kontrol eder.

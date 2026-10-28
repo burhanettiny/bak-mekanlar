@@ -1,0 +1,4417 @@
+{
+ "sablonAdi": "Gebze Center AVM (145 mağaza; sıra ve sağ/sol örnek – sahada düzeltin)",
+ "buyuk": true,
+ "id": "q-sablon",
+ "ad": "Gebze Center AVM",
+ "tur": "diger",
+ "surum": 1,
+ "giris": "giris",
+ "noktalar": [
+  {
+   "id": "giris",
+   "ad": "Ana giriş"
+  },
+  {
+   "id": "koridor-0",
+   "ad": "Eksi 2. kat koridor başı",
+   "kat": -2
+  },
+  {
+   "id": "yuruyen-merdiven-0",
+   "ad": "Yürüyen merdiven başı",
+   "kat": -2
+  },
+  {
+   "id": "asansor-0",
+   "ad": "Asansör önü",
+   "kat": -2
+  },
+  {
+   "id": "car-wax",
+   "ad": "Car Wax kapısı",
+   "kat": -2
+  },
+  {
+   "id": "gebze-pet-shop",
+   "ad": "Gebze Pet Shop kapısı",
+   "kat": -2
+  },
+  {
+   "id": "jolly",
+   "ad": "Jolly kapısı",
+   "kat": -2
+  },
+  {
+   "id": "kunduraci-fatih",
+   "ad": "Kunduracı Fatih kapısı",
+   "kat": -2
+  },
+  {
+   "id": "lemoon-tobacco-shop",
+   "ad": "Lemoon Tobacco Shop kapısı",
+   "kat": -2
+  },
+  {
+   "id": "mandamarina-dogal-yasam-aktar",
+   "ad": "Mandamarina Doğal Yaşam & Aktar kapısı",
+   "kat": -2
+  },
+  {
+   "id": "terzi-ercan",
+   "ad": "Terzi Ercan kapısı",
+   "kat": -2
+  },
+  {
+   "id": "koridor-1",
+   "ad": "Bodrum kat koridor başı",
+   "kat": -1
+  },
+  {
+   "id": "yuruyen-merdiven-1",
+   "ad": "Yürüyen merdiven başı",
+   "kat": -1
+  },
+  {
+   "id": "asansor-1",
+   "ad": "Asansör önü",
+   "kat": -1
+  },
+  {
+   "id": "david-people-coffee",
+   "ad": "David People Coffee kapısı",
+   "kat": -1
+  },
+  {
+   "id": "bambi-yatak",
+   "ad": "Bambi Yatak kapısı",
+   "kat": -1
+  },
+  {
+   "id": "beko",
+   "ad": "Beko kapısı",
+   "kat": -1
+  },
+  {
+   "id": "big-bubble-tea",
+   "ad": "Big Bubble Tea kapısı",
+   "kat": -1
+  },
+  {
+   "id": "bosch",
+   "ad": "Bosch kapısı",
+   "kat": -1
+  },
+  {
+   "id": "dino-lino-funpark",
+   "ad": "Dino Lino Funpark kapısı",
+   "kat": -1
+  },
+  {
+   "id": "english-home",
+   "ad": "English Home kapısı",
+   "kat": -1
+  },
+  {
+   "id": "enza-home",
+   "ad": "Enza Home kapısı",
+   "kat": -1
+  },
+  {
+   "id": "evidea",
+   "ad": "Evidea kapısı",
+   "kat": -1
+  },
+  {
+   "id": "gallery-crystal",
+   "ad": "Gallery Crystal kapısı",
+   "kat": -1
+  },
+  {
+   "id": "gratis",
+   "ad": "Gratis kapısı",
+   "kat": -1
+  },
+  {
+   "id": "homend",
+   "ad": "Homend kapısı",
+   "kat": -1
+  },
+  {
+   "id": "jumbo",
+   "ad": "Jumbo kapısı",
+   "kat": -1
+  },
+  {
+   "id": "karaca",
+   "ad": "Karaca kapısı",
+   "kat": -1
+  },
+  {
+   "id": "besiktas-kartal-yuvasi",
+   "ad": "Beşiktaş Kartal Yuvası kapısı",
+   "kat": -1
+  },
+  {
+   "id": "koctas",
+   "ad": "Koçtaş kapısı",
+   "kat": -1
+  },
+  {
+   "id": "krispy-kreme",
+   "ad": "Krispy Kreme kapısı",
+   "kat": -1
+  },
+  {
+   "id": "lg",
+   "ad": "LG kapısı",
+   "kat": -1
+  },
+  {
+   "id": "madame-coco",
+   "ad": "Madame Coco kapısı",
+   "kat": -1
+  },
+  {
+   "id": "mi-store",
+   "ad": "Mi Store kapısı",
+   "kat": -1
+  },
+  {
+   "id": "misir-evi",
+   "ad": "Mısır Evi kapısı",
+   "kat": -1
+  },
+  {
+   "id": "mobilup",
+   "ad": "Mobilup kapısı",
+   "kat": -1
+  },
+  {
+   "id": "muscent",
+   "ad": "Muscent kapısı",
+   "kat": -1
+  },
+  {
+   "id": "necco",
+   "ad": "Necco kapısı",
+   "kat": -1
+  },
+  {
+   "id": "ozdilek",
+   "ad": "Özdilek kapısı",
+   "kat": -1
+  },
+  {
+   "id": "reeder",
+   "ad": "Reeder kapısı",
+   "kat": -1
+  },
+  {
+   "id": "rossmann",
+   "ad": "Rossmann kapısı",
+   "kat": -1
+  },
+  {
+   "id": "samsung",
+   "ad": "Samsung kapısı",
+   "kat": -1
+  },
+  {
+   "id": "siemens",
+   "ad": "Siemens kapısı",
+   "kat": -1
+  },
+  {
+   "id": "takma-takma",
+   "ad": "Takma Takma kapısı",
+   "kat": -1
+  },
+  {
+   "id": "tatli-evi",
+   "ad": "Tatlı Evi kapısı",
+   "kat": -1
+  },
+  {
+   "id": "tekno-sa-exxtra",
+   "ad": "Tekno SA exxtra kapısı",
+   "kat": -1
+  },
+  {
+   "id": "turk-telekom",
+   "ad": "Türk Telekom kapısı",
+   "kat": -1
+  },
+  {
+   "id": "turkcell",
+   "ad": "Turkcell kapısı",
+   "kat": -1
+  },
+  {
+   "id": "vodafone",
+   "ad": "Vodafone kapısı",
+   "kat": -1
+  },
+  {
+   "id": "xenon-smart",
+   "ad": "Xenon Smart kapısı",
+   "kat": -1
+  },
+  {
+   "id": "yatas",
+   "ad": "Yataş kapısı",
+   "kat": -1
+  },
+  {
+   "id": "koridor-2",
+   "ad": "Zemin kat koridor başı"
+  },
+  {
+   "id": "yuruyen-merdiven-2",
+   "ad": "Yürüyen merdiven başı"
+  },
+  {
+   "id": "asansor-2",
+   "ad": "Asansör önü"
+  },
+  {
+   "id": "5m-migros",
+   "ad": "5M Migros kapısı"
+  },
+  {
+   "id": "aker",
+   "ad": "Aker kapısı"
+  },
+  {
+   "id": "altinbas",
+   "ad": "Altınbaş kapısı"
+  },
+  {
+   "id": "altinyildiz-classics",
+   "ad": "Altınyıldız Classics kapısı"
+  },
+  {
+   "id": "atasay",
+   "ad": "Atasay kapısı"
+  },
+  {
+   "id": "atasun-optik",
+   "ad": "Atasun Optik kapısı"
+  },
+  {
+   "id": "avva",
+   "ad": "AVVA kapısı"
+  },
+  {
+   "id": "kuafera",
+   "ad": "Kuafera kapısı"
+  },
+  {
+   "id": "boyner",
+   "ad": "Boyner kapısı"
+  },
+  {
+   "id": "uki",
+   "ad": "UKI kapısı"
+  },
+  {
+   "id": "chef-s-corner",
+   "ad": "Chef's Corner kapısı"
+  },
+  {
+   "id": "dagi",
+   "ad": "Dagi kapısı"
+  },
+  {
+   "id": "d-s-damat",
+   "ad": "D'S Damat kapısı"
+  },
+  {
+   "id": "dyson",
+   "ad": "Dyson kapısı"
+  },
+  {
+   "id": "eco-dry-kuru-temizleme",
+   "ad": "Eco Dry Kuru Temizleme kapısı"
+  },
+  {
+   "id": "fenerium",
+   "ad": "Fenerium kapısı"
+  },
+  {
+   "id": "flormar",
+   "ad": "Flormar kapısı"
+  },
+  {
+   "id": "genom-optik",
+   "ad": "Genom Optik kapısı"
+  },
+  {
+   "id": "greenwich-center-of-coffee",
+   "ad": "Greenwich Center of Coffee kapısı"
+  },
+  {
+   "id": "kahve-dunyasi",
+   "ad": "Kahve Dünyası kapısı"
+  },
+  {
+   "id": "kigili",
+   "ad": "Kiğılı kapısı"
+  },
+  {
+   "id": "koton",
+   "ad": "Koton kapısı"
+  },
+  {
+   "id": "kuppeli-accessories",
+   "ad": "Kuppeli Accessories kapısı"
+  },
+  {
+   "id": "lc-waikiki",
+   "ad": "LC Waikiki kapısı"
+  },
+  {
+   "id": "lcw-home-dream",
+   "ad": "LCW Home & Dream kapısı"
+  },
+  {
+   "id": "lufian",
+   "ad": "Lufian kapısı"
+  },
+  {
+   "id": "mac-fit",
+   "ad": "Mac Fit kapısı"
+  },
+  {
+   "id": "madame-moss",
+   "ad": "Madame Moss kapısı"
+  },
+  {
+   "id": "media-markt",
+   "ad": "Media Markt kapısı"
+  },
+  {
+   "id": "pandora",
+   "ad": "Pandora kapısı"
+  },
+  {
+   "id": "saat-saat",
+   "ad": "Saat&Saat kapısı"
+  },
+  {
+   "id": "sarar",
+   "ad": "Sarar kapısı"
+  },
+  {
+   "id": "so-chic",
+   "ad": "So Chic kapısı"
+  },
+  {
+   "id": "starbucks",
+   "ad": "Starbucks kapısı"
+  },
+  {
+   "id": "supplementler",
+   "ad": "Supplementler kapısı"
+  },
+  {
+   "id": "suvari",
+   "ad": "Süvari kapısı"
+  },
+  {
+   "id": "suwen-lingerie",
+   "ad": "Suwen Lingerie kapısı"
+  },
+  {
+   "id": "u-s-polo-assn",
+   "ad": "U.S. Polo ASSN. kapısı"
+  },
+  {
+   "id": "watsons",
+   "ad": "Watsons kapısı"
+  },
+  {
+   "id": "yves-rocher",
+   "ad": "Yves Rocher kapısı"
+  },
+  {
+   "id": "koridor-3",
+   "ad": "1. kat koridor başı",
+   "kat": 1
+  },
+  {
+   "id": "yuruyen-merdiven-3",
+   "ad": "Yürüyen merdiven başı",
+   "kat": 1
+  },
+  {
+   "id": "asansor-3",
+   "ad": "Asansör önü",
+   "kat": 1
+  },
+  {
+   "id": "adidas",
+   "ad": "Adidas kapısı",
+   "kat": 1
+  },
+  {
+   "id": "bambi",
+   "ad": "Bambi kapısı",
+   "kat": 1
+  },
+  {
+   "id": "bargello",
+   "ad": "Bargello kapısı",
+   "kat": 1
+  },
+  {
+   "id": "chocnette",
+   "ad": "Chocnette kapısı",
+   "kat": 1
+  },
+  {
+   "id": "the-co",
+   "ad": "THE CO kapısı",
+   "kat": 1
+  },
+  {
+   "id": "colin-s",
+   "ad": "Colin's kapısı",
+   "kat": 1
+  },
+  {
+   "id": "creaphone",
+   "ad": "Creaphone kapısı",
+   "kat": 1
+  },
+  {
+   "id": "defacto",
+   "ad": "DeFacto kapısı",
+   "kat": 1
+  },
+  {
+   "id": "ebebek",
+   "ad": "Ebebek kapısı",
+   "kat": 1
+  },
+  {
+   "id": "ecrou",
+   "ad": "Ecrou kapısı",
+   "kat": 1
+  },
+  {
+   "id": "flo",
+   "ad": "FLO kapısı",
+   "kat": 1
+  },
+  {
+   "id": "greyder",
+   "ad": "Greyder kapısı",
+   "kat": 1
+  },
+  {
+   "id": "harput-dibek",
+   "ad": "Harput Dibek kapısı",
+   "kat": 1
+  },
+  {
+   "id": "hello-sweetie",
+   "ad": "Hello Sweetie kapısı",
+   "kat": 1
+  },
+  {
+   "id": "hummel",
+   "ad": "Hummel kapısı",
+   "kat": 1
+  },
+  {
+   "id": "sport-in-street",
+   "ad": "Sport In Street kapısı",
+   "kat": 1
+  },
+  {
+   "id": "lee-cooper",
+   "ad": "Lee Cooper kapısı",
+   "kat": 1
+  },
+  {
+   "id": "lescon",
+   "ad": "Lescon kapısı",
+   "kat": 1
+  },
+  {
+   "id": "loft",
+   "ad": "Loft kapısı",
+   "kat": 1
+  },
+  {
+   "id": "ltb",
+   "ad": "LTB kapısı",
+   "kat": 1
+  },
+  {
+   "id": "mad-parfumeur",
+   "ad": "Mad Parfumeur kapısı",
+   "kat": 1
+  },
+  {
+   "id": "mavi",
+   "ad": "Mavi kapısı",
+   "kat": 1
+  },
+  {
+   "id": "mudo-city",
+   "ad": "Mudo City kapısı",
+   "kat": 1
+  },
+  {
+   "id": "my-takinti-luxury",
+   "ad": "My Takıntı Luxury kapısı",
+   "kat": 1
+  },
+  {
+   "id": "penti",
+   "ad": "Penti kapısı",
+   "kat": 1
+  },
+  {
+   "id": "sandik-gumus",
+   "ad": "Sandık Gümüş kapısı",
+   "kat": 1
+  },
+  {
+   "id": "takistir",
+   "ad": "Takıştır kapısı",
+   "kat": 1
+  },
+  {
+   "id": "tudors",
+   "ad": "Tudors kapısı",
+   "kat": 1
+  },
+  {
+   "id": "koridor-4",
+   "ad": "2. kat koridor başı",
+   "kat": 2
+  },
+  {
+   "id": "yuruyen-merdiven-4",
+   "ad": "Yürüyen merdiven başı",
+   "kat": 2
+  },
+  {
+   "id": "asansor-4",
+   "ad": "Asansör önü",
+   "kat": 2
+  },
+  {
+   "id": "addax",
+   "ad": "Addax kapısı",
+   "kat": 2
+  },
+  {
+   "id": "arby-s",
+   "ad": "Arby's kapısı",
+   "kat": 2
+  },
+  {
+   "id": "baydoner",
+   "ad": "Baydöner kapısı",
+   "kat": 2
+  },
+  {
+   "id": "bedrock-bowling",
+   "ad": "Bedrock Bowling kapısı",
+   "kat": 2
+  },
+  {
+   "id": "burger-king",
+   "ad": "Burger King kapısı",
+   "kat": 2
+  },
+  {
+   "id": "bursa-kebap-evi",
+   "ad": "Bursa Kebap Evi kapısı",
+   "kat": 2
+  },
+  {
+   "id": "cinema",
+   "ad": "Cinema kapısı",
+   "kat": 2
+  },
+  {
+   "id": "dal-temapark",
+   "ad": "Dal Temapark kapısı",
+   "kat": 2
+  },
+  {
+   "id": "dominos",
+   "ad": "Dominos kapısı",
+   "kat": 2
+  },
+  {
+   "id": "durumle",
+   "ad": "Dürümle kapısı",
+   "kat": 2
+  },
+  {
+   "id": "green-salads",
+   "ad": "Green Salads kapısı",
+   "kat": 2
+  },
+  {
+   "id": "gs-store",
+   "ad": "GS Store kapısı",
+   "kat": 2
+  },
+  {
+   "id": "hacioglu",
+   "ad": "Hacıoğlu kapısı",
+   "kat": 2
+  },
+  {
+   "id": "hd-iskender",
+   "ad": "HD İskender kapısı",
+   "kat": 2
+  },
+  {
+   "id": "ice-berry",
+   "ad": "Ice Berry kapısı",
+   "kat": 2
+  },
+  {
+   "id": "kahve-dukkani",
+   "ad": "Kahve Dükkanı kapısı",
+   "kat": 2
+  },
+  {
+   "id": "kayseri-mutfagi",
+   "ad": "Kayseri Mutfağı kapısı",
+   "kat": 2
+  },
+  {
+   "id": "doyuyo",
+   "ad": "Doyuyo! kapısı",
+   "kat": 2
+  },
+  {
+   "id": "mado",
+   "ad": "Mado kapısı",
+   "kat": 2
+  },
+  {
+   "id": "mcdonald-s",
+   "ad": "McDonald's kapısı",
+   "kat": 2
+  },
+  {
+   "id": "packet-burger",
+   "ad": "Packet Burger kapısı",
+   "kat": 2
+  },
+  {
+   "id": "pasaport-pizza",
+   "ad": "Pasaport Pizza kapısı",
+   "kat": 2
+  },
+  {
+   "id": "penguen-books-coffee",
+   "ad": "Penguen Books Coffee kapısı",
+   "kat": 2
+  },
+  {
+   "id": "pide-by-pide",
+   "ad": "Pide by Pide kapısı",
+   "kat": 2
+  },
+  {
+   "id": "pidem",
+   "ad": "Pidem kapısı",
+   "kat": 2
+  },
+  {
+   "id": "pideye",
+   "ad": "Pideye kapısı",
+   "kat": 2
+  },
+  {
+   "id": "popeyes",
+   "ad": "Popeyes kapısı",
+   "kat": 2
+  },
+  {
+   "id": "suat-usta",
+   "ad": "Suat Usta kapısı",
+   "kat": 2
+  },
+  {
+   "id": "subway",
+   "ad": "Subway kapısı",
+   "kat": 2
+  },
+  {
+   "id": "tavuk-dunyasi",
+   "ad": "Tavuk Dünyası kapısı",
+   "kat": 2
+  },
+  {
+   "id": "tedi",
+   "ad": "Tedi kapısı",
+   "kat": 2
+  },
+  {
+   "id": "toyzz-shop",
+   "ad": "Toyzz Shop kapısı",
+   "kat": 2
+  },
+  {
+   "id": "usta-donerci",
+   "ad": "Usta Dönerci kapısı",
+   "kat": 2
+  }
+ ],
+ "baglantilar": [
+  {
+   "a": "koridor-0",
+   "b": "yuruyen-merdiven-0",
+   "adim": 3,
+   "tarif": "Koridorun başında solunuzdaki yürüyen merdivene yönelin",
+   "geriTarif": "Yürüyen merdivenden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "koridor-0",
+   "b": "asansor-0",
+   "adim": 3,
+   "tarif": "Koridorun başında sağınızdaki asansöre yönelin",
+   "geriTarif": "Asansörden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "koridor-0",
+   "b": "car-wax",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Car Wax solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "car-wax",
+   "b": "gebze-pet-shop",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Gebze Pet Shop sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "gebze-pet-shop",
+   "b": "jolly",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Jolly solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "jolly",
+   "b": "kunduraci-fatih",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Kunduracı Fatih sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "kunduraci-fatih",
+   "b": "lemoon-tobacco-shop",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Lemoon Tobacco Shop solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "lemoon-tobacco-shop",
+   "b": "mandamarina-dogal-yasam-aktar",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Mandamarina Doğal Yaşam & Aktar sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "mandamarina-dogal-yasam-aktar",
+   "b": "terzi-ercan",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Terzi Ercan solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "koridor-1",
+   "b": "yuruyen-merdiven-1",
+   "adim": 3,
+   "tarif": "Koridorun başında solunuzdaki yürüyen merdivene yönelin",
+   "geriTarif": "Yürüyen merdivenden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "yuruyen-merdiven-0",
+   "b": "yuruyen-merdiven-1",
+   "adim": 25,
+   "tur": "yuruyen-merdiven",
+   "tarif": "Binmeden önce yan tutamağı bulun; inişte bant bitince adımınızı uzatın.",
+   "geriTarif": "Binmeden önce yan tutamağı bulun; inişte bant bitince adımınızı uzatın."
+  },
+  {
+   "a": "koridor-1",
+   "b": "asansor-1",
+   "adim": 3,
+   "tarif": "Koridorun başında sağınızdaki asansöre yönelin",
+   "geriTarif": "Asansörden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "asansor-0",
+   "b": "asansor-1",
+   "adim": 35,
+   "tur": "asansor",
+   "tarif": "Düğmelerde kabartma yazı olabilir; sorabilirsiniz.",
+   "geriTarif": "Düğmelerde kabartma yazı olabilir; sorabilirsiniz."
+  },
+  {
+   "a": "koridor-1",
+   "b": "david-people-coffee",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, David People Coffee solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "david-people-coffee",
+   "b": "bambi-yatak",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Bambi Yatak sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "bambi-yatak",
+   "b": "beko",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Beko solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "beko",
+   "b": "big-bubble-tea",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Big Bubble Tea sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "big-bubble-tea",
+   "b": "bosch",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Bosch solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "bosch",
+   "b": "dino-lino-funpark",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Dino Lino Funpark sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "dino-lino-funpark",
+   "b": "english-home",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, English Home solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "english-home",
+   "b": "enza-home",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Enza Home sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "enza-home",
+   "b": "evidea",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Evidea solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "evidea",
+   "b": "gallery-crystal",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Gallery Crystal sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "gallery-crystal",
+   "b": "gratis",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Gratis solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "gratis",
+   "b": "homend",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Homend sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "homend",
+   "b": "jumbo",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Jumbo solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "jumbo",
+   "b": "karaca",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Karaca sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "karaca",
+   "b": "besiktas-kartal-yuvasi",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Beşiktaş Kartal Yuvası solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "besiktas-kartal-yuvasi",
+   "b": "koctas",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Koçtaş sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "koctas",
+   "b": "krispy-kreme",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Krispy Kreme solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "krispy-kreme",
+   "b": "lg",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, LG sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "lg",
+   "b": "madame-coco",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Madame Coco solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "madame-coco",
+   "b": "mi-store",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Mi Store sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "mi-store",
+   "b": "misir-evi",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Mısır Evi solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "misir-evi",
+   "b": "mobilup",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Mobilup sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "mobilup",
+   "b": "muscent",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Muscent solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "muscent",
+   "b": "necco",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Necco sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "necco",
+   "b": "ozdilek",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Özdilek solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "ozdilek",
+   "b": "reeder",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Reeder sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "reeder",
+   "b": "rossmann",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Rossmann solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "rossmann",
+   "b": "samsung",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Samsung sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "samsung",
+   "b": "siemens",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Siemens solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "siemens",
+   "b": "takma-takma",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Takma Takma sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "takma-takma",
+   "b": "tatli-evi",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Tatlı Evi solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "tatli-evi",
+   "b": "tekno-sa-exxtra",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Tekno SA exxtra sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "tekno-sa-exxtra",
+   "b": "turk-telekom",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Türk Telekom solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "turk-telekom",
+   "b": "turkcell",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Turkcell sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "turkcell",
+   "b": "vodafone",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Vodafone solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "vodafone",
+   "b": "xenon-smart",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Xenon Smart sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "xenon-smart",
+   "b": "yatas",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Yataş solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "giris",
+   "b": "koridor-2",
+   "adim": 8,
+   "tarif": "Girişten düz ilerleyin, koridorun başına ulaşın",
+   "geriTarif": "Çıkışa doğru düz ilerleyin"
+  },
+  {
+   "a": "koridor-2",
+   "b": "yuruyen-merdiven-2",
+   "adim": 3,
+   "tarif": "Koridorun başında solunuzdaki yürüyen merdivene yönelin",
+   "geriTarif": "Yürüyen merdivenden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "yuruyen-merdiven-1",
+   "b": "yuruyen-merdiven-2",
+   "adim": 25,
+   "tur": "yuruyen-merdiven",
+   "tarif": "Binmeden önce yan tutamağı bulun; inişte bant bitince adımınızı uzatın.",
+   "geriTarif": "Binmeden önce yan tutamağı bulun; inişte bant bitince adımınızı uzatın."
+  },
+  {
+   "a": "koridor-2",
+   "b": "asansor-2",
+   "adim": 3,
+   "tarif": "Koridorun başında sağınızdaki asansöre yönelin",
+   "geriTarif": "Asansörden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "asansor-1",
+   "b": "asansor-2",
+   "adim": 35,
+   "tur": "asansor",
+   "tarif": "Düğmelerde kabartma yazı olabilir; sorabilirsiniz.",
+   "geriTarif": "Düğmelerde kabartma yazı olabilir; sorabilirsiniz."
+  },
+  {
+   "a": "koridor-2",
+   "b": "5m-migros",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, 5M Migros solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "5m-migros",
+   "b": "aker",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Aker sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "aker",
+   "b": "altinbas",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Altınbaş solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "altinbas",
+   "b": "altinyildiz-classics",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Altınyıldız Classics sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "altinyildiz-classics",
+   "b": "atasay",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Atasay solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "atasay",
+   "b": "atasun-optik",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Atasun Optik sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "atasun-optik",
+   "b": "avva",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, AVVA solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "avva",
+   "b": "kuafera",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Kuafera sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "kuafera",
+   "b": "boyner",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Boyner solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "boyner",
+   "b": "uki",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, UKI sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "uki",
+   "b": "chef-s-corner",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Chef's Corner solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "chef-s-corner",
+   "b": "dagi",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Dagi sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "dagi",
+   "b": "d-s-damat",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, D'S Damat solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "d-s-damat",
+   "b": "dyson",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Dyson sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "dyson",
+   "b": "eco-dry-kuru-temizleme",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Eco Dry Kuru Temizleme solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "eco-dry-kuru-temizleme",
+   "b": "fenerium",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Fenerium sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "fenerium",
+   "b": "flormar",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Flormar solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "flormar",
+   "b": "genom-optik",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Genom Optik sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "genom-optik",
+   "b": "greenwich-center-of-coffee",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Greenwich Center of Coffee solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "greenwich-center-of-coffee",
+   "b": "kahve-dunyasi",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Kahve Dünyası sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "kahve-dunyasi",
+   "b": "kigili",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Kiğılı solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "kigili",
+   "b": "koton",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Koton sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "koton",
+   "b": "kuppeli-accessories",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Kuppeli Accessories solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "kuppeli-accessories",
+   "b": "lc-waikiki",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, LC Waikiki sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "lc-waikiki",
+   "b": "lcw-home-dream",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, LCW Home & Dream solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "lcw-home-dream",
+   "b": "lufian",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Lufian sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "lufian",
+   "b": "mac-fit",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Mac Fit solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "mac-fit",
+   "b": "madame-moss",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Madame Moss sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "madame-moss",
+   "b": "media-markt",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Media Markt solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "media-markt",
+   "b": "pandora",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Pandora sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "pandora",
+   "b": "saat-saat",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Saat&Saat solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "saat-saat",
+   "b": "sarar",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Sarar sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "sarar",
+   "b": "so-chic",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, So Chic solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "so-chic",
+   "b": "starbucks",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Starbucks sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "starbucks",
+   "b": "supplementler",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Supplementler solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "supplementler",
+   "b": "suvari",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Süvari sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "suvari",
+   "b": "suwen-lingerie",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Suwen Lingerie solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "suwen-lingerie",
+   "b": "u-s-polo-assn",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, U.S. Polo ASSN. sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "u-s-polo-assn",
+   "b": "watsons",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Watsons solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "watsons",
+   "b": "yves-rocher",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Yves Rocher sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "koridor-3",
+   "b": "yuruyen-merdiven-3",
+   "adim": 3,
+   "tarif": "Koridorun başında solunuzdaki yürüyen merdivene yönelin",
+   "geriTarif": "Yürüyen merdivenden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "yuruyen-merdiven-2",
+   "b": "yuruyen-merdiven-3",
+   "adim": 25,
+   "tur": "yuruyen-merdiven",
+   "tarif": "Binmeden önce yan tutamağı bulun; inişte bant bitince adımınızı uzatın.",
+   "geriTarif": "Binmeden önce yan tutamağı bulun; inişte bant bitince adımınızı uzatın."
+  },
+  {
+   "a": "koridor-3",
+   "b": "asansor-3",
+   "adim": 3,
+   "tarif": "Koridorun başında sağınızdaki asansöre yönelin",
+   "geriTarif": "Asansörden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "asansor-2",
+   "b": "asansor-3",
+   "adim": 35,
+   "tur": "asansor",
+   "tarif": "Düğmelerde kabartma yazı olabilir; sorabilirsiniz.",
+   "geriTarif": "Düğmelerde kabartma yazı olabilir; sorabilirsiniz."
+  },
+  {
+   "a": "koridor-3",
+   "b": "adidas",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Adidas solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "adidas",
+   "b": "bambi",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Bambi sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "bambi",
+   "b": "bargello",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Bargello solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "bargello",
+   "b": "chocnette",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Chocnette sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "chocnette",
+   "b": "the-co",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, THE CO solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "the-co",
+   "b": "colin-s",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Colin's sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "colin-s",
+   "b": "creaphone",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Creaphone solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "creaphone",
+   "b": "defacto",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, DeFacto sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "defacto",
+   "b": "ebebek",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Ebebek solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "ebebek",
+   "b": "ecrou",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Ecrou sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "ecrou",
+   "b": "flo",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, FLO solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "flo",
+   "b": "greyder",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Greyder sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "greyder",
+   "b": "harput-dibek",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Harput Dibek solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "harput-dibek",
+   "b": "hello-sweetie",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Hello Sweetie sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "hello-sweetie",
+   "b": "hummel",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Hummel solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "hummel",
+   "b": "sport-in-street",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Sport In Street sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "sport-in-street",
+   "b": "lee-cooper",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Lee Cooper solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "lee-cooper",
+   "b": "lescon",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Lescon sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "lescon",
+   "b": "loft",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Loft solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "loft",
+   "b": "ltb",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, LTB sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "ltb",
+   "b": "mad-parfumeur",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Mad Parfumeur solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "mad-parfumeur",
+   "b": "mavi",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Mavi sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "mavi",
+   "b": "mudo-city",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Mudo City solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "mudo-city",
+   "b": "my-takinti-luxury",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, My Takıntı Luxury sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "my-takinti-luxury",
+   "b": "penti",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Penti solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "penti",
+   "b": "sandik-gumus",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Sandık Gümüş sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "sandik-gumus",
+   "b": "takistir",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Takıştır solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "takistir",
+   "b": "tudors",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Tudors sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "koridor-4",
+   "b": "yuruyen-merdiven-4",
+   "adim": 3,
+   "tarif": "Koridorun başında solunuzdaki yürüyen merdivene yönelin",
+   "geriTarif": "Yürüyen merdivenden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "yuruyen-merdiven-3",
+   "b": "yuruyen-merdiven-4",
+   "adim": 25,
+   "tur": "yuruyen-merdiven",
+   "tarif": "Binmeden önce yan tutamağı bulun; inişte bant bitince adımınızı uzatın.",
+   "geriTarif": "Binmeden önce yan tutamağı bulun; inişte bant bitince adımınızı uzatın."
+  },
+  {
+   "a": "koridor-4",
+   "b": "asansor-4",
+   "adim": 3,
+   "tarif": "Koridorun başında sağınızdaki asansöre yönelin",
+   "geriTarif": "Asansörden çıkınca koridora doğru ilerleyin"
+  },
+  {
+   "a": "asansor-3",
+   "b": "asansor-4",
+   "adim": 35,
+   "tur": "asansor",
+   "tarif": "Düğmelerde kabartma yazı olabilir; sorabilirsiniz.",
+   "geriTarif": "Düğmelerde kabartma yazı olabilir; sorabilirsiniz."
+  },
+  {
+   "a": "koridor-4",
+   "b": "addax",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Addax solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "addax",
+   "b": "arby-s",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Arby's sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "arby-s",
+   "b": "baydoner",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Baydöner solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "baydoner",
+   "b": "bedrock-bowling",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Bedrock Bowling sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "bedrock-bowling",
+   "b": "burger-king",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Burger King solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "burger-king",
+   "b": "bursa-kebap-evi",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Bursa Kebap Evi sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "bursa-kebap-evi",
+   "b": "cinema",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Cinema solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "cinema",
+   "b": "dal-temapark",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Dal Temapark sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "dal-temapark",
+   "b": "dominos",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Dominos solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "dominos",
+   "b": "durumle",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Dürümle sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "durumle",
+   "b": "green-salads",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Green Salads solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "green-salads",
+   "b": "gs-store",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, GS Store sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "gs-store",
+   "b": "hacioglu",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Hacıoğlu solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "hacioglu",
+   "b": "hd-iskender",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, HD İskender sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "hd-iskender",
+   "b": "ice-berry",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Ice Berry solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "ice-berry",
+   "b": "kahve-dukkani",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Kahve Dükkanı sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "kahve-dukkani",
+   "b": "kayseri-mutfagi",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Kayseri Mutfağı solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "kayseri-mutfagi",
+   "b": "doyuyo",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Doyuyo! sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "doyuyo",
+   "b": "mado",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Mado solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "mado",
+   "b": "mcdonald-s",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, McDonald's sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "mcdonald-s",
+   "b": "packet-burger",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Packet Burger solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "packet-burger",
+   "b": "pasaport-pizza",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Pasaport Pizza sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "pasaport-pizza",
+   "b": "penguen-books-coffee",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Penguen Books Coffee solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "penguen-books-coffee",
+   "b": "pide-by-pide",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Pide by Pide sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "pide-by-pide",
+   "b": "pidem",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Pidem solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "pidem",
+   "b": "pideye",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Pideye sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "pideye",
+   "b": "popeyes",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Popeyes solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "popeyes",
+   "b": "suat-usta",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Suat Usta sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "suat-usta",
+   "b": "subway",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Subway solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "subway",
+   "b": "tavuk-dunyasi",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Tavuk Dünyası sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "tavuk-dunyasi",
+   "b": "tedi",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Tedi solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "tedi",
+   "b": "toyzz-shop",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Toyzz Shop sağınızda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "toyzz-shop",
+   "b": "usta-donerci",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, Usta Dönerci solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  }
+ ],
+ "hedefler": [
+  {
+   "ad": "Car Wax",
+   "nokta": "car-wax",
+   "tarif": "Car Wax kapısı solunuzda.",
+   "anahtarlar": [
+    "car wax",
+    "car",
+    "wax",
+    "hizmet",
+    "oto yıkama"
+   ]
+  },
+  {
+   "ad": "Gebze Pet Shop",
+   "nokta": "gebze-pet-shop",
+   "tarif": "Gebze Pet Shop kapısı sağınızda.",
+   "anahtarlar": [
+    "gebze pet shop",
+    "gebze",
+    "pet",
+    "shop",
+    "hizmet",
+    "evcil hayvan"
+   ]
+  },
+  {
+   "ad": "Jolly",
+   "nokta": "jolly",
+   "tarif": "Jolly kapısı solunuzda.",
+   "anahtarlar": [
+    "jolly",
+    "hizmet",
+    "tatil",
+    "tur"
+   ]
+  },
+  {
+   "ad": "Kunduracı Fatih",
+   "nokta": "kunduraci-fatih",
+   "tarif": "Kunduracı Fatih kapısı sağınızda.",
+   "anahtarlar": [
+    "kunduracı fatih",
+    "kunduracı",
+    "fatih",
+    "hizmet",
+    "ayakkabı tamiri"
+   ]
+  },
+  {
+   "ad": "Lemoon Tobacco Shop",
+   "nokta": "lemoon-tobacco-shop",
+   "tarif": "Lemoon Tobacco Shop kapısı solunuzda.",
+   "anahtarlar": [
+    "lemoon tobacco shop",
+    "lemoon",
+    "tobacco",
+    "shop",
+    "hizmet",
+    "tütün"
+   ]
+  },
+  {
+   "ad": "Mandamarina Doğal Yaşam & Aktar",
+   "nokta": "mandamarina-dogal-yasam-aktar",
+   "tarif": "Mandamarina Doğal Yaşam & Aktar kapısı sağınızda.",
+   "anahtarlar": [
+    "mandamarina doğal yaşam & aktar",
+    "mandamarina",
+    "doğal",
+    "yaşam",
+    "aktar",
+    "kozmetik",
+    "kişisel bakım",
+    "güzellik"
+   ]
+  },
+  {
+   "ad": "Terzi Ercan",
+   "nokta": "terzi-ercan",
+   "tarif": "Terzi Ercan kapısı solunuzda.",
+   "anahtarlar": [
+    "terzi ercan",
+    "terzi",
+    "ercan",
+    "hizmet"
+   ]
+  },
+  {
+   "ad": "David People Coffee",
+   "nokta": "david-people-coffee",
+   "tarif": "David People Coffee kapısı solunuzda.",
+   "anahtarlar": [
+    "david people coffee",
+    "david",
+    "people",
+    "coffee",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran",
+    "kahve"
+   ]
+  },
+  {
+   "ad": "Bambi Yatak",
+   "nokta": "bambi-yatak",
+   "tarif": "Bambi Yatak kapısı sağınızda.",
+   "anahtarlar": [
+    "bambi yatak",
+    "bambi",
+    "yatak",
+    "mağaza"
+   ]
+  },
+  {
+   "ad": "Beko",
+   "nokta": "beko",
+   "tarif": "Beko kapısı solunuzda.",
+   "anahtarlar": [
+    "beko",
+    "beyaz eşya",
+    "elektronik",
+    "ev aletleri"
+   ]
+  },
+  {
+   "ad": "Big Bubble Tea",
+   "nokta": "big-bubble-tea",
+   "tarif": "Big Bubble Tea kapısı sağınızda.",
+   "anahtarlar": [
+    "big bubble tea",
+    "big",
+    "bubble",
+    "tea",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran"
+   ]
+  },
+  {
+   "ad": "Bosch",
+   "nokta": "bosch",
+   "tarif": "Bosch kapısı solunuzda.",
+   "anahtarlar": [
+    "bosch",
+    "beyaz eşya",
+    "elektronik",
+    "ev aletleri"
+   ]
+  },
+  {
+   "ad": "Dino Lino Funpark",
+   "nokta": "dino-lino-funpark",
+   "tarif": "Dino Lino Funpark kapısı sağınızda.",
+   "anahtarlar": [
+    "dino lino funpark",
+    "dino",
+    "lino",
+    "funpark",
+    "eğlence",
+    "oyun",
+    "çocuk"
+   ]
+  },
+  {
+   "ad": "English Home",
+   "nokta": "english-home",
+   "tarif": "English Home kapısı solunuzda.",
+   "anahtarlar": [
+    "english home",
+    "english",
+    "home",
+    "ev",
+    "dekorasyon",
+    "mutfak",
+    "ev tekstili"
+   ]
+  },
+  {
+   "ad": "Enza Home",
+   "nokta": "enza-home",
+   "tarif": "Enza Home kapısı sağınızda.",
+   "anahtarlar": [
+    "enza home",
+    "enza",
+    "home",
+    "ev",
+    "dekorasyon",
+    "mutfak",
+    "ev tekstili",
+    "mobilya"
+   ]
+  },
+  {
+   "ad": "Evidea",
+   "nokta": "evidea",
+   "tarif": "Evidea kapısı solunuzda.",
+   "anahtarlar": [
+    "evidea",
+    "ev",
+    "dekorasyon",
+    "mutfak",
+    "ev tekstili"
+   ]
+  },
+  {
+   "ad": "Gallery Crystal",
+   "nokta": "gallery-crystal",
+   "tarif": "Gallery Crystal kapısı sağınızda.",
+   "anahtarlar": [
+    "gallery crystal",
+    "gallery",
+    "crystal",
+    "ev",
+    "dekorasyon",
+    "mutfak",
+    "ev tekstili"
+   ]
+  },
+  {
+   "ad": "Gratis",
+   "nokta": "gratis",
+   "tarif": "Gratis kapısı solunuzda.",
+   "anahtarlar": [
+    "gratis",
+    "kozmetik",
+    "kişisel bakım",
+    "güzellik"
+   ]
+  },
+  {
+   "ad": "Homend",
+   "nokta": "homend",
+   "tarif": "Homend kapısı sağınızda.",
+   "anahtarlar": [
+    "homend",
+    "beyaz eşya",
+    "elektronik",
+    "ev aletleri"
+   ]
+  },
+  {
+   "ad": "Jumbo",
+   "nokta": "jumbo",
+   "tarif": "Jumbo kapısı solunuzda.",
+   "anahtarlar": [
+    "jumbo",
+    "beyaz eşya",
+    "elektronik",
+    "ev aletleri"
+   ]
+  },
+  {
+   "ad": "Karaca",
+   "nokta": "karaca",
+   "tarif": "Karaca kapısı sağınızda.",
+   "anahtarlar": [
+    "karaca",
+    "ev",
+    "dekorasyon",
+    "mutfak",
+    "ev tekstili"
+   ]
+  },
+  {
+   "ad": "Beşiktaş Kartal Yuvası",
+   "nokta": "besiktas-kartal-yuvasi",
+   "tarif": "Beşiktaş Kartal Yuvası kapısı solunuzda.",
+   "anahtarlar": [
+    "beşiktaş kartal yuvası",
+    "beşiktaş",
+    "kartal",
+    "yuvası",
+    "spor",
+    "spor giyim",
+    "eşofman",
+    "forma"
+   ]
+  },
+  {
+   "ad": "Koçtaş",
+   "nokta": "koctas",
+   "tarif": "Koçtaş kapısı sağınızda.",
+   "anahtarlar": [
+    "koçtaş",
+    "mağaza",
+    "yapı market"
+   ]
+  },
+  {
+   "ad": "Krispy Kreme",
+   "nokta": "krispy-kreme",
+   "tarif": "Krispy Kreme kapısı solunuzda.",
+   "anahtarlar": [
+    "krispy kreme",
+    "krispy",
+    "kreme",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran",
+    "donut"
+   ]
+  },
+  {
+   "ad": "LG",
+   "nokta": "lg",
+   "tarif": "LG kapısı sağınızda.",
+   "anahtarlar": [
+    "lg",
+    "teknoloji",
+    "elektronik",
+    "telefon"
+   ]
+  },
+  {
+   "ad": "Madame Coco",
+   "nokta": "madame-coco",
+   "tarif": "Madame Coco kapısı solunuzda.",
+   "anahtarlar": [
+    "madame coco",
+    "madame",
+    "coco",
+    "ev",
+    "dekorasyon",
+    "mutfak",
+    "ev tekstili"
+   ]
+  },
+  {
+   "ad": "Mi Store",
+   "nokta": "mi-store",
+   "tarif": "Mi Store kapısı sağınızda.",
+   "anahtarlar": [
+    "mi store",
+    "store",
+    "teknoloji",
+    "elektronik",
+    "telefon"
+   ]
+  },
+  {
+   "ad": "Mısır Evi",
+   "nokta": "misir-evi",
+   "tarif": "Mısır Evi kapısı solunuzda.",
+   "anahtarlar": [
+    "mısır evi",
+    "mısır",
+    "evi",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran"
+   ]
+  },
+  {
+   "ad": "Mobilup",
+   "nokta": "mobilup",
+   "tarif": "Mobilup kapısı sağınızda.",
+   "anahtarlar": [
+    "mobilup",
+    "hizmet",
+    "telefon tamiri"
+   ]
+  },
+  {
+   "ad": "Muscent",
+   "nokta": "muscent",
+   "tarif": "Muscent kapısı solunuzda.",
+   "anahtarlar": [
+    "muscent",
+    "kozmetik",
+    "kişisel bakım",
+    "güzellik",
+    "parfüm"
+   ]
+  },
+  {
+   "ad": "Necco",
+   "nokta": "necco",
+   "tarif": "Necco kapısı sağınızda.",
+   "anahtarlar": [
+    "necco",
+    "hizmet"
+   ]
+  },
+  {
+   "ad": "Özdilek",
+   "nokta": "ozdilek",
+   "tarif": "Özdilek kapısı solunuzda.",
+   "anahtarlar": [
+    "özdilek",
+    "ev",
+    "dekorasyon",
+    "mutfak",
+    "ev tekstili"
+   ]
+  },
+  {
+   "ad": "Reeder",
+   "nokta": "reeder",
+   "tarif": "Reeder kapısı sağınızda.",
+   "anahtarlar": [
+    "reeder",
+    "teknoloji",
+    "elektronik",
+    "telefon"
+   ]
+  },
+  {
+   "ad": "Rossmann",
+   "nokta": "rossmann",
+   "tarif": "Rossmann kapısı solunuzda.",
+   "anahtarlar": [
+    "rossmann",
+    "kozmetik",
+    "kişisel bakım",
+    "güzellik"
+   ]
+  },
+  {
+   "ad": "Samsung",
+   "nokta": "samsung",
+   "tarif": "Samsung kapısı sağınızda.",
+   "anahtarlar": [
+    "samsung",
+    "beyaz eşya",
+    "elektronik",
+    "ev aletleri"
+   ]
+  },
+  {
+   "ad": "Siemens",
+   "nokta": "siemens",
+   "tarif": "Siemens kapısı solunuzda.",
+   "anahtarlar": [
+    "siemens",
+    "beyaz eşya",
+    "elektronik",
+    "ev aletleri"
+   ]
+  },
+  {
+   "ad": "Takma Takma",
+   "nokta": "takma-takma",
+   "tarif": "Takma Takma kapısı sağınızda.",
+   "anahtarlar": [
+    "takma takma",
+    "takma",
+    "aksesuar",
+    "mücevher",
+    "takı",
+    "saat",
+    "altın"
+   ]
+  },
+  {
+   "ad": "Tatlı Evi",
+   "nokta": "tatli-evi",
+   "tarif": "Tatlı Evi kapısı solunuzda.",
+   "anahtarlar": [
+    "tatlı evi",
+    "tatlı",
+    "evi",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran"
+   ]
+  },
+  {
+   "ad": "Tekno SA exxtra",
+   "nokta": "tekno-sa-exxtra",
+   "tarif": "Tekno SA exxtra kapısı sağınızda.",
+   "anahtarlar": [
+    "tekno sa exxtra",
+    "tekno",
+    "exxtra",
+    "teknoloji",
+    "elektronik",
+    "telefon"
+   ]
+  },
+  {
+   "ad": "Türk Telekom",
+   "nokta": "turk-telekom",
+   "tarif": "Türk Telekom kapısı solunuzda.",
+   "anahtarlar": [
+    "türk telekom",
+    "türk",
+    "telekom",
+    "hizmet",
+    "telefon",
+    "internet"
+   ]
+  },
+  {
+   "ad": "Turkcell",
+   "nokta": "turkcell",
+   "tarif": "Turkcell kapısı sağınızda.",
+   "anahtarlar": [
+    "turkcell",
+    "hizmet",
+    "telefon",
+    "hat"
+   ]
+  },
+  {
+   "ad": "Vodafone",
+   "nokta": "vodafone",
+   "tarif": "Vodafone kapısı solunuzda.",
+   "anahtarlar": [
+    "vodafone",
+    "hizmet",
+    "telefon",
+    "hat"
+   ]
+  },
+  {
+   "ad": "Xenon Smart",
+   "nokta": "xenon-smart",
+   "tarif": "Xenon Smart kapısı sağınızda.",
+   "anahtarlar": [
+    "xenon smart",
+    "xenon",
+    "smart",
+    "teknoloji",
+    "elektronik",
+    "telefon"
+   ]
+  },
+  {
+   "ad": "Yataş",
+   "nokta": "yatas",
+   "tarif": "Yataş kapısı solunuzda.",
+   "anahtarlar": [
+    "yataş",
+    "mağaza",
+    "yatak",
+    "mobilya"
+   ]
+  },
+  {
+   "ad": "5M Migros",
+   "nokta": "5m-migros",
+   "tarif": "5M Migros kapısı solunuzda.",
+   "anahtarlar": [
+    "5m migros",
+    "migros",
+    "mağaza",
+    "market",
+    "süpermarket",
+    "gıda"
+   ]
+  },
+  {
+   "ad": "Aker",
+   "nokta": "aker",
+   "tarif": "Aker kapısı sağınızda.",
+   "anahtarlar": [
+    "aker",
+    "giyim",
+    "kıyafet"
+   ]
+  },
+  {
+   "ad": "Altınbaş",
+   "nokta": "altinbas",
+   "tarif": "Altınbaş kapısı solunuzda.",
+   "anahtarlar": [
+    "altınbaş",
+    "aksesuar",
+    "mücevher",
+    "takı",
+    "saat",
+    "altın"
+   ]
+  },
+  {
+   "ad": "Altınyıldız Classics",
+   "nokta": "altinyildiz-classics",
+   "tarif": "Altınyıldız Classics kapısı sağınızda.",
+   "anahtarlar": [
+    "altınyıldız classics",
+    "altınyıldız",
+    "classics",
+    "giyim",
+    "kıyafet"
+   ]
+  },
+  {
+   "ad": "Atasay",
+   "nokta": "atasay",
+   "tarif": "Atasay kapısı solunuzda.",
+   "anahtarlar": [
+    "atasay",
+    "aksesuar",
+    "mücevher",
+    "takı",
+    "saat",
+    "altın"
+   ]
+  },
+  {
+   "ad": "Atasun Optik",
+   "nokta": "atasun-optik",
+   "tarif": "Atasun Optik kapısı sağınızda.",
+   "anahtarlar": [
+    "atasun optik",
+    "atasun",
+    "optik",
+    "kozmetik",
+    "kişisel bakım",
+    "güzellik",
+    "gözlük"
+   ]
+  },
+  {
+   "ad": "AVVA",
+   "nokta": "avva",
+   "tarif": "AVVA kapısı solunuzda.",
+   "anahtarlar": [
+    "avva",
+    "giyim",
+    "kıyafet"
+   ]
+  },
+  {
+   "ad": "Kuafera",
+   "nokta": "kuafera",
+   "tarif": "Kuafera kapısı sağınızda.",
+   "anahtarlar": [
+    "kuafera",
+    "kozmetik",
+    "kişisel bakım",
+    "güzellik",
+    "kuaför"
+   ]
+  },
+  {
+   "ad": "Boyner",
+   "nokta": "boyner",
+   "tarif": "Boyner kapısı solunuzda.",
+   "anahtarlar": [
+    "boyner",
+    "mağaza",
+    "giyim"
+   ]
+  },
+  {
+   "ad": "UKI",
+   "nokta": "uki",
+   "tarif": "UKI kapısı sağınızda.",
+   "anahtarlar": [
+    "uki",
+    "giyim",
+    "kıyafet"
+   ]
+  },
+  {
+   "ad": "Chef's Corner",
+   "nokta": "chef-s-corner",
+   "tarif": "Chef's Corner kapısı solunuzda.",
+   "anahtarlar": [
+    "chef's corner",
+    "chef's",
+    "corner",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran"
+   ]
+  },
+  {
+   "ad": "Dagi",
+   "nokta": "dagi",
+   "tarif": "Dagi kapısı sağınızda.",
+   "anahtarlar": [
+    "dagi",
+    "giyim",
+    "kıyafet"
+   ]
+  },
+  {
+   "ad": "D'S Damat",
+   "nokta": "d-s-damat",
+   "tarif": "D'S Damat kapısı solunuzda.",
+   "anahtarlar": [
+    "d's damat",
+    "d's",
+    "damat",
+    "giyim",
+    "kıyafet",
+    "takım elbise"
+   ]
+  },
+  {
+   "ad": "Dyson",
+   "nokta": "dyson",
+   "tarif": "Dyson kapısı sağınızda.",
+   "anahtarlar": [
+    "dyson",
+    "teknoloji",
+    "elektronik",
+    "telefon",
+    "süpürge"
+   ]
+  },
+  {
+   "ad": "Eco Dry Kuru Temizleme",
+   "nokta": "eco-dry-kuru-temizleme",
+   "tarif": "Eco Dry Kuru Temizleme kapısı solunuzda.",
+   "anahtarlar": [
+    "eco dry kuru temizleme",
+    "eco",
+    "dry",
+    "kuru",
+    "temizleme",
+    "hizmet",
+    "kuru temizleme"
+   ]
+  },
+  {
+   "ad": "Fenerium",
+   "nokta": "fenerium",
+   "tarif": "Fenerium kapısı sağınızda.",
+   "anahtarlar": [
+    "fenerium",
+    "spor",
+    "spor giyim",
+    "eşofman",
+    "forma"
+   ]
+  },
+  {
+   "ad": "Flormar",
+   "nokta": "flormar",
+   "tarif": "Flormar kapısı solunuzda.",
+   "anahtarlar": [
+    "flormar",
+    "kozmetik",
+    "kişisel bakım",
+    "güzellik",
+    "makyaj"
+   ]
+  },
+  {
+   "ad": "Genom Optik",
+   "nokta": "genom-optik",
+   "tarif": "Genom Optik kapısı sağınızda.",
+   "anahtarlar": [
+    "genom optik",
+    "genom",
+    "optik",
+    "kozmetik",
+    "kişisel bakım",
+    "güzellik",
+    "gözlük"
+   ]
+  },
+  {
+   "ad": "Greenwich Center of Coffee",
+   "nokta": "greenwich-center-of-coffee",
+   "tarif": "Greenwich Center of Coffee kapısı solunuzda.",
+   "anahtarlar": [
+    "greenwich center of coffee",
+    "greenwich",
+    "center",
+    "coffee",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran",
+    "kahve"
+   ]
+  },
+  {
+   "ad": "Kahve Dünyası",
+   "nokta": "kahve-dunyasi",
+   "tarif": "Kahve Dünyası kapısı sağınızda.",
+   "anahtarlar": [
+    "kahve dünyası",
+    "kahve",
+    "dünyası",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran"
+   ]
+  },
+  {
+   "ad": "Kiğılı",
+   "nokta": "kigili",
+   "tarif": "Kiğılı kapısı solunuzda.",
+   "anahtarlar": [
+    "kiğılı",
+    "giyim",
+    "kıyafet"
+   ]
+  },
+  {
+   "ad": "Koton",
+   "nokta": "koton",
+   "tarif": "Koton kapısı sağınızda.",
+   "anahtarlar": [
+    "koton",
+    "giyim",
+    "kıyafet"
+   ]
+  },
+  {
+   "ad": "Kuppeli Accessories",
+   "nokta": "kuppeli-accessories",
+   "tarif": "Kuppeli Accessories kapısı solunuzda.",
+   "anahtarlar": [
+    "kuppeli accessories",
+    "kuppeli",
+    "accessories",
+    "aksesuar",
+    "mücevher",
+    "takı",
+    "saat",
+    "altın"
+   ]
+  },
+  {
+   "ad": "LC Waikiki",
+   "nokta": "lc-waikiki",
+   "tarif": "LC Waikiki kapısı sağınızda.",
+   "anahtarlar": [
+    "lc waikiki",
+    "waikiki",
+    "giyim",
+    "kıyafet"
+   ]
+  },
+  {
+   "ad": "LCW Home & Dream",
+   "nokta": "lcw-home-dream",
+   "tarif": "LCW Home & Dream kapısı solunuzda.",
+   "anahtarlar": [
+    "lcw home & dream",
+    "lcw",
+    "home",
+    "dream",
+    "ev",
+    "dekorasyon",
+    "mutfak",
+    "ev tekstili"
+   ]
+  },
+  {
+   "ad": "Lufian",
+   "nokta": "lufian",
+   "tarif": "Lufian kapısı sağınızda.",
+   "anahtarlar": [
+    "lufian",
+    "giyim",
+    "kıyafet"
+   ]
+  },
+  {
+   "ad": "Mac Fit",
+   "nokta": "mac-fit",
+   "tarif": "Mac Fit kapısı solunuzda.",
+   "anahtarlar": [
+    "mac fit",
+    "mac",
+    "fit",
+    "eğlence",
+    "spor salonu"
+   ]
+  },
+  {
+   "ad": "Madame Moss",
+   "nokta": "madame-moss",
+   "tarif": "Madame Moss kapısı sağınızda.",
+   "anahtarlar": [
+    "madame moss",
+    "madame",
+    "moss",
+    "giyim",
+    "kıyafet"
+   ]
+  },
+  {
+   "ad": "Media Markt",
+   "nokta": "media-markt",
+   "tarif": "Media Markt kapısı solunuzda.",
+   "anahtarlar": [
+    "media markt",
+    "media",
+    "markt",
+    "teknoloji",
+    "elektronik",
+    "telefon"
+   ]
+  },
+  {
+   "ad": "Pandora",
+   "nokta": "pandora",
+   "tarif": "Pandora kapısı sağınızda.",
+   "anahtarlar": [
+    "pandora",
+    "aksesuar",
+    "mücevher",
+    "takı",
+    "saat",
+    "altın"
+   ]
+  },
+  {
+   "ad": "Saat&Saat",
+   "nokta": "saat-saat",
+   "tarif": "Saat&Saat kapısı solunuzda.",
+   "anahtarlar": [
+    "saat&saat",
+    "aksesuar",
+    "mücevher",
+    "takı",
+    "saat",
+    "altın"
+   ]
+  },
+  {
+   "ad": "Sarar",
+   "nokta": "sarar",
+   "tarif": "Sarar kapısı sağınızda.",
+   "anahtarlar": [
+    "sarar",
+    "giyim",
+    "kıyafet"
+   ]
+  },
+  {
+   "ad": "So Chic",
+   "nokta": "so-chic",
+   "tarif": "So Chic kapısı solunuzda.",
+   "anahtarlar": [
+    "so chic",
+    "chic",
+    "aksesuar",
+    "mücevher",
+    "takı",
+    "saat",
+    "altın"
+   ]
+  },
+  {
+   "ad": "Starbucks",
+   "nokta": "starbucks",
+   "tarif": "Starbucks kapısı sağınızda.",
+   "anahtarlar": [
+    "starbucks",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran",
+    "kahve"
+   ]
+  },
+  {
+   "ad": "Supplementler",
+   "nokta": "supplementler",
+   "tarif": "Supplementler kapısı solunuzda.",
+   "anahtarlar": [
+    "supplementler",
+    "kozmetik",
+    "kişisel bakım",
+    "güzellik",
+    "takviye"
+   ]
+  },
+  {
+   "ad": "Süvari",
+   "nokta": "suvari",
+   "tarif": "Süvari kapısı sağınızda.",
+   "anahtarlar": [
+    "süvari",
+    "giyim",
+    "kıyafet"
+   ]
+  },
+  {
+   "ad": "Suwen Lingerie",
+   "nokta": "suwen-lingerie",
+   "tarif": "Suwen Lingerie kapısı solunuzda.",
+   "anahtarlar": [
+    "suwen lingerie",
+    "suwen",
+    "lingerie",
+    "giyim",
+    "kıyafet",
+    "iç giyim"
+   ]
+  },
+  {
+   "ad": "U.S. Polo ASSN.",
+   "nokta": "u-s-polo-assn",
+   "tarif": "U.S. Polo ASSN. kapısı sağınızda.",
+   "anahtarlar": [
+    "u.s. polo assn.",
+    "u.s.",
+    "polo",
+    "assn.",
+    "giyim",
+    "kıyafet"
+   ]
+  },
+  {
+   "ad": "Watsons",
+   "nokta": "watsons",
+   "tarif": "Watsons kapısı solunuzda.",
+   "anahtarlar": [
+    "watsons",
+    "kozmetik",
+    "kişisel bakım",
+    "güzellik"
+   ]
+  },
+  {
+   "ad": "Yves Rocher",
+   "nokta": "yves-rocher",
+   "tarif": "Yves Rocher kapısı sağınızda.",
+   "anahtarlar": [
+    "yves rocher",
+    "yves",
+    "rocher",
+    "kozmetik",
+    "kişisel bakım",
+    "güzellik"
+   ]
+  },
+  {
+   "ad": "Adidas",
+   "nokta": "adidas",
+   "tarif": "Adidas kapısı solunuzda.",
+   "anahtarlar": [
+    "adidas",
+    "spor",
+    "spor giyim",
+    "eşofman"
+   ]
+  },
+  {
+   "ad": "Bambi",
+   "nokta": "bambi",
+   "tarif": "Bambi kapısı sağınızda.",
+   "anahtarlar": [
+    "bambi",
+    "ayakkabı",
+    "çanta"
+   ]
+  },
+  {
+   "ad": "Bargello",
+   "nokta": "bargello",
+   "tarif": "Bargello kapısı solunuzda.",
+   "anahtarlar": [
+    "bargello",
+    "kozmetik",
+    "kişisel bakım",
+    "güzellik",
+    "parfüm"
+   ]
+  },
+  {
+   "ad": "Chocnette",
+   "nokta": "chocnette",
+   "tarif": "Chocnette kapısı sağınızda.",
+   "anahtarlar": [
+    "chocnette",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran",
+    "çikolata"
+   ]
+  },
+  {
+   "ad": "THE CO",
+   "nokta": "the-co",
+   "tarif": "THE CO kapısı solunuzda.",
+   "anahtarlar": [
+    "the co",
+    "the",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran"
+   ]
+  },
+  {
+   "ad": "Colin's",
+   "nokta": "colin-s",
+   "tarif": "Colin's kapısı sağınızda.",
+   "anahtarlar": [
+    "colin's",
+    "giyim",
+    "kıyafet"
+   ]
+  },
+  {
+   "ad": "Creaphone",
+   "nokta": "creaphone",
+   "tarif": "Creaphone kapısı solunuzda.",
+   "anahtarlar": [
+    "creaphone",
+    "teknoloji",
+    "elektronik",
+    "telefon"
+   ]
+  },
+  {
+   "ad": "DeFacto",
+   "nokta": "defacto",
+   "tarif": "DeFacto kapısı sağınızda.",
+   "anahtarlar": [
+    "defacto",
+    "giyim",
+    "kıyafet"
+   ]
+  },
+  {
+   "ad": "Ebebek",
+   "nokta": "ebebek",
+   "tarif": "Ebebek kapısı solunuzda.",
+   "anahtarlar": [
+    "ebebek",
+    "çocuk",
+    "bebek",
+    "oyuncak"
+   ]
+  },
+  {
+   "ad": "Ecrou",
+   "nokta": "ecrou",
+   "tarif": "Ecrou kapısı sağınızda.",
+   "anahtarlar": [
+    "ecrou",
+    "giyim",
+    "kıyafet"
+   ]
+  },
+  {
+   "ad": "FLO",
+   "nokta": "flo",
+   "tarif": "FLO kapısı solunuzda.",
+   "anahtarlar": [
+    "flo",
+    "ayakkabı",
+    "çanta"
+   ]
+  },
+  {
+   "ad": "Greyder",
+   "nokta": "greyder",
+   "tarif": "Greyder kapısı sağınızda.",
+   "anahtarlar": [
+    "greyder",
+    "ayakkabı",
+    "çanta"
+   ]
+  },
+  {
+   "ad": "Harput Dibek",
+   "nokta": "harput-dibek",
+   "tarif": "Harput Dibek kapısı solunuzda.",
+   "anahtarlar": [
+    "harput dibek",
+    "harput",
+    "dibek",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran",
+    "kahve"
+   ]
+  },
+  {
+   "ad": "Hello Sweetie",
+   "nokta": "hello-sweetie",
+   "tarif": "Hello Sweetie kapısı sağınızda.",
+   "anahtarlar": [
+    "hello sweetie",
+    "hello",
+    "sweetie",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran",
+    "tatlı"
+   ]
+  },
+  {
+   "ad": "Hummel",
+   "nokta": "hummel",
+   "tarif": "Hummel kapısı solunuzda.",
+   "anahtarlar": [
+    "hummel",
+    "spor",
+    "spor giyim",
+    "eşofman"
+   ]
+  },
+  {
+   "ad": "Sport In Street",
+   "nokta": "sport-in-street",
+   "tarif": "Sport In Street kapısı sağınızda.",
+   "anahtarlar": [
+    "sport in street",
+    "sport",
+    "street",
+    "spor",
+    "spor giyim",
+    "eşofman"
+   ]
+  },
+  {
+   "ad": "Lee Cooper",
+   "nokta": "lee-cooper",
+   "tarif": "Lee Cooper kapısı solunuzda.",
+   "anahtarlar": [
+    "lee cooper",
+    "lee",
+    "cooper",
+    "giyim",
+    "kıyafet",
+    "ayakkabı"
+   ]
+  },
+  {
+   "ad": "Lescon",
+   "nokta": "lescon",
+   "tarif": "Lescon kapısı sağınızda.",
+   "anahtarlar": [
+    "lescon",
+    "spor",
+    "spor giyim",
+    "eşofman"
+   ]
+  },
+  {
+   "ad": "Loft",
+   "nokta": "loft",
+   "tarif": "Loft kapısı solunuzda.",
+   "anahtarlar": [
+    "loft",
+    "giyim",
+    "kıyafet"
+   ]
+  },
+  {
+   "ad": "LTB",
+   "nokta": "ltb",
+   "tarif": "LTB kapısı sağınızda.",
+   "anahtarlar": [
+    "ltb",
+    "giyim",
+    "kıyafet",
+    "kot"
+   ]
+  },
+  {
+   "ad": "Mad Parfumeur",
+   "nokta": "mad-parfumeur",
+   "tarif": "Mad Parfumeur kapısı solunuzda.",
+   "anahtarlar": [
+    "mad parfumeur",
+    "mad",
+    "parfumeur",
+    "kozmetik",
+    "kişisel bakım",
+    "güzellik",
+    "parfüm"
+   ]
+  },
+  {
+   "ad": "Mavi",
+   "nokta": "mavi",
+   "tarif": "Mavi kapısı sağınızda.",
+   "anahtarlar": [
+    "mavi",
+    "giyim",
+    "kıyafet",
+    "kot"
+   ]
+  },
+  {
+   "ad": "Mudo City",
+   "nokta": "mudo-city",
+   "tarif": "Mudo City kapısı solunuzda.",
+   "anahtarlar": [
+    "mudo city",
+    "mudo",
+    "city",
+    "giyim",
+    "kıyafet"
+   ]
+  },
+  {
+   "ad": "My Takıntı Luxury",
+   "nokta": "my-takinti-luxury",
+   "tarif": "My Takıntı Luxury kapısı sağınızda.",
+   "anahtarlar": [
+    "my takıntı luxury",
+    "takıntı",
+    "luxury",
+    "aksesuar",
+    "mücevher",
+    "takı",
+    "saat",
+    "altın"
+   ]
+  },
+  {
+   "ad": "Penti",
+   "nokta": "penti",
+   "tarif": "Penti kapısı solunuzda.",
+   "anahtarlar": [
+    "penti",
+    "giyim",
+    "kıyafet",
+    "çorap"
+   ]
+  },
+  {
+   "ad": "Sandık Gümüş",
+   "nokta": "sandik-gumus",
+   "tarif": "Sandık Gümüş kapısı sağınızda.",
+   "anahtarlar": [
+    "sandık gümüş",
+    "sandık",
+    "gümüş",
+    "aksesuar",
+    "mücevher",
+    "takı",
+    "saat",
+    "altın"
+   ]
+  },
+  {
+   "ad": "Takıştır",
+   "nokta": "takistir",
+   "tarif": "Takıştır kapısı solunuzda.",
+   "anahtarlar": [
+    "takıştır",
+    "aksesuar",
+    "mücevher",
+    "takı",
+    "saat",
+    "altın"
+   ]
+  },
+  {
+   "ad": "Tudors",
+   "nokta": "tudors",
+   "tarif": "Tudors kapısı sağınızda.",
+   "anahtarlar": [
+    "tudors",
+    "giyim",
+    "kıyafet",
+    "gömlek"
+   ]
+  },
+  {
+   "ad": "Addax",
+   "nokta": "addax",
+   "tarif": "Addax kapısı solunuzda.",
+   "anahtarlar": [
+    "addax",
+    "giyim",
+    "kıyafet"
+   ]
+  },
+  {
+   "ad": "Arby's",
+   "nokta": "arby-s",
+   "tarif": "Arby's kapısı sağınızda.",
+   "anahtarlar": [
+    "arby's",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran"
+   ]
+  },
+  {
+   "ad": "Baydöner",
+   "nokta": "baydoner",
+   "tarif": "Baydöner kapısı solunuzda.",
+   "anahtarlar": [
+    "baydöner",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran",
+    "döner"
+   ]
+  },
+  {
+   "ad": "Bedrock Bowling",
+   "nokta": "bedrock-bowling",
+   "tarif": "Bedrock Bowling kapısı sağınızda.",
+   "anahtarlar": [
+    "bedrock bowling",
+    "bedrock",
+    "bowling",
+    "eğlence"
+   ]
+  },
+  {
+   "ad": "Burger King",
+   "nokta": "burger-king",
+   "tarif": "Burger King kapısı solunuzda.",
+   "anahtarlar": [
+    "burger king",
+    "burger",
+    "king",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran",
+    "hamburger"
+   ]
+  },
+  {
+   "ad": "Bursa Kebap Evi",
+   "nokta": "bursa-kebap-evi",
+   "tarif": "Bursa Kebap Evi kapısı sağınızda.",
+   "anahtarlar": [
+    "bursa kebap evi",
+    "bursa",
+    "kebap",
+    "evi",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran"
+   ]
+  },
+  {
+   "ad": "Cinema",
+   "nokta": "cinema",
+   "tarif": "Cinema kapısı solunuzda.",
+   "anahtarlar": [
+    "cinema",
+    "eğlence",
+    "sinema",
+    "film"
+   ]
+  },
+  {
+   "ad": "Dal Temapark",
+   "nokta": "dal-temapark",
+   "tarif": "Dal Temapark kapısı sağınızda.",
+   "anahtarlar": [
+    "dal temapark",
+    "dal",
+    "temapark",
+    "eğlence",
+    "oyun"
+   ]
+  },
+  {
+   "ad": "Dominos",
+   "nokta": "dominos",
+   "tarif": "Dominos kapısı solunuzda.",
+   "anahtarlar": [
+    "dominos",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran",
+    "pizza"
+   ]
+  },
+  {
+   "ad": "Dürümle",
+   "nokta": "durumle",
+   "tarif": "Dürümle kapısı sağınızda.",
+   "anahtarlar": [
+    "dürümle",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran",
+    "dürüm"
+   ]
+  },
+  {
+   "ad": "Green Salads",
+   "nokta": "green-salads",
+   "tarif": "Green Salads kapısı solunuzda.",
+   "anahtarlar": [
+    "green salads",
+    "green",
+    "salads",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran",
+    "salata"
+   ]
+  },
+  {
+   "ad": "GS Store",
+   "nokta": "gs-store",
+   "tarif": "GS Store kapısı sağınızda.",
+   "anahtarlar": [
+    "gs store",
+    "store",
+    "spor",
+    "spor giyim",
+    "eşofman",
+    "forma"
+   ]
+  },
+  {
+   "ad": "Hacıoğlu",
+   "nokta": "hacioglu",
+   "tarif": "Hacıoğlu kapısı solunuzda.",
+   "anahtarlar": [
+    "hacıoğlu",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran"
+   ]
+  },
+  {
+   "ad": "HD İskender",
+   "nokta": "hd-iskender",
+   "tarif": "HD İskender kapısı sağınızda.",
+   "anahtarlar": [
+    "hd i̇skender",
+    "i̇skender",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran",
+    "iskender"
+   ]
+  },
+  {
+   "ad": "Ice Berry",
+   "nokta": "ice-berry",
+   "tarif": "Ice Berry kapısı solunuzda.",
+   "anahtarlar": [
+    "ice berry",
+    "ice",
+    "berry",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran",
+    "dondurma"
+   ]
+  },
+  {
+   "ad": "Kahve Dükkanı",
+   "nokta": "kahve-dukkani",
+   "tarif": "Kahve Dükkanı kapısı sağınızda.",
+   "anahtarlar": [
+    "kahve dükkanı",
+    "kahve",
+    "dükkanı",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran"
+   ]
+  },
+  {
+   "ad": "Kayseri Mutfağı",
+   "nokta": "kayseri-mutfagi",
+   "tarif": "Kayseri Mutfağı kapısı solunuzda.",
+   "anahtarlar": [
+    "kayseri mutfağı",
+    "kayseri",
+    "mutfağı",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran"
+   ]
+  },
+  {
+   "ad": "Doyuyo!",
+   "nokta": "doyuyo",
+   "tarif": "Doyuyo! kapısı sağınızda.",
+   "anahtarlar": [
+    "doyuyo!",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran"
+   ]
+  },
+  {
+   "ad": "Mado",
+   "nokta": "mado",
+   "tarif": "Mado kapısı solunuzda.",
+   "anahtarlar": [
+    "mado",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran",
+    "dondurma"
+   ]
+  },
+  {
+   "ad": "McDonald's",
+   "nokta": "mcdonald-s",
+   "tarif": "McDonald's kapısı sağınızda.",
+   "anahtarlar": [
+    "mcdonald's",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran",
+    "hamburger"
+   ]
+  },
+  {
+   "ad": "Packet Burger",
+   "nokta": "packet-burger",
+   "tarif": "Packet Burger kapısı solunuzda.",
+   "anahtarlar": [
+    "packet burger",
+    "packet",
+    "burger",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran",
+    "hamburger"
+   ]
+  },
+  {
+   "ad": "Pasaport Pizza",
+   "nokta": "pasaport-pizza",
+   "tarif": "Pasaport Pizza kapısı sağınızda.",
+   "anahtarlar": [
+    "pasaport pizza",
+    "pasaport",
+    "pizza",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran"
+   ]
+  },
+  {
+   "ad": "Penguen Books Coffee",
+   "nokta": "penguen-books-coffee",
+   "tarif": "Penguen Books Coffee kapısı solunuzda.",
+   "anahtarlar": [
+    "penguen books coffee",
+    "penguen",
+    "books",
+    "coffee",
+    "eğlence",
+    "kitap",
+    "kahve"
+   ]
+  },
+  {
+   "ad": "Pide by Pide",
+   "nokta": "pide-by-pide",
+   "tarif": "Pide by Pide kapısı sağınızda.",
+   "anahtarlar": [
+    "pide by pide",
+    "pide",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran"
+   ]
+  },
+  {
+   "ad": "Pidem",
+   "nokta": "pidem",
+   "tarif": "Pidem kapısı solunuzda.",
+   "anahtarlar": [
+    "pidem",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran",
+    "pide"
+   ]
+  },
+  {
+   "ad": "Pideye",
+   "nokta": "pideye",
+   "tarif": "Pideye kapısı sağınızda.",
+   "anahtarlar": [
+    "pideye",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran",
+    "pide"
+   ]
+  },
+  {
+   "ad": "Popeyes",
+   "nokta": "popeyes",
+   "tarif": "Popeyes kapısı solunuzda.",
+   "anahtarlar": [
+    "popeyes",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran",
+    "tavuk"
+   ]
+  },
+  {
+   "ad": "Suat Usta",
+   "nokta": "suat-usta",
+   "tarif": "Suat Usta kapısı sağınızda.",
+   "anahtarlar": [
+    "suat usta",
+    "suat",
+    "usta",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran"
+   ]
+  },
+  {
+   "ad": "Subway",
+   "nokta": "subway",
+   "tarif": "Subway kapısı solunuzda.",
+   "anahtarlar": [
+    "subway",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran",
+    "sandviç"
+   ]
+  },
+  {
+   "ad": "Tavuk Dünyası",
+   "nokta": "tavuk-dunyasi",
+   "tarif": "Tavuk Dünyası kapısı sağınızda.",
+   "anahtarlar": [
+    "tavuk dünyası",
+    "tavuk",
+    "dünyası",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran"
+   ]
+  },
+  {
+   "ad": "Tedi",
+   "nokta": "tedi",
+   "tarif": "Tedi kapısı solunuzda.",
+   "anahtarlar": [
+    "tedi",
+    "mağaza"
+   ]
+  },
+  {
+   "ad": "Toyzz Shop",
+   "nokta": "toyzz-shop",
+   "tarif": "Toyzz Shop kapısı sağınızda.",
+   "anahtarlar": [
+    "toyzz shop",
+    "toyzz",
+    "shop",
+    "çocuk",
+    "bebek",
+    "oyuncak"
+   ]
+  },
+  {
+   "ad": "Usta Dönerci",
+   "nokta": "usta-donerci",
+   "tarif": "Usta Dönerci kapısı solunuzda.",
+   "anahtarlar": [
+    "usta dönerci",
+    "usta",
+    "dönerci",
+    "yemek",
+    "yiyecek",
+    "içecek",
+    "kafe",
+    "restoran",
+    "döner"
+   ]
+  }
+ ],
+ "plan": {
+  "konum": {
+   "giris": [
+    0,
+    15
+   ],
+   "koridor-0": [
+    0,
+    0
+   ],
+   "yuruyen-merdiven-0": [
+    -9,
+    0
+   ],
+   "asansor-0": [
+    -18,
+    0
+   ],
+   "car-wax": [
+    9,
+    3.5
+   ],
+   "gebze-pet-shop": [
+    18,
+    -3.5
+   ],
+   "jolly": [
+    27,
+    3.5
+   ],
+   "kunduraci-fatih": [
+    36,
+    -3.5
+   ],
+   "lemoon-tobacco-shop": [
+    45,
+    3.5
+   ],
+   "mandamarina-dogal-yasam-aktar": [
+    54,
+    -3.5
+   ],
+   "terzi-ercan": [
+    63,
+    3.5
+   ],
+   "koridor-1": [
+    0,
+    11
+   ],
+   "yuruyen-merdiven-1": [
+    -9,
+    11
+   ],
+   "asansor-1": [
+    -18,
+    11
+   ],
+   "david-people-coffee": [
+    9,
+    14.5
+   ],
+   "bambi-yatak": [
+    18,
+    7.5
+   ],
+   "beko": [
+    27,
+    14.5
+   ],
+   "big-bubble-tea": [
+    36,
+    7.5
+   ],
+   "bosch": [
+    45,
+    14.5
+   ],
+   "dino-lino-funpark": [
+    54,
+    7.5
+   ],
+   "english-home": [
+    63,
+    14.5
+   ],
+   "enza-home": [
+    72,
+    7.5
+   ],
+   "evidea": [
+    81,
+    14.5
+   ],
+   "gallery-crystal": [
+    90,
+    7.5
+   ],
+   "gratis": [
+    99,
+    14.5
+   ],
+   "homend": [
+    108,
+    7.5
+   ],
+   "jumbo": [
+    117,
+    14.5
+   ],
+   "karaca": [
+    126,
+    7.5
+   ],
+   "besiktas-kartal-yuvasi": [
+    135,
+    14.5
+   ],
+   "koctas": [
+    144,
+    7.5
+   ],
+   "krispy-kreme": [
+    153,
+    14.5
+   ],
+   "lg": [
+    162,
+    7.5
+   ],
+   "madame-coco": [
+    171,
+    14.5
+   ],
+   "mi-store": [
+    180,
+    7.5
+   ],
+   "misir-evi": [
+    189,
+    14.5
+   ],
+   "mobilup": [
+    198,
+    7.5
+   ],
+   "muscent": [
+    207,
+    14.5
+   ],
+   "necco": [
+    216,
+    7.5
+   ],
+   "ozdilek": [
+    225,
+    14.5
+   ],
+   "reeder": [
+    234,
+    7.5
+   ],
+   "rossmann": [
+    243,
+    14.5
+   ],
+   "samsung": [
+    252,
+    7.5
+   ],
+   "siemens": [
+    261,
+    14.5
+   ],
+   "takma-takma": [
+    270,
+    7.5
+   ],
+   "tatli-evi": [
+    279,
+    14.5
+   ],
+   "tekno-sa-exxtra": [
+    288,
+    7.5
+   ],
+   "turk-telekom": [
+    297,
+    14.5
+   ],
+   "turkcell": [
+    306,
+    7.5
+   ],
+   "vodafone": [
+    315,
+    14.5
+   ],
+   "xenon-smart": [
+    324,
+    7.5
+   ],
+   "yatas": [
+    333,
+    14.5
+   ],
+   "koridor-2": [
+    0,
+    22
+   ],
+   "yuruyen-merdiven-2": [
+    -9,
+    22
+   ],
+   "asansor-2": [
+    -18,
+    22
+   ],
+   "5m-migros": [
+    9,
+    25.5
+   ],
+   "aker": [
+    18,
+    18.5
+   ],
+   "altinbas": [
+    27,
+    25.5
+   ],
+   "altinyildiz-classics": [
+    36,
+    18.5
+   ],
+   "atasay": [
+    45,
+    25.5
+   ],
+   "atasun-optik": [
+    54,
+    18.5
+   ],
+   "avva": [
+    63,
+    25.5
+   ],
+   "kuafera": [
+    72,
+    18.5
+   ],
+   "boyner": [
+    81,
+    25.5
+   ],
+   "uki": [
+    90,
+    18.5
+   ],
+   "chef-s-corner": [
+    99,
+    25.5
+   ],
+   "dagi": [
+    108,
+    18.5
+   ],
+   "d-s-damat": [
+    117,
+    25.5
+   ],
+   "dyson": [
+    126,
+    18.5
+   ],
+   "eco-dry-kuru-temizleme": [
+    135,
+    25.5
+   ],
+   "fenerium": [
+    144,
+    18.5
+   ],
+   "flormar": [
+    153,
+    25.5
+   ],
+   "genom-optik": [
+    162,
+    18.5
+   ],
+   "greenwich-center-of-coffee": [
+    171,
+    25.5
+   ],
+   "kahve-dunyasi": [
+    180,
+    18.5
+   ],
+   "kigili": [
+    189,
+    25.5
+   ],
+   "koton": [
+    198,
+    18.5
+   ],
+   "kuppeli-accessories": [
+    207,
+    25.5
+   ],
+   "lc-waikiki": [
+    216,
+    18.5
+   ],
+   "lcw-home-dream": [
+    225,
+    25.5
+   ],
+   "lufian": [
+    234,
+    18.5
+   ],
+   "mac-fit": [
+    243,
+    25.5
+   ],
+   "madame-moss": [
+    252,
+    18.5
+   ],
+   "media-markt": [
+    261,
+    25.5
+   ],
+   "pandora": [
+    270,
+    18.5
+   ],
+   "saat-saat": [
+    279,
+    25.5
+   ],
+   "sarar": [
+    288,
+    18.5
+   ],
+   "so-chic": [
+    297,
+    25.5
+   ],
+   "starbucks": [
+    306,
+    18.5
+   ],
+   "supplementler": [
+    315,
+    25.5
+   ],
+   "suvari": [
+    324,
+    18.5
+   ],
+   "suwen-lingerie": [
+    333,
+    25.5
+   ],
+   "u-s-polo-assn": [
+    342,
+    18.5
+   ],
+   "watsons": [
+    351,
+    25.5
+   ],
+   "yves-rocher": [
+    360,
+    18.5
+   ],
+   "koridor-3": [
+    0,
+    33
+   ],
+   "yuruyen-merdiven-3": [
+    -9,
+    33
+   ],
+   "asansor-3": [
+    -18,
+    33
+   ],
+   "adidas": [
+    9,
+    36.5
+   ],
+   "bambi": [
+    18,
+    29.5
+   ],
+   "bargello": [
+    27,
+    36.5
+   ],
+   "chocnette": [
+    36,
+    29.5
+   ],
+   "the-co": [
+    45,
+    36.5
+   ],
+   "colin-s": [
+    54,
+    29.5
+   ],
+   "creaphone": [
+    63,
+    36.5
+   ],
+   "defacto": [
+    72,
+    29.5
+   ],
+   "ebebek": [
+    81,
+    36.5
+   ],
+   "ecrou": [
+    90,
+    29.5
+   ],
+   "flo": [
+    99,
+    36.5
+   ],
+   "greyder": [
+    108,
+    29.5
+   ],
+   "harput-dibek": [
+    117,
+    36.5
+   ],
+   "hello-sweetie": [
+    126,
+    29.5
+   ],
+   "hummel": [
+    135,
+    36.5
+   ],
+   "sport-in-street": [
+    144,
+    29.5
+   ],
+   "lee-cooper": [
+    153,
+    36.5
+   ],
+   "lescon": [
+    162,
+    29.5
+   ],
+   "loft": [
+    171,
+    36.5
+   ],
+   "ltb": [
+    180,
+    29.5
+   ],
+   "mad-parfumeur": [
+    189,
+    36.5
+   ],
+   "mavi": [
+    198,
+    29.5
+   ],
+   "mudo-city": [
+    207,
+    36.5
+   ],
+   "my-takinti-luxury": [
+    216,
+    29.5
+   ],
+   "penti": [
+    225,
+    36.5
+   ],
+   "sandik-gumus": [
+    234,
+    29.5
+   ],
+   "takistir": [
+    243,
+    36.5
+   ],
+   "tudors": [
+    252,
+    29.5
+   ],
+   "koridor-4": [
+    0,
+    44
+   ],
+   "yuruyen-merdiven-4": [
+    -9,
+    44
+   ],
+   "asansor-4": [
+    -18,
+    44
+   ],
+   "addax": [
+    9,
+    47.5
+   ],
+   "arby-s": [
+    18,
+    40.5
+   ],
+   "baydoner": [
+    27,
+    47.5
+   ],
+   "bedrock-bowling": [
+    36,
+    40.5
+   ],
+   "burger-king": [
+    45,
+    47.5
+   ],
+   "bursa-kebap-evi": [
+    54,
+    40.5
+   ],
+   "cinema": [
+    63,
+    47.5
+   ],
+   "dal-temapark": [
+    72,
+    40.5
+   ],
+   "dominos": [
+    81,
+    47.5
+   ],
+   "durumle": [
+    90,
+    40.5
+   ],
+   "green-salads": [
+    99,
+    47.5
+   ],
+   "gs-store": [
+    108,
+    40.5
+   ],
+   "hacioglu": [
+    117,
+    47.5
+   ],
+   "hd-iskender": [
+    126,
+    40.5
+   ],
+   "ice-berry": [
+    135,
+    47.5
+   ],
+   "kahve-dukkani": [
+    144,
+    40.5
+   ],
+   "kayseri-mutfagi": [
+    153,
+    47.5
+   ],
+   "doyuyo": [
+    162,
+    40.5
+   ],
+   "mado": [
+    171,
+    47.5
+   ],
+   "mcdonald-s": [
+    180,
+    40.5
+   ],
+   "packet-burger": [
+    189,
+    47.5
+   ],
+   "pasaport-pizza": [
+    198,
+    40.5
+   ],
+   "penguen-books-coffee": [
+    207,
+    47.5
+   ],
+   "pide-by-pide": [
+    216,
+    40.5
+   ],
+   "pidem": [
+    225,
+    47.5
+   ],
+   "pideye": [
+    234,
+    40.5
+   ],
+   "popeyes": [
+    243,
+    47.5
+   ],
+   "suat-usta": [
+    252,
+    40.5
+   ],
+   "subway": [
+    261,
+    47.5
+   ],
+   "tavuk-dunyasi": [
+    270,
+    40.5
+   ],
+   "tedi": [
+    279,
+    47.5
+   ],
+   "toyzz-shop": [
+    288,
+    40.5
+   ],
+   "usta-donerci": [
+    297,
+    47.5
+   ]
+  }
+ }
+}
