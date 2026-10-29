@@ -160,6 +160,14 @@ def modul_ekle(mekan: dict, plan: dict, tur: str, ad: str, *, yer: list[float], 
                baglanacak: str | None, olc: float, kat: int = 0) -> str:
     """Yeni modül: nokta (+ hedef türlerinde hedef), çizimdeki yeri ve isteğe bağlı olarak seçili modüle yol."""
     ad = ad.strip() or MODULLER[tur][0]
+    # "Yer ekle"de hepsi "Oda" seçiliyken "WC", "Danışma" yazılırsa doğru tür (ve "tuvalet" gibi söyleyişler) gelsin
+    if tur == "oda":
+        kucuk_ad = ad.replace("I", "ı").replace("İ", "i").lower()
+        for t, sozler in (("wc", ("wc", "tuvalet", "lavabo")), ("danisma", ("danışma", "bilgi masası")),
+                          ("asansor", ("asansör",)), ("merdiven", ("merdiven",))):
+            if any(soz in kucuk_ad for soz in sozler):
+                tur = t
+                break
     nokta_adi = f"{ad} girişi" if tur == "bina" else f"{ad} kapısı" if tur == "oda" else ad
     kimlik = _yeni_kimlik(mekan, ad)
     nokta = {"id": kimlik, "ad": nokta_adi}

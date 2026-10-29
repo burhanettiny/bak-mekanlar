@@ -122,6 +122,10 @@ dugumler = [{"id": n["id"], "ad": n["ad"], "x": konum_g[n["id"]][0], "y": -konum
              "tur": cz.modul_turu(mekan, plan, n["id"]), "hedef": n["id"] in hedef_noktalari,
              "giris": n["id"] == mekan.get("giris"), "icerik": icerik.get(n["id"], 0)}
             for n in mekan["noktalar"] if n["id"] in gorunen and n["id"] in konum_g]
+# Binanın içinde, binanın kendi kutusu dışarıyla bağlantı noktasıdır: "Bina girişi" olarak gösterilir
+for d in dugumler:
+    if d["id"] == gorunum:
+        d.update(ad="Bina girişi", tur="kavsak", hedef=False, giris=True, icerik=0)
 yollar = []
 for b in mekan["baglantilar"]:
     tur = b.get("tur") or "yuru"
@@ -165,8 +169,10 @@ with st.expander("Yer ekle", icon=":material/add_location_alt:", expanded=len(du
                                         format_func=lambda t: cz.MODULLER[t][0])
     with st.form("cizim-ekle", clear_on_submit=True, border=False):
         with st.container(horizontal=True, vertical_alignment="bottom"):
-            yeni_ad = st.text_input("Adı", placeholder="ör. Mühendislik Fakültesi" if yeni_tur == "bina"
-                                    else "ör. Kardiyoloji, Dekanlık, 112 nolu sınıf")
+            yeni_ad = st.text_input("Adı (virgülle birden çok)",
+                                    placeholder="ör. Mühendislik Fakültesi, Rektörlük" if yeni_tur == "bina"
+                                    else "ör. Sekreterlik, Dekan odası, 101, 102, WC",
+                                    help="Virgülle birden çok yer yazarsanız hepsi sırayla, koridor boyunca eklenir.")
             # Seçili modül yoksa binanın girişine (bina içinde) ya da kurumun girişine bağlanır
             baglanacak = secili if secili in gorunen else gorunum or (
                 mekan.get("giris") if mekan.get("giris") in gorunen else None)
@@ -190,8 +196,18 @@ with st.expander("Yer ekle", icon=":material/add_location_alt:", expanded=len(du
         yer = yer or [merkez[0] + uzak, merkez[1] + uzak]
         kat_yeni = kat if kat is not None else next((n.get("kat") or 0 for n in mekan["noktalar"]
                                                      if n["id"] == (gorunum or baglanacak)), 0)
-        kimlik = cz.modul_ekle(mekan, plan, yeni_tur, yeni_ad, yer=yer, ust=gorunum,
-                               baglanacak=baglanacak if bagla_mi else None, olc=olc_g, kat=kat_yeni)
+        # "101, 102, 103": ilki seçili modülün yanına, sonrakiler aynı yönde birbirinin ardına (koridor boyunca)
+        adlar_listesi = [a.strip() for a in yeni_ad.split(",") if a.strip()] or [""]
+        onceki, kimlik = baglanacak if bagla_mi else None, None
+        yon = (yer[0] - merkez[0], yer[1] - merkez[1])
+        for i, ad in enumerate(adlar_listesi):
+            if i:
+                yer = [yer[0] + yon[0], yer[1] + yon[1]]
+            kimlik = cz.modul_ekle(mekan, plan, yeni_tur, ad, yer=yer, ust=gorunum, baglanacak=onceki, olc=olc_g,
+                                   kat=kat_yeni)
+            onceki = kimlik   # sonraki yer bunun ardına bağlanır
+        if len(adlar_listesi) > 1:
+            st.toast(f"{len(adlar_listesi)} yer koridor boyunca sırayla eklendi.", icon=":material/check:")
         st.session_state.cizim_secili, st.session_state.cizim_yol = kimlik, None
         kaydet(mekan, plan)
         st.rerun()

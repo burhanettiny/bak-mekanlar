@@ -506,7 +506,7 @@ def test_cizim_sayfasi_bos_ve_sablonla_acilir_modul_eklenir():
     at = sablon_ac(uygulama())
     at.switch_page("app_pages/cizim_sayfasi.py").run()
     assert not at.exception
-    next(t for t in at.text_input if t.label == "Adı").input("Kütüphane")
+    next(t for t in at.text_input if t.label.startswith("Adı")).input("Kütüphane")
     next(b for b in at.button if b.label == "Ekle").click().run()
     assert not at.exception
     assert at.session_state["cizim_secili"] == "kutuphane"
@@ -605,3 +605,19 @@ def test_yarim_is_uyarisiz_silinmez():
     next(b for b in at.button if b.label == "Yeni başla").click().run()
     assert not at.exception
     assert at.session_state["bilgi"]["ad"] == ""
+
+
+def test_cizimde_virgulle_birden_cok_yer_koridor_boyunca_eklenir():
+    at = sablon_ac(uygulama(), "Okul (iki katlı, merdivenli ve rampalı)")
+    at.session_state["cizim_secili"] = "hol"
+    at.run()
+    next(t for t in at.text_input if t.label.startswith("Adı")).input("101, 102, WC")
+    next(b for b in at.button if b.label == "Ekle").click().run()
+    assert not at.exception
+    yollar = at.session_state["kaynak"]["yollar"]
+    zincir = {(a, b) for a, b in zip(yollar["a"], yollar["b"], strict=True)}
+    assert {("hol", "101"), ("101", "102"), ("102", "wc")} <= zincir
+    hedefler = set(at.session_state["kaynak"]["hedefler"]["ad"])
+    assert {"101", "102", "WC"} <= hedefler
+    wc = at.session_state["kaynak"]["hedefler"].set_index("ad").loc["WC", "anahtarlar"]
+    assert "tuvalet" in wc                                     # adından tuvalet olduğu anlaşıldı
