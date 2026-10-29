@@ -486,7 +486,7 @@ export default function (component) {
     baglaBtn.setAttribute("aria-pressed", String(d.bagla))
     ipucu.textContent = d.bagla
       ? (d.kaynak ? `${bul(d.kaynak)?.ad ?? ""} seçildi; bağlanacak ikinci modüle tıklayın.` : "Bağlanacak ilk modüle tıklayın.")
-      : `Modülleri sürükleyerek yerleştirin; 1 kare = ${data.olcek} adım. Tekerlekle yakınlaştırın, boş yeri sürükleyerek kaydırın.`
+      : "Kutuya tıklayın: ayarları açılır. Sürükleyin: aradaki adım sayısı değişir. Tekerlek: yakınlaştır."
   }
 
   function svgNokta(e) {

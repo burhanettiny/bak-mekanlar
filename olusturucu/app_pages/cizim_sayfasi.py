@@ -62,10 +62,23 @@ gorunum = st.session_state.cizim_gorunum if st.session_state.cizim_gorunum in ad
 secili = st.session_state.cizim_secili if st.session_state.cizim_secili in adlar else None
 ust = plan.get("ust") or {}
 
-st.title("Çizim")
-st.caption("Binanızı modül modül çizin: bina, oda, kavşak, danışma, tuvalet… Modülleri sürükleyerek yerleştirin; "
-           "aradaki yolların adım sayısı çizimdeki mesafeden hesaplanır. Bir binaya tıklayıp **İçini aç** deyince "
-           "odalarını eklersiniz. Yaptıklarınız Düzenle, Plan ve QR sayfalarına yansır.")
+st.title("Kontrol ve çizim")
+if st.session_state.pop("yeni_olusturuldu", False):
+    st.success("Düzeniniz hazır. Aşağıda kontrol edin: bir yere tıklayıp adını düzeltebilir, sürükleyip yerini "
+               "değiştirebilir, yeni yer ekleyebilirsiniz. Her şey doğruysa **4. Yazdır** adımına geçin.",
+               icon=":material/check_circle:")
+else:
+    st.caption("Bir kutuya tıklayınca altında ayarları açılır. Sürükleyince aradaki adım sayısı yeniden hesaplanır. "
+               "Bina kutusunda **İçini aç** ile odalarını eklersiniz.")
+
+# Kampüs gibi sıfırdan çizilen düzende kurumun adı burada sorulur (sihirbaz kullanılmadı)
+bilgi = st.session_state.bilgi
+if not gorunum:
+    yeni_ad = st.text_input("Kurumun adı", bilgi.get("ad") or "", placeholder="ör. Ardahan Üniversitesi Yenisey Kampüsü",
+                            key=f"cizim-kurum-adi-{st.session_state.surum_anahtari}")
+    if yeni_ad.strip() != (bilgi.get("ad") or ""):
+        bilgi["ad"] = yeni_ad.strip()
+        mekan["ad"] = bilgi["ad"]
 
 # ── Hangi çizim: dış çizim ya da bir binanın içi; birden çok katta kat seçimi ──
 with st.container(horizontal=True, vertical_alignment="center"):
@@ -76,8 +89,6 @@ with st.container(horizontal=True, vertical_alignment="center"):
             st.session_state.cizim_gorunum, st.session_state.cizim_secili = ust_gorunum, gorunum
             st.rerun()
         st.subheader(f"{bm.liste_adi(next((h for h in mekan['hedefler'] if h['nokta'] == gorunum), {'ad': adlar[gorunum]}))} – içi")
-    elif mekan.get("ad"):
-        st.subheader(mekan["ad"])
     gorunen_katlar = sorted({n.get("kat") or 0 for n in mekan["noktalar"]
                              if (ust.get(n["id"]) == gorunum if gorunum else n["id"] not in ust)})
     kat = None
@@ -136,8 +147,8 @@ if gorunum and not icerik.get(gorunum):
                 st.warning("Liste okunamadı. Her satıra bir kat yazın: \"Zemin kat: Sekreterlik, WC\".",
                            icon=":material/info:")
 
-# ── Modül ekleme ──────────────────────────────────────────
-with st.container(border=True):
+# ── Yer ekleme: çizim boşsa açık, değilse kapalı (önce kontrol, sonra ekleme) ──
+with st.expander("Yer ekle", icon=":material/add_location_alt:", expanded=len(dugumler) <= 1):
     secenekler = [t for t in cz.MODULLER if not (gorunum and t == "bina")]
     with st.container(horizontal=True, vertical_alignment="bottom"):
         yeni_tur = st.segmented_control("Eklenecek modül", secenekler, required=True, default="oda" if gorunum else
@@ -282,9 +293,20 @@ elif st.session_state.cizim_yol:
                 kaydet(mekan, plan)
                 st.rerun()
 
+# ── Tarifi deneyin: ziyaretçinin duyacağı tarif ──
+if mekan["hedefler"] and mekan.get("giris") in adlar:
+    with st.container(border=True):
+        st.markdown("**:material/hearing: Ziyaretçi ne duyacak?** Bir yer seçin; girişten oraya giden sesli tarif "
+                    "görünür.")
+        hedef_adi = st.selectbox("Gidilecek yer", [h["ad"] for h in mekan["hedefler"]], key="cizim-onizleme",
+                                 label_visibility="collapsed")
+        st.markdown("\n".join(f"1. {adim}" for adim in bm.rota_onizleme(mekan, hedef_adi)))
+
 hatalar, _ = bm.dogrula(mekan)
 with st.container(horizontal=True, vertical_alignment="center"):
-    st.caption(f":material/error: {len(hatalar)} eksik var; ayrıntılar QR sayfasında." if hatalar
-               else ":material/check_circle: Düzen geçerli.")
-    st.page_link("app_pages/duzenle.py", label="Tablolarda düzenle", icon=":material/edit_note:")
-    st.page_link("app_pages/yazdir.py", label="QR ve etiketler", icon=":material/qr_code_2:")
+    if hatalar:
+        st.caption(f":material/error: {len(hatalar)} eksik var: " + hatalar[0])
+    else:
+        st.caption(":material/check_circle: Düzen hazır.")
+    if st.button("4. Yazdır", type="primary", icon=":material/arrow_forward:"):
+        st.switch_page("app_pages/yazdir.py")

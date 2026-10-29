@@ -5,3 +5,6 @@ baseRadius = "medium"
 
 [server]
 maxUploadSize = 1
+
+[client]
+toolbarMode = "minimal"

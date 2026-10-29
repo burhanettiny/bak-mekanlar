@@ -38,7 +38,7 @@ def adresi_kontrol_et(adres: str, mekan: dict) -> tuple[bool, str]:
 mekan = durum.guncel_mekan()
 hatalar, uyarilar = bm.dogrula(mekan)
 
-st.title("QR ve etiketler")
+st.title("Yazdır")
 
 if hatalar:
     st.error("\n".join(f"- {h}" for h in hatalar), title="QR oluşturmadan önce düzeltin", icon=":material/error:")
@@ -53,29 +53,29 @@ if hatalar:
             if st.button("Bağlantıları düzelt", icon=":material/link:", type="primary"):
                 durum.mekani_tablolara_yaz(bm.kimlikleri_degistir(mekan, oneriler))
                 st.rerun()
-    st.page_link("app_pages/duzenle.py", label="Düzenle sayfasına git", icon=":material/edit_note:")
-for u in uyarilar:
-    st.warning(u, icon=":material/info:")
+    with st.container(horizontal=True):
+        st.page_link("app_pages/cizim_sayfasi.py", label="Çizimde düzelt", icon=":material/draw:")
+        st.page_link("app_pages/duzenle.py", label="Tablolarda düzelt", icon=":material/table_view:")
+# Uyarılar QR'ı engellemez: kalabalık etmesin diye kapalı bir kutuda
+if uyarilar:
+    with st.expander(f"{len(uyarilar)} öneri (QR'ı engellemez)", icon=":material/lightbulb:"):
+        for u in uyarilar:
+            st.markdown(f"- {u}")
 
 veri = None   # giriş QR'ının içeriği: düzenin kendisi ya da kurumun sitesindeki adresi
 if not hatalar:
     gomulu = bm.qr_verisi(mekan)
     sigmiyor = not bm.qr_sigar_mi(gomulu)
-    with st.container(border=True):
-        yontem = st.segmented_control(
-            "Bina bilgisi nerede dursun?", ["icinde", "adres"], required=True,
-            default="adres" if sigmiyor else "icinde", key="qr_yontemi",
-            format_func={"icinde": "QR'ın içinde (küçük ve orta binalar)",
-                         "adres": "Kurumun sitesinde (büyük binalar, AVM)"}.get)
-        if yontem == "icinde":
-            st.caption("İnternet gerekmez; ziyaretçinin telefonu bina bilgisini QR'dan okur. Bina değişirse "
-                       "giriş QR'ını yeniden basmanız gerekir.")
+    # Bina bilgisi normalde QR'ın içindedir (internet gerekmez); soru sorulmaz. Yalnızca QR'a sığmayacak kadar büyük
+    # binada ya da kurum sayfanın altındaki "Gelişmiş" kutusundan isterse bilgi kurumun sitesinde tutulur.
+    yontem = "adres" if sigmiyor or st.session_state.get("qr_adres_modu") else "icinde"
+    if yontem == "icinde":
+        veri = gomulu
+    else:
+        with st.container(border=True):
             if sigmiyor:
-                st.warning("Bina bilgisi tek QR'a sığmayacak kadar büyük; QR çok sık kareli oluyor ve telefon zor "
-                           "okur. **Kurumun sitesinde** seçeneğini kullanın.", icon=":material/warning:")
-            # Hiçbir QR'a sığmıyorsa (en büyük QR sürümünü de aşıyorsa) QR çizilemez
-            veri = gomulu if bm.qr_surumu(gomulu) is not None else None
-        else:
+                st.info("Binanız tek bir QR'a sığmayacak kadar büyük. Bina bilgisini kurumunuzun web sitesine koyup "
+                        "QR'a yalnızca adresini yazacağız.", icon=":material/info:")
             st.markdown(
                 "1. Aşağıdan **düzen dosyasını** indirin.\n"
                 "2. Dosyayı kurumunuzun web sitesine yükleyin (ör. `https://kurumunuz.com.tr/bak/duzen.json`).\n"
@@ -99,16 +99,16 @@ if not hatalar and veri:
     with sol, st.container(border=True):
         st.image(qr_resmi(veri), caption="Giriş QR'ı", alt=f"{mekan['ad']} için BAK giriş QR kodu")
     with sag:
-        st.success(f"{len(mekan['noktalar'])} nokta, {len(mekan['baglantilar'])} yol, "
-                   f"{len(mekan['hedefler'])} hedef.", title="Düzen geçerli, QR hazır",
+        st.success(f"Ziyaretçiye {len(mekan['hedefler'])} yer okunacak. {len(mekan['noktalar'])} etiket "
+                   "basılacak: biri girişe, diğerleri yol üstündeki noktalara.", title="QR hazır",
                    icon=":material/check_circle:")
         st.download_button("Etiketleri indir (yazdırmak için)", etiketler(bm.sade_json(mekan), veri),
                            file_name=f"{mekan['id']}-etiketler.html", mime="text/html", type="primary",
                            icon=":material/print:", width="stretch")
-        st.download_button("Düzen dosyasını sakla (.json)", durum.dosya_icerigi(mekan),
+        st.download_button("Daha sonra düzenlemek için kaydet (.json)", durum.dosya_icerigi(mekan),
                            file_name=f"{mekan['id']}.json", mime="application/json",
                            icon=":material/save:", width="stretch",
-                           help="Binayı daha sonra güncellemek için bu dosyayı Başla sayfasından geri yükleyin.")
+                           help="Binayı daha sonra güncellemek için bu dosyayı 1. Başla sayfasında açın.")
         st.download_button("Yalnızca giriş QR'ı (.png)", bm.qr_png(veri, kutu=12),
                            file_name=f"{mekan['id']}-giris.png", mime="image/png",
                            icon=":material/image:", width="stretch")
@@ -130,6 +130,14 @@ if not hatalar:
         if len(sayfalar) > 1:
             st.caption(f"Liste {bm.SAYFA_BOYU}'ar yer olarak okunur. Kısa adlar listeyi kısaltır; ziyaretçi "
                        "bir yerin adını biliyorsa listeyi beklemeden doğrudan söyleyebilir.")
+
+if not hatalar and not sigmiyor:  # noqa: F821 (sigmiyor yalnızca hata yoksa tanımlı)
+    with st.expander("Gelişmiş: bina bilgisini kurumun sitesinde tutmak", icon=":material/language:"):
+        st.toggle("Bina bilgisini kurumun sitesinde tut", key="qr_adres_modu",
+                  help="Gerekmez. Bina sık değişiyorsa işe yarar: değişince QR'ı yeniden basmak yerine sitedeki "
+                       "dosyayı güncellersiniz.")
+        st.caption("Kapalıyken bina bilgisi QR'ın içindedir; ziyaretçinin interneti olmasa da çalışır. Bina "
+                   "değişirse giriş QR'ını yeniden basarsınız.")
 
 with st.expander("BAK tarafından doğrulanmış yayın", icon=":material/verified:"):
     st.markdown(

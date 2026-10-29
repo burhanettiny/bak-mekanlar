@@ -29,12 +29,12 @@ Bina bilgisi QR'ın içinde taşınır. Sunucu, hesap ya da internet bağlantıs
 
 | Sayfa | Ne yapar |
 |---|---|
-| Başla | Sihirbaz, hazır şablon ya da kayıtlı düzen dosyası ile başlama |
-| Sihirbaz | **Market:** her koridorun solunda ve sağında hangi reyonlar var. **AVM:** her katta mağazalar, bodrum/otopark, yürüyen merdiven. **Koridorlu bina:** her katta koridor boyunca kapılar sırayla. Noktalar, yollar ve sesli tarifler kendiliğinden üretilir |
-| Çizim | 2B sürükle-bırak düzenleyici: bina, oda, kavşak, danışma, tuvalet, asansör, merdiven modülleri eklenir; modül sürüklenince aradaki yolların adımı çizimdeki mesafeden hesaplanır. Binaya tıklayıp **İçini aç** denince odaları ayrı bir çizimde (1 kare = 1 adım) eklenir. Sahada sayılıp yazılan adımlar sürüklemeyle değişmez |
-| Düzenle | Noktalar, yollar ve hedefler tabloları; her şey elle değiştirilebilir |
-| Plan | Binanın 2D planı (katlar, merdiven, asansör, adım sayıları) ve tarif önizleme |
-| QR ve etiketler | Kontrol, giriş QR'ı, yazdırılabilir etiketler, düzen dosyası |
+| 1. Başla | Tek soru: ne için QR? (Hastane/okul/kurum, Market, AVM, Kampüs). Hazır örnek ve kayıtlı dosya kapalı kutularda |
+| 2. Yerleri yazın | Varsayılan: ad + "Zemin kat: Danışma, Vezne, WC" gibi tek bir liste; kurumun sitesindeki kat planı yapıştırılabilir. Market için koridor koridor solda/sağda reyonlar. Ayrıntılı tablo (sağ/sol, adım, oda no) isteğe bağlı |
+| 3. Kontrol ve çizim | Oluşan düzen 2B çizimde: tıklayıp düzeltme, sürükleme (adımlar mesafeden), yer ekleme, binanın içini açma, "koridor gibi sırala", ziyaretçinin duyacağı tarifin önizlemesi. Kampüs burada sıfırdan çizilir |
+| 4. Yazdır | Giriş QR'ı ve etiketler. Bina bilgisi kendiliğinden QR'ın içine konur; QR'a sığmayan büyük binada kurumun sitesindeki adres yolu açılır |
+| Gelişmiş › Tablolar | Noktalar, yollar ve hedefler tabloları; her şey elle değiştirilebilir |
+| Gelişmiş › Teknik plan | Graphviz planı ve tarif önizleme |
 
 `bak_mekan.py` (doğrulama, QR, etiketler), `sihirbaz.py` (düzen üretimi), `plan.py` (Graphviz planı) ve `cizim.py`
 (çizim düzenleyicinin mantığı ve Streamlit özel bileşeni; çizime özgü bilgiler planda durur, QR'a girmez)

@@ -44,9 +44,8 @@ def test_hicbir_qra_sigmayan_bina_sayfayi_cokertmez():
     at = sablon_ac(uygulama(), ad).switch_page("app_pages/yazdir.py").run()
     assert not at.exception
     assert bm.qr_surumu(bm.qr_verisi(bm.sablonlar()[ad])) is None
-    assert at.segmented_control(key="qr_yontemi").value == "adres"
-    at.segmented_control(key="qr_yontemi").set_value("icinde").run()   # kurum yine de "QR'ın içinde" seçerse
-    assert not at.exception
+    assert any("tek bir QR'a sığmayacak" in str(i.value) for i in at.info)   # adres yolu kendiliğinden
+    assert at.text_input(key="duzen_adresi")
 
 
 def test_kimlik_q_ile_baslar_ve_turkce_harfleri_sadelestirir():
@@ -102,17 +101,17 @@ def uygulama():
 
 def sablon_ac(at, ad="Hastane / poliklinik (iki katlı, asansörlü)"):
     at.selectbox[0].select(ad)
-    next(b for b in at.button if b.label == "Şablonu aç").click().run()
+    next(b for b in at.button if b.label == "Örneği aç").click().run()
     return at
 
 
 def test_uygulama_sablonla_acilir_plan_ve_qr_uretir():
     at = sablon_ac(uygulama())
     assert not at.exception
-    assert at.get("graphviz_chart")                  # şablon açılınca plan sayfasına geçilir
+    assert any(t.label == "Kurumun adı" for t in at.text_input)   # örnek açılınca kontrol ve çizime geçilir
     at.switch_page("app_pages/yazdir.py").run()
     assert not at.exception
-    assert any("15 nokta, 15 yol, 8 hedef" in str(s.value) for s in at.success)
+    assert any("Ziyaretçiye 8 yer okunacak. 15 etiket" in str(s.value) for s in at.success)
     at.switch_page("app_pages/duzenle.py").run()
     assert not at.exception
     assert at.text_input[0].value == "Örnek Devlet Hastanesi"
@@ -267,19 +266,22 @@ def test_plan_sihirbaz_konumlariyla_sabit_cizilir_elle_girilende_katlara_ayrilir
 
 
 def test_sihirbaz_sayfasindan_market_olusturulur():
-    at = uygulama().switch_page("app_pages/sihirbaz.py").run()
+    at = uygulama()
+    at.session_state["sihirbaz_turu"] = "Market"
+    at.switch_page("app_pages/sihirbaz.py").run()
     assert not at.exception
     at.text_input[0].input("Çarşı Market").run()
     next(b for b in at.button if b.label == "Market düzenini oluştur").click().run()
     assert not at.exception
     assert at.session_state["bilgi"]["ad"] == "Çarşı Market"
     assert at.session_state["plan"]["raflar"]
-    assert at.get("graphviz_chart")
+    assert any(t.label == "Kurumun adı" for t in at.text_input)   # kontrol ve çizim sayfasına geçildi
 
 
 def test_bina_sihirbazi_sayfasi_calisir():
     at = uygulama()
     at.session_state["sihirbaz_turu"] = "Koridorlu bina"
+    at.session_state["sihirbaz_Koridorlu bina_yontem"] = "tablo"
     at.switch_page("app_pages/sihirbaz.py").run()
     assert not at.exception
     at.text_input[0].input("Deneme Hastanesi").run()
@@ -343,6 +345,7 @@ def test_adres_qr_ve_etiketler():
 def test_buyuk_binada_adres_secenegi_kendiliginden_secilir():
     at = uygulama()
     at.session_state["sihirbaz_turu"] = "AVM"
+    at.session_state["sihirbaz_AVM_yontem"] = "tablo"
     at.switch_page("app_pages/sihirbaz.py").run()
     assert not at.exception
     at.text_input[0].input("Büyük AVM").run()
@@ -364,7 +367,6 @@ def test_buyuk_binada_adres_secenegi_kendiliginden_secilir():
                                   "hedefler": bm.tablo(hedefler, bm.HEDEF_SUTUNLARI)}
     at.switch_page("app_pages/yazdir.py").run()
     assert not at.exception
-    assert at.segmented_control(key="qr_yontemi").value == "adres"
     at.text_input(key="duzen_adresi").input("https://buyuk-avm.com.tr/bak.json").run()
     assert not at.exception
     assert any(b.label.startswith("Etiketleri indir") for b in at.get("download_button"))
@@ -419,6 +421,7 @@ def test_kat_listesi_cozulur(metin, beklenen):
 def test_yapistirilan_kat_listesi_sihirbazi_doldurur():
     at = uygulama()
     at.session_state["sihirbaz_turu"] = "Koridorlu bina"
+    at.session_state["sihirbaz_Koridorlu bina_yontem"] = "tablo"
     at.switch_page("app_pages/sihirbaz.py").run()
     at.text_area(key="sihirbaz_Koridorlu bina_yapistir").input(HASTANE_SITESI).run()
     next(b for b in at.button if b.label == "Katları doldur").click().run()
@@ -501,7 +504,7 @@ def test_cizim_sayfasi_bos_ve_sablonla_acilir_modul_eklenir():
     at = sablon_ac(uygulama())
     at.switch_page("app_pages/cizim_sayfasi.py").run()
     assert not at.exception
-    at.text_input[0].input("Kütüphane")
+    next(t for t in at.text_input if t.label == "Adı").input("Kütüphane")
     next(b for b in at.button if b.label == "Ekle").click().run()
     assert not at.exception
     assert at.session_state["cizim_secili"] == "kutuphane"
@@ -552,3 +555,22 @@ def test_cizim_yildiz_bicimindeki_odalar_koridora_dizilir():
     assert yollar[("mudur", "ogretmen")]["adim"] == 6
     assert ("hol", "merdiven") in yollar                     # arkadaki merdiven olduğu gibi kalır
     assert bm.dogrula(m)[0] == []
+
+
+def test_bina_listesi_tek_kutuyla_duzene_donusur():
+    """Varsayılan yol: ad + "Zemin kat: …" listesi → Düzeni oluştur → kontrol ve çizim."""
+    at = uygulama()
+    at.session_state["sihirbaz_turu"] = "Koridorlu bina"
+    at.switch_page("app_pages/sihirbaz.py").run()
+    assert not at.exception
+    at.text_input[0].input("Atatürk İlkokulu").run()
+    at.text_area(key="sihirbaz_Koridorlu bina_liste").input(
+        "Zemin kat: Müdür odası, Öğretmenler odası, WC" + chr(10) + "1. kat: 101, 102, Kütüphane").run()
+    assert any("Zemin kat: 3 yer" in str(x.value) for x in at.success)
+    next(b for b in at.button if b.label == "Düzeni oluştur").click().run()
+    assert not at.exception
+    hedefler = list(at.session_state["kaynak"]["hedefler"]["ad"])
+    assert {"Müdür odası", "Kütüphane", "101"} <= set(hedefler)
+    assert any("Düzeniniz hazır" in str(x.value) for x in at.success)
+    at.switch_page("app_pages/yazdir.py").run()
+    assert not at.error

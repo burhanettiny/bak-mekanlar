@@ -29,15 +29,21 @@ st.logo("logo.png", size="large", icon_image="logo.png")
 
 durum.baslat()
 
-DUZENLE = st.Page("app_pages/duzenle.py", title="Düzenle", icon=":material/edit_note:")
-sayfa = st.navigation([
-    st.Page("app_pages/basla.py", title="Başla", icon=":material/home:", default=True),
-    st.Page("app_pages/sihirbaz.py", title="Sihirbaz", icon=":material/auto_fix_high:"),
-    st.Page("app_pages/cizim_sayfasi.py", title="Çizim", icon=":material/draw:"),
-    DUZENLE,
-    st.Page("app_pages/plan_sayfasi.py", title="Plan", icon=":material/map:"),
-    st.Page("app_pages/yazdir.py", title="QR ve etiketler", icon=":material/qr_code_2:"),
-], position="top")
+# Kurum görevlisi üç adımı görür: başla → yerleri yaz ve kontrol et → yazdır. Tablolar ve teknik plan, ihtiyaç
+# duyan için "Gelişmiş" menüsündedir.
+DUZENLE = st.Page("app_pages/duzenle.py", title="Tablolar", icon=":material/table_view:")
+sayfa = st.navigation({
+    "": [
+        st.Page("app_pages/basla.py", title="1. Başla", icon=":material/home:", default=True),
+        st.Page("app_pages/sihirbaz.py", title="2. Yerleri yazın", icon=":material/edit_note:"),
+        st.Page("app_pages/cizim_sayfasi.py", title="3. Kontrol ve çizim", icon=":material/draw:"),
+        st.Page("app_pages/yazdir.py", title="4. Yazdır", icon=":material/print:"),
+    ],
+    "Gelişmiş": [
+        DUZENLE,
+        st.Page("app_pages/plan_sayfasi.py", title="Teknik plan", icon=":material/map:"),
+    ],
+}, position="top")
 
 # Düzenle sayfasından çıkınca tablolardaki değişiklikler kalıcı hale getirilir
 if sayfa.url_path != DUZENLE.url_path:
