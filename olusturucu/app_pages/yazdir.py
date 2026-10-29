@@ -40,6 +40,10 @@ hatalar, uyarilar = bm.dogrula(mekan)
 
 durum.adim_cubugu(3)
 st.title("Yazdır")
+if st.session_state.get("ornek_adi") and mekan.get("ad") == st.session_state.ornek_adi:
+    st.warning(f"Kurumun adı hâlâ örnekteki gibi: **{mekan['ad']}**. Bu QR'ı kapınıza asacaksanız önce 3. adımda "
+               "adını ve yerleri kendi binanıza göre değiştirin; ziyaretçi girişte bu adı duyar.",
+               icon=":material/warning:")
 
 if hatalar:
     st.error("\n".join(f"- {h}" for h in hatalar), title="QR oluşturmadan önce düzeltin", icon=":material/error:")

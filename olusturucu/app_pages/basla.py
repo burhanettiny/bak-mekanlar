@@ -30,8 +30,11 @@ def yap(eylem: tuple) -> None:
     if eylem[0] == "ornek":
         durum.mekani_yukle(SABLONLAR[eylem[1]], yeni_kimlik=True)
         st.session_state.yeni_olusturuldu = True
+        # Örnekteki ad ("Örnek Devlet Hastanesi") değiştirilmeden basılmasın diye hatırlanır
+        st.session_state.ornek_adi = SABLONLAR[eylem[1]].get("ad")
         st.switch_page("app_pages/cizim_sayfasi.py")
     durum.mekani_yukle(durum.BOS_MEKAN, yeni_kimlik=True)
+    st.session_state.pop("ornek_adi", None)
     if eylem[1]:
         st.session_state.sihirbaz_turu = eylem[1]
         st.switch_page("app_pages/sihirbaz.py")
@@ -108,6 +111,7 @@ with st.expander("Daha önce kaydettiğim dosyayı açacağım", icon=":material
     if yuklenen and st.button("Dosyayı aç", icon=":material/open_in_new:"):
         try:
             durum.mekani_yukle(json.load(yuklenen), yeni_kimlik=False)
+            st.session_state.pop("ornek_adi", None)
             st.switch_page("app_pages/cizim_sayfasi.py")
         except (json.JSONDecodeError, KeyError, TypeError, AttributeError):
             st.error("Bu dosya okunamadı. 4. adımda indirilen düzen dosyasını seçin.")

@@ -621,3 +621,51 @@ def test_cizimde_virgulle_birden_cok_yer_koridor_boyunca_eklenir():
     assert {"101", "102", "WC"} <= hedefler
     wc = at.session_state["kaynak"]["hedefler"].set_index("ad").loc["WC", "anahtarlar"]
     assert "tuvalet" in wc                                     # adından tuvalet olduğu anlaşıldı
+
+
+def test_ornek_kopya_olarak_acilir_adi_degismeden_yazdirilirsa_uyarilir():
+    at = sablon_ac(uygulama(), "Okul (iki katlı, merdivenli ve rampalı)")
+    assert any("Bu bir örnek" in str(i.value) for i in at.info)
+    at.switch_page("app_pages/yazdir.py").run()
+    assert any("hâlâ örnekteki gibi" in str(w.value) for w in at.warning)
+    at.switch_page("app_pages/cizim_sayfasi.py").run()
+    next(t for t in at.text_input if t.label == "Kurumun adı").input("Cumhuriyet İlkokulu").run()
+    assert not any("Bu bir örnek" in str(i.value) for i in at.info)
+    at.switch_page("app_pages/yazdir.py").run()
+    assert not any("hâlâ örnekteki gibi" in str(w.value) for w in at.warning)
+    # Orijinal örnek değişmedi
+    assert bm.sablonlar()["Okul (iki katlı, merdivenli ve rampalı)"]["ad"] == "Örnek İlkokulu"
+
+
+def test_cizimden_yon_tarifi_saga_sola_duz():
+    import cizim as cz
+    assert cz.donus_metni((0, 1), (0, 1)) == "Düz ilerleyin"
+    assert cz.donus_metni((0, 1), (-1, 0)) == "Sola dönün"         # kuzeye giderken batı: sol
+    assert cz.donus_metni((0, 1), (1, 0)) == "Sağa dönün"
+    assert cz.donus_metni((0, 1), (1, 1)) == "Hafif sağa yönelin"
+    assert cz.donus_metni((0, 1), (0, -1)) == "Geri dönün"
+    m = {"id": "q-x", "ad": "X", "tur": "kurum", "surum": 1, "giris": "giris",
+         "noktalar": [{"id": i, "ad": a} for i, a in [("giris", "Giriş"), ("hol", "Hol"), ("sol", "Sekreterlik"),
+                                                       ("sag", "WC"), ("ileri", "Kantin"), ("ust", "Arşiv")]],
+         "baglantilar": [], "hedefler": [{"ad": "WC", "nokta": "sag", "tarif": "t", "anahtarlar": ["wc"]}]}
+    plan = {"konum": {"giris": [0, 0], "hol": [0, 10], "sol": [-10, 10], "sag": [10, 10], "ileri": [0, 20],
+                      "ust": [0, 30]}}
+    for a, b in [("giris", "hol"), ("hol", "sol"), ("sag", "hol"), ("hol", "ileri"), ("ileri", "ust")]:
+        cz.bagla(m, plan, a, b, 1.0)
+    # Elle yazılmış tarif korunur
+    m["baglantilar"].append({"a": "giris", "b": "x", "adim": 1, "tarif": "Rampadan çıkın", "geriTarif": "İnin"})
+    cz.tarifleri_guncelle(m, plan)
+    y = {(b["a"], b["b"]): b for b in m["baglantilar"]}
+    assert y[("hol", "sol")]["tarif"] == "Sola dönün, Sekreterlik yönüne ilerleyin"
+    assert y[("hol", "sol")]["geriTarif"] == "Geri dönün, Hol yönüne ilerleyin"       # odadan çıkış
+    assert y[("sag", "hol")]["geriTarif"] == "Sağa dönün, WC yönüne ilerleyin"        # ters yönde kaydedilmiş yol
+    assert y[("hol", "ileri")]["tarif"].startswith("Düz ilerleyin")
+    assert y[("ileri", "ust")]["geriTarif"] == "Geri dönün, Kantin yönüne ilerleyin"
+    assert y[("ileri", "ust")]["tarif"].startswith("Düz ilerleyin")
+    # Arşivden kantine dönüp (tek çocuk) hole doğru: düz
+    assert y[("hol", "ileri")]["geriTarif"] == "Düz ilerleyin, Hol yönüne ilerleyin"
+    assert y[("giris", "x")]["tarif"] == "Rampadan çıkın"
+    # Kantin bir hedefse ziyaretçi oraya holden gelmiştir: dönüşte geri döner
+    m["hedefler"].append({"ad": "Kantin", "nokta": "ileri", "tarif": "t", "anahtarlar": ["kantin"]})
+    cz.tarifleri_guncelle(m, plan)
+    assert y[("hol", "ileri")]["geriTarif"] == "Geri dönün, Hol yönüne ilerleyin"

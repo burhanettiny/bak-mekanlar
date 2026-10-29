@@ -16,7 +16,9 @@ plan anahtarları:
 
 from __future__ import annotations
 
+import heapq
 import math
+import re
 import statistics
 from collections import deque
 from collections.abc import Callable
@@ -153,7 +155,115 @@ def bagla(mekan: dict, plan: dict, a: str, b: str, olc: float, gorunum: str | No
     mekan["baglantilar"].append({
         "a": a, "b": b, "adim": _adim(konum, a, b, olc) if a in konum and b in konum else YENI_MESAFE,
         "tarif": f"{adlar[b]} yönüne ilerleyin", "geriTarif": f"{adlar[a]} yönüne ilerleyin"})
+    # Yön (sağa/sola/düz) kaydedilirken çizimden hesaplanır (tarifleri_guncelle)
+    plan.setdefault("otoTarif", []).append([a, b])
     return True
+
+
+# ── Çizimden yön tarifi ───────────────────────────────────
+# Görme engelli ziyaretçiye "tuvalet yönüne ilerleyin" bir şey söylemez; sağa mı, sola mı, düz mü gideceğini bilmeli.
+# Ziyaretçinin bir noktaya hangi yönden geldiği, girişten oraya giden en kısa yoldan bulunur; çıkış yönüyle arasındaki
+# açı tarife çevrilir. Dönüşte (geri tarif) aynı yolun tersi kullanılır. Elle yazılan ve örneklerden gelen tarifler
+# korunur: yalnızca BAK'ın ürettiği tarifler (plan["otoTarif"]) ve eski genel cümleler yeniden hesaplanır.
+_GENEL_TARIF = re.compile(r"^.+ yönüne ilerleyin\.?$")
+
+
+def donus_metni(gelis: tuple[float, float], gidis: tuple[float, float]) -> str:
+    """İki yön arasındaki açı → "Düz ilerleyin", "Hafif sağa yönelin", "Sola dönün", "Geri dönün". Planda y yukarı."""
+    aci = math.degrees(math.atan2(gelis[0] * gidis[1] - gelis[1] * gidis[0], gelis[0] * gidis[0] + gelis[1] * gidis[1]))
+    if abs(aci) < 30:
+        return "Düz ilerleyin"
+    taraf = "sola" if aci > 0 else "sağa"   # saat yönünün tersi (artı açı) sol
+    if abs(aci) < 60:
+        return f"Hafif {taraf} yönelin"
+    if abs(aci) < 150:
+        return f"{taraf.capitalize()} dönün"
+    return "Geri dönün"
+
+
+def _yon(konum: dict, a: str, b: str) -> tuple[float, float]:
+    return konum[b][0] - konum[a][0], konum[b][1] - konum[a][1]
+
+
+def tarifleri_guncelle(mekan: dict, plan: dict) -> int:
+    """Her çizimde (dış çizim ve her binanın içi) BAK'ın ürettiği yürüme tariflerini açılardan yeniden yazar.
+    Değişen yol sayısı döner."""
+    oto = {tuple(y) for y in plan.get("otoTarif") or []}
+    hedef_noktalari = {h["nokta"] for h in mekan["hedefler"]}
+    adlar = {h["nokta"]: bm.liste_adi(h) for h in mekan["hedefler"]}
+    adlar = {n["id"]: adlar.get(n["id"], n["ad"]) for n in mekan["noktalar"]}
+    degisen = 0
+    gorunumler = [None, *dict.fromkeys((plan.get("ust") or {}).values())]
+    for gorunum in gorunumler:
+        konum = gorunum_konumlari(plan, gorunum)
+        yollar = [b for b in mekan["baglantilar"] if b["a"] in konum and b["b"] in konum
+                  and (b.get("tur") or "yuru") not in bm.DIKEY_GECISLER and b["a"] != b["b"]]
+        if not yollar:
+            continue
+        komsu: dict[str, list[str]] = {}
+        for b in yollar:
+            komsu.setdefault(b["a"], []).append(b["b"])
+            komsu.setdefault(b["b"], []).append(b["a"])
+        # Kök: kurumun girişi (dış çizimde) ya da binanın girişi (iç çizimde); yoksa ilk nokta
+        kok = gorunum or (mekan.get("giris") if mekan.get("giris") in komsu else next(iter(komsu)))
+        if kok not in komsu:
+            continue
+        # Girişten en kısa yollar ağacı (Dijkstra, mesafe çizimden)
+        uz, ebeveyn, kuyruk = {kok: 0.0}, {kok: None}, [(0.0, kok)]
+        while kuyruk:
+            d, u = heapq.heappop(kuyruk)
+            if d > uz[u]:
+                continue
+            for v in komsu[u]:
+                nd = d + math.dist(konum[u], konum[v])
+                if nd < uz.get(v, math.inf):
+                    uz[v], ebeveyn[v] = nd, u
+                    heapq.heappush(kuyruk, (nd, v))
+        cocuklar: dict[str, list[str]] = {}
+        for v, u in ebeveyn.items():
+            if u:
+                cocuklar.setdefault(u, []).append(v)
+        # Girişte ziyaretçi binanın içine (çizimin ortasına) bakar
+        ox = sum(p[0] for p in konum.values()) / len(konum)
+        oy = sum(p[1] for p in konum.values()) / len(konum)
+        giris_bakisi = (ox - konum[kok][0], oy - konum[kok][1])
+
+        def gidis(u: str, v: str) -> str:
+            """u'dan v'ye: girişten u'ya gelinen yöne göre dönüş."""
+            p = ebeveyn.get(u)
+            gelis = _yon(konum, p, u) if p else giris_bakisi
+            if not p and math.hypot(*gelis) < 0.01:
+                return f"{adlar[v]} yönüne ilerleyin"
+            return f"{donus_metni(gelis, _yon(konum, u, v))}, {adlar[v]} yönüne ilerleyin"
+
+        def donus(u: str, v: str) -> str:
+            """u'dan girişe doğru v'ye. u bir oda/hedef ya da uç ise ziyaretçi oraya girişten gelmiştir: geri döner.
+            Bir koridor noktasıysa içeriden (tek çocuğundan) geldiği varsayılır."""
+            alt = cocuklar.get(u, [])
+            if not alt or u in hedef_noktalari:
+                return f"Geri dönün, {adlar[v]} yönüne ilerleyin"
+            if len(alt) == 1:
+                return f"{donus_metni(_yon(konum, alt[0], u), _yon(konum, u, v))}, {adlar[v]} yönüne ilerleyin"
+            return f"{adlar[v]} yönüne ilerleyin"
+
+        for b in yollar:
+            anahtar = (b["a"], b["b"])
+            if anahtar not in oto and not (_GENEL_TARIF.match(b.get("tarif") or "")
+                                           and _GENEL_TARIF.match(b.get("geriTarif") or "")):
+                continue   # elle yazılmış ya da örnekten gelen tarif
+            a, c = b["a"], b["b"]
+            if ebeveyn.get(c) == a:          # a girişe daha yakın: gidiş a → c
+                yeni = gidis(a, c), donus(c, a)
+            elif ebeveyn.get(a) == c:        # c girişe daha yakın: a → c girişe doğru
+                yeni = donus(a, c), gidis(c, a)
+            else:                            # ağaç dışı (döngü) yolu: iki uç da kendi geliş yönüne göre
+                yeni = gidis(a, c), gidis(c, a)
+            if (b.get("tarif"), b.get("geriTarif")) != yeni:
+                b["tarif"], b["geriTarif"] = yeni
+                degisen += 1
+            oto.add(anahtar)
+    plan["otoTarif"] = sorted(map(list, oto))
+    return degisen
 
 
 def modul_ekle(mekan: dict, plan: dict, tur: str, ad: str, *, yer: list[float], ust: str | None,

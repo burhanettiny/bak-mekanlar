@@ -1,5 +1,6 @@
 import json
 import math
+import zlib
 
 import streamlit as st
 
@@ -23,6 +24,8 @@ def mekan_ve_plan() -> tuple[dict, dict, float]:
 
 
 def kaydet(mekan: dict, plan: dict) -> None:
+    # Taşınan, eklenen ya da silinen her şeyden sonra BAK'ın ürettiği tarifler (sağa/sola/düz) yeniden hesaplanır
+    cz.tarifleri_guncelle(mekan, plan)
     st.session_state.plan = plan
     durum.mekani_tablolara_yaz(mekan)
 
@@ -71,7 +74,15 @@ ust = plan.get("ust") or {}
 
 durum.adim_cubugu(2)
 st.title("Kontrol et")
-if st.session_state.pop("yeni_olusturuldu", False):
+ornek = st.session_state.get("ornek_adi")
+# Ad kutusu aşağıda; yazılan yeni ad bu çalıştırmada henüz bilgiye geçmemiş olabilir
+ad_simdi = st.session_state.get(f"cizim-kurum-adi-{st.session_state.surum_anahtari}",
+                                st.session_state.bilgi.get("ad"))
+if ornek and (ad_simdi or "").strip() == ornek:
+    st.info("**Bu bir örnek; size ait bir kopya olarak açıldı** (orijinal örnek değişmez). Kendi kurumunuz için "
+            "kullanacaksanız aşağıdan adını, sonra yerleri ve mesafeleri kendi binanıza göre değiştirin.",
+            icon=":material/content_copy:")
+elif st.session_state.pop("yeni_olusturuldu", False):
     st.success("Düzeniniz hazır. Aşağıda kontrol edin: bir yere tıklayıp adını düzeltebilir, sürükleyip yerini "
                "değiştirebilir, yeni yer ekleyebilirsiniz. Her şey doğruysa **4. Yazdır** adımına geçin.",
                icon=":material/check_circle:")
@@ -313,13 +324,16 @@ elif st.session_state.cizim_yol:
                 st.caption(f"≈ {yeni_adim} standart adım ({bm.adimdan_metre(yeni_adim):g} m). Telefondaki uygulama "
                            "bunu her ziyaretçinin kendi adım uzunluğuna göre söyler.")
                 tarif = st.text_input(f"Gidiş tarifi ({adlar[yol['a']]} → {adlar[yol['b']]})", yol.get("tarif", ""),
-                                      key=f"cizim-tarif-{a}-{b}")
+                                      key=f"cizim-tarif-{a}-{b}-{zlib.crc32(yol.get('tarif', '').encode())}")
                 geri = st.text_input(f"Dönüş tarifi ({adlar[yol['b']]} → {adlar[yol['a']]})", yol.get("geriTarif", ""),
-                                     key=f"cizim-geri-{a}-{b}")
+                                     key=f"cizim-geri-{a}-{b}-{zlib.crc32(yol.get('geriTarif', '').encode())}")
                 if st.button("Kaydet", icon=":material/save:", type="primary", key=f"cizim-yol-kaydet-{a}-{b}"):
                     if yeni_adim != yol.get("adim"):
                         sabit.add((yol["a"], yol["b"]))
                         plan["sabitAdim"] = sorted(map(list, sabit))
+                    if (tarif.strip(), geri.strip()) != (yol.get("tarif"), yol.get("geriTarif")):
+                        # Elle yazılan tarif bundan sonra çizimden yeniden hesaplanmaz
+                        plan["otoTarif"] = [y for y in plan.get("otoTarif") or [] if y != [yol["a"], yol["b"]]]
                     yol.update(adim=yeni_adim, tarif=tarif.strip(), geriTarif=geri.strip())
                     if tek_yon:
                         yol["tekYon"] = True
@@ -327,6 +341,12 @@ elif st.session_state.cizim_yol:
                         yol.pop("tekYon", None)
                     kaydet(mekan, plan)
                     st.rerun()
+            if [yol["a"], yol["b"]] not in (plan.get("otoTarif") or []) and st.button(
+                    "Yön tarifini çizimden üret", icon=":material/turn_right:",
+                    help="Elle yazılmış tarifin yerine, çizimdeki açılardan sağa / sola / düz tarifi yazılır."):
+                plan.setdefault("otoTarif", []).append([yol["a"], yol["b"]])
+                kaydet(mekan, plan)
+                st.rerun()
             if st.button("Yolu sil", icon=":material/delete:"):
                 cz.yol_sil(mekan, a, b)
                 st.session_state.cizim_yol = None
