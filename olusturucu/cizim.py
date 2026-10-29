@@ -390,8 +390,9 @@ svg.suruk { cursor: grabbing; }
 .yol.dikey { stroke-dasharray: 4 4; }
 .yol.secili { stroke: var(--st-primary-color); opacity: 1; }
 .yolvurus { stroke: transparent; cursor: pointer; }
-.adim { fill: var(--st-text-color); opacity: .8; paint-order: stroke;
+.adim { fill: var(--st-primary-color); font-weight: 600; paint-order: stroke; cursor: pointer;
   stroke: var(--st-secondary-background-color); text-anchor: middle; dominant-baseline: central; }
+.adim:hover { text-decoration: underline; }
 .modul { cursor: pointer; touch-action: none; }
 .ic-ac { cursor: pointer; }
 .modul rect { fill: var(--st-background-color); stroke: var(--st-border-color); }
@@ -466,10 +467,18 @@ export default function (component) {
       el("line", { x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: "yol" + (yol.dikey ? " dikey" : "") + (secili ? " secili" : ""),
         "stroke-width": px(secili ? 3 : 2) }, katman)
       const vurus = el("line", { x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: "yolvurus", "stroke-width": px(14) }, katman)
-      vurus.onclick = e => { e.stopPropagation(); setTriggerValue("olay", { tur: "secyol", a: yol.a, b: yol.b }) }
-      const t = el("text", { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, class: "adim", "font-size": px(12),
-        "stroke-width": px(4) }, katman)
-      t.textContent = yol.dikey ? yol.etiket : `${yol.adim} adım`
+      // Yolun kendisi ve üstündeki mesafe yazısı tıklanınca yol seçilir (mesafe girilir). Basış arka plana
+      // geçmesin: yoksa kaydırma işleyicisi tıklamayı "boşluğa tıklandı" sayıp seçimi kaldırıyordu.
+      const yoluSec = e => { e.stopPropagation(); setTriggerValue("olay", { tur: "secyol", a: yol.a, b: yol.b }) }
+      vurus.onpointerdown = e => e.stopPropagation()
+      vurus.onclick = yoluSec
+      const t = el("text", { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, class: "adim", "font-size": px(13),
+        "stroke-width": px(5), role: "button", tabindex: 0,
+        "aria-label": `${yol.etiket}. Mesafeyi değiştirmek için seçin` }, katman)
+      t.textContent = yol.etiket
+      t.onpointerdown = e => e.stopPropagation()
+      t.onclick = yoluSec
+      t.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); yoluSec(e) } }
     }
     for (const n of dugumler) {
       const sinif = ["modul", n.tur, n.hedef ? "hedef" : "", n.giris ? "giris" : "",
@@ -507,7 +516,7 @@ export default function (component) {
     baglaBtn.setAttribute("aria-pressed", String(d.bagla))
     ipucu.textContent = d.bagla
       ? (d.kaynak ? `${bul(d.kaynak)?.ad ?? ""} seçildi; bağlanacak ikinci modüle tıklayın.` : "Bağlanacak ilk modüle tıklayın.")
-      : "Kutuya tıklayın: ayarları açılır. Sürükleyin: aradaki adım değişir. Binanın içine girmek için kutusundaki İçi › düğmesi."
+      : "Kutuya tıklayın: ayarları açılır. Mesafe yazısına (ör. 12 m) tıklayın: mesafeyi girin. İçi › : binanın içi."
   }
 
   function svgNokta(e) {

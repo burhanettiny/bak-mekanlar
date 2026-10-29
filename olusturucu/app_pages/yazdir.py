@@ -38,6 +38,7 @@ def adresi_kontrol_et(adres: str, mekan: dict) -> tuple[bool, str]:
 mekan = durum.guncel_mekan()
 hatalar, uyarilar = bm.dogrula(mekan)
 
+durum.adim_cubugu(3)
 st.title("Yazdır")
 
 if hatalar:

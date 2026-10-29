@@ -92,3 +92,40 @@ def dosya_icerigi(mekan: dict) -> str:
     """İndirilen düzen dosyası: QR verisi + plan (plan QR'a girmez, yalnızca bu dosyada durur)."""
     plan = st.session_state.get("plan") or {}
     return json.dumps({**mekan, **({"plan": plan} if plan else {})}, ensure_ascii=False, indent=1)
+
+
+# ── Adım çubuğu: kurum görevlisi nerede olduğunu ve sırada ne olduğunu her sayfada görür ──
+ADIMLAR = (("app_pages/basla.py", "Başla"), ("app_pages/sihirbaz.py", "Yerleri yazın"),
+           ("app_pages/cizim_sayfasi.py", "Kontrol et"), ("app_pages/yazdir.py", "Yazdır"))
+
+
+def adim_cubugu(aktif: int) -> None:
+    """Sayfanın tepesinde 1 Başla › 2 Yerleri yazın › 3 Kontrol et › 4 Yazdır. Geçilen adımlar ✓; her biri
+    tıklanınca o adıma gider. Üst menü yerine bu kullanılır: tek bir yol, tek bir yön."""
+    with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+        for i, (sayfa, ad) in enumerate(ADIMLAR):
+            if i:
+                st.markdown(":gray[›]", width="content")
+            if i == aktif:
+                # Bulunulan adım bağlantı değil, belirgin yazı (soluk "devre dışı" bağlantı gibi görünmesin)
+                st.markdown(f":blue[:material/radio_button_checked: **{i + 1}. {ad}**]", width="content")
+                continue
+            ikon = ":material/check_circle:" if i < aktif else ":material/radio_button_unchecked:"
+            st.page_link(sayfa, label=f"{i + 1}. {ad}", icon=ikon)
+        # Çalışma yalnızca bu tarayıcı oturumunda durur; sayfa yenilenince silinir. Her adımda indirilebilsin.
+        mekan = guncel_mekan()
+        if mekan.get("ad") and mekan.get("hedefler"):
+            st.space("stretch")
+            st.download_button("Kaydet", dosya_icerigi(mekan), file_name=f"{mekan['id'] or 'bak'}.json",
+                               mime="application/json", icon=":material/save:", key=f"adim-kaydet-{aktif}",
+                               help="Çalışmanız yalnızca bu sayfada durur; sayfayı yenilerseniz ya da kapatırsanız "
+                                    "silinir. Bu dosyayı indirip sonra 1. Başla'da açarak devam edersiniz.")
+
+
+def ileri(sayfa: str, etiket: str, *, etkin: bool = True, neden: str = "") -> None:
+    """Sayfanın sonunda tek, belirgin "ileri" düğmesi; yanında durum notu (ör. eksik sayısı)."""
+    with st.container(horizontal=True, vertical_alignment="center", horizontal_alignment="right"):
+        if neden:
+            st.caption(neden)
+        if st.button(etiket, type="primary", icon=":material/arrow_forward:", disabled=not etkin):
+            st.switch_page(sayfa)

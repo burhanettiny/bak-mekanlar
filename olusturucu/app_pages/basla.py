@@ -5,62 +5,113 @@ import streamlit as st
 import bak_mekan as bm
 import durum
 
+durum.adim_cubugu(0)
 st.title("BAK QR oluşturucu")
 st.markdown(
     "Binanızın girişine asacağınız **tek bir QR kodu** ile görme engelli ziyaretçileriniz BAK uygulamasıyla "
     "danışmayı, polikliniği, sınıfı ya da reyonu **sesli, adım adım** bulur. Ücretsizdir; hesap ya da sunucu "
-    "gerekmez.")
-st.caption("Adımlar: **yerleri yazın** → **kontrol edin** → **yazdırıp asın**. Yaklaşık 15 dakika.")
+    "gerekmez. Yaklaşık 15 dakika sürer.")
 
 st.subheader("Ne için QR hazırlıyorsunuz?")
 
+# Her kartta iki yol: boş başla ya da o türün hazır örneğiyle dene (örnekler ayrı bir kutuda değil, kendi kartında)
+ornekler: dict[str, list[str]] = {}
+SABLONLAR = bm.sablonlar()
+for ad, veri in SABLONLAR.items():
+    ornekler.setdefault(bm.sablon_grubu(ad, veri), []).append(ad)
 
-def secenek(ikon: str, baslik: str, metin: str, hedef: str, tur: str | None = None) -> None:
+
+MEVCUT = durum.guncel_mekan()
+YARIM_IS = bool(MEVCUT["ad"] and MEVCUT["hedefler"])
+
+
+def yap(eylem: tuple) -> None:
+    """("bos", tur) ya da ("ornek", şablon adı). Boş başlangıçta önceki iş temizlenir ("yarım kalan" yanıltmasın)."""
+    if eylem[0] == "ornek":
+        durum.mekani_yukle(SABLONLAR[eylem[1]], yeni_kimlik=True)
+        st.session_state.yeni_olusturuldu = True
+        st.switch_page("app_pages/cizim_sayfasi.py")
+    durum.mekani_yukle(durum.BOS_MEKAN, yeni_kimlik=True)
+    if eylem[1]:
+        st.session_state.sihirbaz_turu = eylem[1]
+        st.switch_page("app_pages/sihirbaz.py")
+    st.switch_page("app_pages/cizim_sayfasi.py")
+
+
+def _vazgec() -> None:
+    st.session_state.pop("bekleyen_eylem", None)
+
+
+# Bekleyen eylem oturumda tutulur ve pencere her çalıştırmada yeniden açılır: penceredeki düğme hangi yolla
+# (pencerenin kendi yeniden çalışması ya da sayfanın tamamı) işlenirse işlensin kaybolmaz. Kapatınca vazgeçilir.
+@st.dialog("Yeni bir çalışma başlasın mı?", on_dismiss=_vazgec)
+def onay(eylem: tuple) -> None:
+    st.markdown(f"Üzerinde çalıştığınız **{MEVCUT['ad']}** kapanacak. Sonra devam etmek isterseniz önce kaydedin; "
+                "dosyayı bu sayfadaki *Daha önce kaydettiğim dosyayı açacağım* bölümünden açarsınız.")
+    st.download_button("Önce kaydet (.json)", durum.dosya_icerigi(MEVCUT), file_name=f"{MEVCUT['id']}.json",
+                       mime="application/json", icon=":material/save:", width="stretch")
+    with st.container(horizontal=True):
+        if st.button("Vazgeç", width="stretch"):
+            _vazgec()
+            st.rerun()
+        if st.button("Yeni başla", type="primary", width="stretch"):
+            _vazgec()
+            yap(eylem)
+
+
+def sec(eylem: tuple) -> None:
+    # Yarım kalan iş uyarısız silinmesin
+    if YARIM_IS:
+        st.session_state.bekleyen_eylem = eylem
+    else:
+        yap(eylem)
+
+
+def kart(grup: str, ikon: str, baslik: str, metin: str, tur: str | None) -> None:
     with st.container(border=True, height="stretch"):
         st.markdown(f"#### {ikon} {baslik}")
         st.caption(metin)
-        if st.button("Başla", type="primary", width="stretch", key=f"basla-{baslik}", icon=":material/arrow_forward:"):
-            if tur:
-                st.session_state.sihirbaz_turu = tur
-            else:
-                durum.mekani_yukle(durum.BOS_MEKAN, yeni_kimlik=True)
-            st.switch_page(hedef)
+        if st.button("Boş başla", type="primary", width="stretch", key=f"bos-{grup}", icon=":material/arrow_forward:"):
+            sec(("bos", tur))
+        liste = ornekler.get(grup, [])
+        if len(liste) == 1:
+            if st.button("Örnekle dene", width="stretch", key=f"ornek-{grup}", icon=":material/visibility:",
+                         help=liste[0]):
+                sec(("ornek", liste[0]))
+        elif liste:
+            with st.popover("Örnekle dene", width="stretch", icon=":material/visibility:"):
+                for i, ad in enumerate(liste):
+                    if st.button(ad, key=f"ornek-{grup}-{i}", width="stretch"):
+                        sec(("ornek", ad))
 
 
 with st.container(horizontal=True):
-    secenek(":material/local_hospital:", "Hastane, okul, kurum", "Katları ve odaları liste olarak yazarsınız; "
-            "koridor, merdiven ve asansör kendiliğinden çizilir.", "app_pages/sihirbaz.py", "Koridorlu bina")
-    secenek(":material/shopping_cart:", "Market", "Her koridorda solda ve sağda hangi reyonlar var, onu yazarsınız.",
-            "app_pages/sihirbaz.py", "Market")
-    secenek(":material/storefront:", "AVM", "Katları ve mağazaları liste olarak yazarsınız; yürüyen merdiven ve "
-            "asansör eklenir.", "app_pages/sihirbaz.py", "AVM")
-    secenek(":material/apartment:", "Kampüs, birden çok bina", "Binaları ekranda kutu kutu ekler, sürükleyerek "
-            "yerleştirirsiniz; her binanın içine odalarını yazarsınız.", "app_pages/cizim_sayfasi.py")
+    kart("bina", ":material/local_hospital:", "Hastane, okul, kurum",
+         "Katları ve odaları liste olarak yazarsınız; koridor, merdiven ve asansör kendiliğinden çizilir.",
+         "Koridorlu bina")
+    kart("market", ":material/shopping_cart:", "Market",
+         "Her koridorda solda ve sağda hangi reyonlar var, onu yazarsınız.", "Market")
+    kart("avm", ":material/storefront:", "AVM",
+         "Katları ve mağazaları liste olarak yazarsınız; yürüyen merdiven ve asansör eklenir.", "AVM")
+    kart("kampus", ":material/apartment:", "Kampüs, birden çok bina",
+         "Binaları ekranda kutu kutu ekler, sürükleyerek yerleştirirsiniz; her binanın içine odalarını yazarsınız.",
+         None)
 
-with st.container(horizontal=True):
-    with st.expander("Hazır bir örnekle deneyin", icon=":material/dashboard_customize:"):
-        sablonlar = bm.sablonlar()
-        secilen = st.selectbox("Örnek", list(sablonlar))
-        if st.button("Örneği aç", icon=":material/open_in_new:"):
-            durum.mekani_yukle(sablonlar[secilen], yeni_kimlik=True)
+if YARIM_IS:
+    with st.container(border=True, horizontal=True, vertical_alignment="center"):
+        st.markdown(f":material/history: Yarım kalan: **{MEVCUT['ad']}** · {len(MEVCUT['hedefler'])} yer")
+        if st.button("Kaldığım yerden devam et", icon=":material/arrow_forward:"):
             st.switch_page("app_pages/cizim_sayfasi.py")
-    with st.expander("Daha önce kaydettiğim dosyayı açacağım", icon=":material/upload_file:"):
-        yuklenen = st.file_uploader("Düzen dosyası (.json)", type="json")
-        if yuklenen and st.button("Dosyayı aç", icon=":material/open_in_new:"):
-            try:
-                durum.mekani_yukle(json.load(yuklenen), yeni_kimlik=False)
-                st.switch_page("app_pages/cizim_sayfasi.py")
-            except (json.JSONDecodeError, KeyError, TypeError, AttributeError):
-                st.error("Bu dosya okunamadı. 4. adımda indirilen düzen dosyasını seçin.")
-        st.caption("Aynı bina olarak açılır; yeni basılan QR'ı okutan telefonlar güncel bilgiyi alır.")
 
-mekan = durum.guncel_mekan()
-if mekan["ad"] and mekan["hedefler"]:
-    with st.container(border=True):
-        st.markdown(f"**Üzerinde çalıştığınız:** {mekan['ad']} · ziyaretçiye okunacak {len(mekan['hedefler'])} yer")
-        with st.container(horizontal=True):
-            st.page_link("app_pages/cizim_sayfasi.py", label="Kontrol ve çizime dön", icon=":material/draw:")
-            st.page_link("app_pages/yazdir.py", label="Yazdır", icon=":material/print:")
+with st.expander("Daha önce kaydettiğim dosyayı açacağım", icon=":material/upload_file:"):
+    yuklenen = st.file_uploader("Düzen dosyası (.json)", type="json")
+    if yuklenen and st.button("Dosyayı aç", icon=":material/open_in_new:"):
+        try:
+            durum.mekani_yukle(json.load(yuklenen), yeni_kimlik=False)
+            st.switch_page("app_pages/cizim_sayfasi.py")
+        except (json.JSONDecodeError, KeyError, TypeError, AttributeError):
+            st.error("Bu dosya okunamadı. 4. adımda indirilen düzen dosyasını seçin.")
+    st.caption("Aynı bina olarak açılır; yeni basılan QR'ı okutan telefonlar güncel bilgiyi alır.")
 
 with st.expander("Görme engelli ziyaretçi ne yaşar?", icon=":material/accessibility_new:"):
     st.markdown(
@@ -69,3 +120,6 @@ with st.expander("Görme engelli ziyaretçi ne yaşar?", icon=":material/accessi
         "3. Ziyaretçi numarayı ya da adı söyler. Uygulama adımlarını sayarak yol tarif eder; dönüşleri, "
         "merdiveni ve asansörü zamanında söyler.\n"
         "4. Yoldaki küçük etiketler konumu düzeltir; ziyaretçi kaybolursa en yakın etiketi okutur.")
+
+if YARIM_IS and st.session_state.get("bekleyen_eylem"):
+    onay(tuple(st.session_state.bekleyen_eylem))

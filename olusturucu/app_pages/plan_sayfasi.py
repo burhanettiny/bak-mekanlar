@@ -7,6 +7,7 @@ import plan
 mekan = durum.guncel_mekan()
 hatalar, uyarilar = bm.dogrula(mekan)
 
+st.page_link("app_pages/cizim_sayfasi.py", label="Kontrol et adımına dön", icon=":material/arrow_back:")
 st.title(mekan["ad"] or "Bina planı")
 
 with st.container(horizontal=True):

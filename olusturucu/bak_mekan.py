@@ -42,6 +42,25 @@ ONERILEN_EN_BUYUK_QR_SURUMU = 30
 SAYFA_BOYU = 10
 # Bundan uzun adlar için kısa ad önerilir
 UZUN_AD = 22
+# Düzendeki adım sayıları standart adımladır (yaklaşık 70 cm). Kurum mesafeyi metre olarak girer; uygulama bunu
+# ziyaretçinin kendi adım uzunluğuna göre çevirir (kişiye göre ölçülüp ayarlanır).
+STANDART_ADIM_M = 0.7
+
+
+def metreden_adim(metre: float) -> int:
+    return max(1, round(float(metre) / STANDART_ADIM_M))
+
+
+def adimdan_metre(adim: float) -> float:
+    m = float(adim) * STANDART_ADIM_M
+    return round(m) if m >= 10 else round(m, 1)
+
+
+def mesafe_etiketi(adim: float | None) -> str:
+    if not adim:
+        return "? m"
+    m = adimdan_metre(adim)
+    return f"{m:g} m"
 
 SABLON_KLASORU = Path(__file__).parent / "sablonlar"
 
@@ -375,7 +394,8 @@ def rota_onizleme(mekan: dict, hedef_ad: str) -> list[str]:
             adimlar.append(f"{DIKEY_ADLARI[tur]} ile {yon} → {adlar[varis]}. {ek}".strip())
         else:
             tarif = (b.get("geriTarif") if ters else b.get("tarif")) or ""
-            adimlar.append(f"{tarif}, yaklaşık {b['adim']} adım → {adlar[varis]}")
+            # Kurum metreyi görür; uygulama ziyaretçiye kendi adım uzunluğuna göre adım söyler
+            adimlar.append(f"{tarif}, yaklaşık {b['adim']} adım ({mesafe_etiketi(b['adim'])}) → {adlar[varis]}")
         i += 1
     return [f"Giriş: {adlar[mekan['giris']]}", *adimlar, f"Varınca: {hedef['tarif']}"]
 
@@ -569,6 +589,17 @@ def sablonlar() -> dict[str, dict]:
         veri.pop("buyuk", None)
         sonuc[veri.pop("sablonAdi")] = veri
     return sonuc
+
+
+def sablon_grubu(ad: str, mekan: dict) -> str:
+    """Başla sayfasındaki karta göre şablonun grubu: "bina", "market", "avm" ya da "kampus"."""
+    if mekan.get("tur") == "magaza":
+        return "market"
+    if "AVM" in ad:
+        return "avm"
+    if "bina" in ((mekan.get("plan") or {}).get("tur") or {}).values():
+        return "kampus"
+    return "bina"
 
 
 def buyuk_sablonlar() -> set[str]:

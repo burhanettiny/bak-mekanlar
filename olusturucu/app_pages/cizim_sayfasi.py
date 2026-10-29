@@ -69,7 +69,8 @@ gorunum = st.session_state.cizim_gorunum if st.session_state.cizim_gorunum in ad
 secili = st.session_state.cizim_secili if st.session_state.cizim_secili in adlar else None
 ust = plan.get("ust") or {}
 
-st.title("Kontrol ve çizim")
+durum.adim_cubugu(2)
+st.title("Kontrol et")
 if st.session_state.pop("yeni_olusturuldu", False):
     st.success("Düzeniniz hazır. Aşağıda kontrol edin: bir yere tıklayıp adını düzeltebilir, sürükleyip yerini "
                "değiştirebilir, yeni yer ekleyebilirsiniz. Her şey doğruysa **4. Yazdır** adımına geçin.",
@@ -128,7 +129,8 @@ for b in mekan["baglantilar"]:
         # Başka kata giden asansör/merdiven: bu katta görünen ucun yanına kısa bir işaret olarak çizilmez
         continue
     if b["a"] in gorunen and b["b"] in gorunen:
-        yollar.append({"a": b["a"], "b": b["b"], "adim": b.get("adim"), "dikey": False})
+        yollar.append({"a": b["a"], "b": b["b"], "adim": b.get("adim"), "dikey": False,
+                       "etiket": bm.mesafe_etiketi(b.get("adim"))})
 
 # ── Boş binanın içini kat listesinden tek seferde kurma ──
 if gorunum and not icerik.get(gorunum):
@@ -275,19 +277,34 @@ elif st.session_state.cizim_yol:
         sabit = set(map(tuple, plan.get("sabitAdim") or []))
         with st.container(border=True):
             st.markdown(f"**{adlar[yol['a']]} → {adlar[yol['b']]}**")
-            with st.form(f"cizim-yol-{a}-{b}", border=False):
+            with st.container():   # form değil: birim ve "≈ adım" önizlemesi yazarken güncellensin
+                # Kurum mesafeyi metre olarak girer (adım kişiden kişiye değişir); isteyen adım sayısı da girebilir.
+                # Düzende standart adım (70 cm) saklanır; uygulama ziyaretçinin kendi adımına çevirir.
                 with st.container(horizontal=True, vertical_alignment="bottom"):
-                    adim = st.number_input("Adım", min_value=1, step=1, value=int(yol.get("adim") or 1),
-                                           help="Çizimdeki mesafeden hesaplandı. Sahada sayınca yazın; o zaman "
-                                                "modülü sürükleseniz de değişmez.")
-                    tek_yon = st.checkbox("Tek yön", bool(yol.get("tekYon")))
-                tarif = st.text_input(f"Gidiş tarifi ({adlar[yol['a']]} → {adlar[yol['b']]})", yol.get("tarif", ""))
-                geri = st.text_input(f"Dönüş tarifi ({adlar[yol['b']]} → {adlar[yol['a']]})", yol.get("geriTarif", ""))
-                if st.form_submit_button("Kaydet", icon=":material/save:"):
-                    if adim != yol.get("adim"):
+                    birim = st.segmented_control("Birim", ["m", "adim"], default="m", required=True,
+                                                 key=f"cizim-birim-{a}-{b}",
+                                                 format_func={"m": "Metre", "adim": "Adım"}.get)
+                    deger = st.number_input(
+                        "Mesafe (metre)" if birim == "m" else "Adım (normal yürüyüşle sayılan)",
+                        min_value=0.5 if birim == "m" else 1.0, step=0.5 if birim == "m" else 1.0,
+                        format="%.1f" if birim == "m" else "%d",
+                        value=float(bm.adimdan_metre(yol.get("adim") or 1) if birim == "m" else yol.get("adim") or 1),
+                        key=f"cizim-mesafe-{a}-{b}-{birim}-{yol.get('adim')}",
+                        help="Şerit metreyle, lazer metreyle ya da kat planından ölçün. Bir kez girince modülü "
+                             "sürükleseniz de değişmez.")
+                    tek_yon = st.checkbox("Tek yön", bool(yol.get("tekYon")), key=f"cizim-tekyon-{a}-{b}")
+                yeni_adim = bm.metreden_adim(deger) if birim == "m" else int(round(deger))
+                st.caption(f"≈ {yeni_adim} standart adım ({bm.adimdan_metre(yeni_adim):g} m). Telefondaki uygulama "
+                           "bunu her ziyaretçinin kendi adım uzunluğuna göre söyler.")
+                tarif = st.text_input(f"Gidiş tarifi ({adlar[yol['a']]} → {adlar[yol['b']]})", yol.get("tarif", ""),
+                                      key=f"cizim-tarif-{a}-{b}")
+                geri = st.text_input(f"Dönüş tarifi ({adlar[yol['b']]} → {adlar[yol['a']]})", yol.get("geriTarif", ""),
+                                     key=f"cizim-geri-{a}-{b}")
+                if st.button("Kaydet", icon=":material/save:", type="primary", key=f"cizim-yol-kaydet-{a}-{b}"):
+                    if yeni_adim != yol.get("adim"):
                         sabit.add((yol["a"], yol["b"]))
                         plan["sabitAdim"] = sorted(map(list, sabit))
-                    yol.update(adim=int(adim), tarif=tarif.strip(), geriTarif=geri.strip())
+                    yol.update(adim=yeni_adim, tarif=tarif.strip(), geriTarif=geri.strip())
                     if tek_yon:
                         yol["tekYon"] = True
                     else:
@@ -310,10 +327,13 @@ if mekan["hedefler"] and mekan.get("giris") in adlar:
         st.markdown("\n".join(f"1. {adim}" for adim in bm.rota_onizleme(mekan, hedef_adi)))
 
 hatalar, _ = bm.dogrula(mekan)
-with st.container(horizontal=True, vertical_alignment="center"):
-    if hatalar:
-        st.caption(f":material/error: {len(hatalar)} eksik var: " + hatalar[0])
-    else:
-        st.caption(":material/check_circle: Düzen hazır.")
-    if st.button("4. Yazdır", type="primary", icon=":material/arrow_forward:"):
-        st.switch_page("app_pages/yazdir.py")
+# Eksik olsa da ilerlenir: Yazdır adımı eksikleri ayrıntılı gösterir ve bazılarını tek tıkla düzeltir
+durum.ileri("app_pages/yazdir.py", "İleri: Yazdır",
+            neden=f":material/error: {len(hatalar)} eksik var: {hatalar[0]}" if hatalar
+            else ":material/check_circle: Düzen hazır.")
+
+with st.expander("Gelişmiş", icon=":material/tune:"):
+    st.caption("Her şeyi tek tek değiştirmek isteyenler için.")
+    with st.container(horizontal=True):
+        st.page_link("app_pages/duzenle.py", label="Tablolarda düzenle", icon=":material/table_view:")
+        st.page_link("app_pages/plan_sayfasi.py", label="Teknik plan", icon=":material/map:")

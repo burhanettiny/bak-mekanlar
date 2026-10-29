@@ -1,5 +1,4 @@
 import json
-import zlib
 
 import pytest
 from streamlit.testing.v1 import AppTest
@@ -100,8 +99,11 @@ def uygulama():
 
 
 def sablon_ac(at, ad="Hastane / poliklinik (iki katlı, asansörlü)"):
-    at.selectbox[0].select(ad)
-    next(b for b in at.button if b.label == "Örneği aç").click().run()
+    """Başla sayfasında örnekler türünün kartındadır: birden çok örnek "Örnekle dene" açılır kutusunda adıyla,
+    tek örnek doğrudan "Örnekle dene" düğmesiyle (adı ipucunda) açılır."""
+    dugme = next((b for b in at.button if b.label == ad), None) or next(
+        b for b in at.button if b.label == "Örnekle dene" and b.help == ad)
+    dugme.click().run()
     return at
 
 
@@ -574,3 +576,32 @@ def test_bina_listesi_tek_kutuyla_duzene_donusur():
     assert any("Düzeniniz hazır" in str(x.value) for x in at.success)
     at.switch_page("app_pages/yazdir.py").run()
     assert not at.error
+
+
+def test_mesafe_metre_olarak_girilir_standart_adima_cevrilir():
+    assert bm.metreden_adim(7) == 10 and bm.metreden_adim(0.2) == 1
+    assert bm.mesafe_etiketi(10) == "7 m" and bm.mesafe_etiketi(20) == "14 m"
+    at = sablon_ac(uygulama(), "Okul (iki katlı, merdivenli ve rampalı)")
+    at.session_state["cizim_yol"] = ["hol", "mudur"]
+    at.run()
+    assert not at.exception
+    next(n for n in at.number_input if n.label == "Mesafe (metre)").set_value(14.0).run()
+    assert any("≈ 20 standart adım" in str(c.value) for c in at.caption)
+    next(b for b in at.button if b.label == "Kaydet").click().run()
+    assert not at.exception
+    yollar = at.session_state["kaynak"]["yollar"]
+    assert int(yollar[(yollar["a"] == "hol") & (yollar["b"] == "mudur")]["adim"].iloc[0]) == 20
+    assert ["hol", "mudur"] in at.session_state["plan"]["sabitAdim"]     # sürüklenince değişmez
+
+
+def test_yarim_is_uyarisiz_silinmez():
+    at = sablon_ac(uygulama())                                   # hastane örneği açık
+    at.switch_page("app_pages/basla.py").run()
+    assert any("Yarım kalan" in str(m.value) for m in at.markdown)
+    next(b for b in at.button if b.label == "Boş başla").click().run()
+    assert not at.exception
+    assert at.session_state["bilgi"]["ad"] == "Örnek Devlet Hastanesi"   # onay verilmeden silinmedi
+    assert any(b.label == "Yeni başla" for b in at.button)
+    next(b for b in at.button if b.label == "Yeni başla").click().run()
+    assert not at.exception
+    assert at.session_state["bilgi"]["ad"] == ""

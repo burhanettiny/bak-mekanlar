@@ -29,8 +29,8 @@ st.logo("logo.png", size="large", icon_image="logo.png")
 
 durum.baslat()
 
-# Kurum görevlisi üç adımı görür: başla → yerleri yaz ve kontrol et → yazdır. Tablolar ve teknik plan, ihtiyaç
-# duyan için "Gelişmiş" menüsündedir.
+# Üst menü gizlidir: kurum görevlisi her sayfanın tepesindeki adım çubuğuyla (durum.adim_cubugu) ve sayfa sonundaki
+# "İleri" düğmesiyle tek bir yolda ilerler. Tablolar ve teknik plan, 3. adımın altındaki "Gelişmiş" bağlantılarındadır.
 DUZENLE = st.Page("app_pages/duzenle.py", title="Tablolar", icon=":material/table_view:")
 sayfa = st.navigation({
     "": [
@@ -43,7 +43,7 @@ sayfa = st.navigation({
         DUZENLE,
         st.Page("app_pages/plan_sayfasi.py", title="Teknik plan", icon=":material/map:"),
     ],
-}, position="top")
+}, position="hidden")
 
 # Düzenle sayfasından çıkınca tablolardaki değişiklikler kalıcı hale getirilir
 if sayfa.url_path != DUZENLE.url_path:

@@ -1,16 +1,27 @@
 import pandas as pd
 import streamlit as st
 
+import bak_mekan as bm
 import durum
 import sihirbaz
 
+durum.adim_cubugu(1)
 st.title("Yerleri yazın")
 st.caption("Binanızda ziyaretçinin gidebileceği yerleri yazın; yol tarifleri kendiliğinden hazırlanır. "
            "Sonraki adımda çizimde kontrol edip düzeltirsiniz.")
 
-tur = st.segmented_control("Ne için?", ["Koridorlu bina", "Market", "AVM"], required=True,
-                           default=st.session_state.get("sihirbaz_turu", "Koridorlu bina"), key="sihirbaz_turu",
-                           format_func=lambda t: "Hastane, okul, kurum" if t == "Koridorlu bina" else t)
+# 3. adımda düzeltilmiş bir düzen varsa "oluştur" onun üzerine yazar: kullanıcı önceden bilsin
+_mevcut = durum.guncel_mekan()
+if _mevcut["ad"] and _mevcut["hedefler"]:
+    st.warning(f"**{_mevcut['ad']}** için hazırlanmış bir düzen var. Burada yeniden oluşturursanız 3. adımda yaptığınız "
+               "düzeltmelerin yerine geçer. Yalnızca düzeltmek istiyorsanız **3. Kontrol et** adımına gidin.",
+               icon=":material/warning:")
+
+# Tür 1. adımda seçildi; burada yeniden sorulmaz, yalnızca gösterilir
+tur = st.session_state.get("sihirbaz_turu") or "Koridorlu bina"
+with st.container(horizontal=True, vertical_alignment="center"):
+    st.markdown(f"**{'Hastane, okul, kurum' if tur == 'Koridorlu bina' else tur}**", width="content")
+    st.page_link("app_pages/basla.py", label="Türü değiştir", icon=":material/swap_horiz:")
 
 ORNEK_KORIDORLAR = pd.DataFrame([
     {"sol": "Meyve, Sebze", "sag": "Ekmek, Unlu mamuller"},
@@ -121,13 +132,17 @@ if tur != "Market" and yontem == "liste":
             default="yuruyen" if avm else "ikisi", key=f"sihirbaz_{tur}_dikey_liste",
             format_func={"yuruyen": "Yürüyen merdiven ve asansör", "ikisi": "Merdiven ve asansör",
                          "asansor": "Yalnız asansör", "merdiven": "Yalnız merdiven"}.get) if cok_katli else "ikisi"
-        with st.expander("Adım sayıları (isterseniz)", icon=":material/straighten:"):
+        with st.expander("Mesafeler (isterseniz)", icon=":material/straighten:"):
+            # Kurum metre girer; düzende standart adım (70 cm) saklanır, uygulama ziyaretçinin adımına çevirir
             with st.container(horizontal=True):
-                giris_adim = st.number_input("Girişten koridor başına", 1, 100, 8, key=f"sihirbaz_{tur}_giris_l")
-                kapi_adim = st.number_input("İki kapı arası", 1, 50, 5, key=f"sihirbaz_{tur}_kapi_l")
+                giris_m = st.number_input("Girişten koridor başına (m)", 0.5, 100.0, 6.0, 0.5,
+                                          key=f"sihirbaz_{tur}_giris_m")
+                kapi_m = st.number_input("İki kapı arası (m)", 0.5, 50.0, 3.5, 0.5, key=f"sihirbaz_{tur}_kapi_m")
                 basamak = st.number_input("Merdiven basamağı (kat başına)", 1, 80, 22, key=f"sihirbaz_{tur}_bas_l")
-            st.caption("Bilmiyorsanız böyle bırakın. Sonraki adımda çizimde her yolu ayrı düzeltebilirsiniz; "
-                       "uygulama da ziyaretçinin adım uzunluğunu kendisi ayarlar.")
+            giris_adim, kapi_adim = bm.metreden_adim(giris_m), bm.metreden_adim(kapi_m)
+            st.caption("Bilmiyorsanız böyle bırakın. Sonraki adımda çizimde her yolun mesafesine tıklayıp "
+                       "düzeltebilirsiniz. Adım kişiden kişiye değiştiği için metre girilir; uygulama her "
+                       "ziyaretçinin kendi adımına çevirir.")
     st.caption("Yerlerin koridorun **solunda mı sağında mı** olduğu listeden bilinemez: şimdilik bir sol bir sağ "
                "dizilir. Sonraki adımda çizimde ya da binada yürüyerek düzeltin; ziyaretçi bu bilgiye güvenerek yürür.")
     if st.button("Düzeni oluştur", type="primary", icon=":material/arrow_forward:",

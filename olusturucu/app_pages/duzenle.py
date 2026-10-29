@@ -11,6 +11,7 @@ YOL_TURU_ADLARI = {"yuru": "Yürüme", "rampa": "Rampa", "kapi": "Kapı", "merdi
 anahtar = st.session_state.surum_anahtari
 kaynak = st.session_state.kaynak
 
+st.page_link("app_pages/cizim_sayfasi.py", label="Kontrol et adımına dön", icon=":material/arrow_back:")
 st.title("Düzenle")
 st.caption("Sihirbazın ya da şablonun hazırladığı her şeyi burada değiştirebilirsiniz. Değişiklikler Plan ve "
            "QR sayfalarına yansır.")
@@ -37,10 +38,10 @@ with noktalar_sekmesi:
                                                              "harf, rakam ve '-'"),
         })
 
-nokta_satirlari = noktalar_df.to_dict("records")
-nokta_idleri = [bm._metin(n.get("id")) or bm.kisalt(bm._metin(n.get("ad"))) for n in nokta_satirlari
-                if bm._metin(n.get("ad")) or bm._metin(n.get("id"))]
-nokta_adlari = {i: bm._metin(n.get("ad")) for i, n in zip(nokta_idleri, nokta_satirlari)}
+# Boş satırlar atlanır; kimlik ve ad aynı satırdan alınır (boş satır araya girince adlar kaymasın)
+nokta_satirlari = [n for n in noktalar_df.to_dict("records") if bm._metin(n.get("ad")) or bm._metin(n.get("id"))]
+nokta_idleri = [bm._metin(n.get("id")) or bm.kisalt(bm._metin(n.get("ad"))) for n in nokta_satirlari]
+nokta_adlari = {i: bm._metin(n.get("ad")) for i, n in zip(nokta_idleri, nokta_satirlari, strict=True)}
 
 
 def nokta_etiketi(i: str) -> str:
