@@ -55,7 +55,13 @@ def olcek(mekan: dict, plan: dict) -> float:
         d = math.dist(konum[b["a"]], konum[b["b"]])
         if d > 0.01 and b.get("adim"):
             oranlar.append(b["adim"] / d)
-    return round(statistics.median(oranlar), 3) if oranlar else 1.0
+    if oranlar:
+        return round(statistics.median(oranlar), 3)
+    # Hiç konum yok (tablodan ya da eski şablondan): kısa yollar da etiketler çakışmadan çizilsin diye
+    # bir birim birkaç adımın altında tutulur (kısa yollar en az ~8 birim olur)
+    adimlar = sorted(b["adim"] for b in mekan.get("baglantilar") or []
+                     if (b.get("tur") or "yuru") not in bm.DIKEY_GECISLER and b.get("adim"))
+    return round(min(1.0, max(0.1, adimlar[len(adimlar) // 4] / 8)), 3) if adimlar else 1.0
 
 
 def gorunum_konumlari(plan: dict, gorunum: str | None) -> dict[str, list[float]]:
@@ -99,7 +105,8 @@ def yerlesim(mekan: dict, plan: dict, olc: float) -> dict[str, list[float]]:
         while kuyruk:
             u, ebeveyn = kuyruk.popleft()
             ux, uy = konum[u]
-            temel = math.atan2(uy - konum[ebeveyn][1], ux - konum[ebeveyn][0]) if ebeveyn else 0.0
+            # Yollar girişten yukarı doğru açılır: etiketler yatay olduğu için dikey zincirler çakışmaz
+            temel = math.atan2(uy - konum[ebeveyn][1], ux - konum[ebeveyn][0]) if ebeveyn else math.pi / 2
             yerlesecek = [(v, a) for v, a in komsu[u] if v not in konum]
             for i, (v, adim) in enumerate(yerlesecek):
                 sira = (i + 1) // 2 * (1 if i % 2 else -1)
@@ -214,6 +221,124 @@ def nokta_sil(mekan: dict, plan: dict, kimlik: str) -> None:
         mekan["kasa"] = None
 
 
+def binayi_doldur(mekan: dict, plan: dict, bina: str, metin: str, dikey: str = "ikisi") -> int:
+    """Binanın içini kat listesinden kurar: her katta koridor, sırayla sol/sağ kapılar, katlar arasında
+    merdiven/asansör ("Zemin kat: Sekreterlik, Dekan odası, WC / 1. kat: 101, 102"). Koridorlu bina sihirbazının
+    ürettiği düzen bu binanın iç çizimine modüller olarak eklenir; binanın girişi koridora bağlanır.
+    Eklenen hedef sayısı döner."""
+    import sihirbaz   # döngüsel içe aktarmayı önlemek için burada
+
+    liste = sihirbaz.kat_listesi_coz(metin)
+    if not liste:
+        return 0
+    ilk, son = min(liste), max(liste)
+    katlar = [[{"ad": ad, "taraf": "sol" if i % 2 == 0 else "sag", "adim": 5} for i, ad in enumerate(liste.get(k, []))]
+              for k in range(ilk, son + 1)]
+    bina_adi = next((h["ad"] for h in mekan["hedefler"] if h["nokta"] == bina),
+                    next(n["ad"] for n in mekan["noktalar"] if n["id"] == bina))
+    alt, alt_plan = sihirbaz.bina_olustur(bina_adi, mekan.get("tur") or "kurum", katlar, giris_adim=6, dikey=dikey,
+                                          ilk_kat=ilk)
+
+    # Kimlikler bina adıyla öneklenir (iki binada da "koridor-0" olabilir); sihirbazın girişi bu binanın kendisidir
+    var = {n["id"] for n in mekan["noktalar"]}
+    harita = {"giris": bina}
+    for n in alt["noktalar"]:
+        if n["id"] != "giris":
+            kimlik, i = f"{bina}-{n['id']}", 2
+            while kimlik in var:
+                kimlik, i = f"{bina}-{n['id']}-{i}", i + 1
+            harita[n["id"]] = kimlik
+            var.add(kimlik)
+    ust = plan.setdefault("ust", {})
+    konum = plan.setdefault("konum", {})
+    for n in alt["noktalar"]:
+        if n["id"] == "giris":
+            continue
+        mekan["noktalar"].append({**n, "id": harita[n["id"]]})
+        ust[harita[n["id"]]] = bina
+        konum[harita[n["id"]]] = list(alt_plan["konum"][n["id"]])
+    gx, gy = alt_plan["konum"]["giris"]
+    plan.setdefault("icKonum", {})[bina] = [gx, gy]
+    for b in alt["baglantilar"]:
+        mekan["baglantilar"].append({**b, "a": harita[b["a"]], "b": harita[b["b"]]})
+    adlar = {h["ad"] for h in mekan["hedefler"]}
+    for h in alt["hedefler"]:
+        # Başka binada ya da başka katta da "WC" olabilir: listede ayırt edilsin diye bina adı, gerekirse kat eklenir
+        kat = next((n.get("kat") or 0) for n in alt["noktalar"] if n["id"] == h["nokta"])
+        ad = next((a for a in (h["ad"], f"{h['ad']} ({bina_adi})",
+                               f"{h['ad']} ({bina_adi}, {sihirbaz.kat_adi(kat)})") if a not in adlar), None)
+        adlar.add(ad)
+        mekan["hedefler"].append({**h, "ad": ad, "nokta": harita[h["nokta"]]})
+    # İç çizimin ölçeği sihirbazın verdiği adımlardan: sürükleyince adımlar tutarlı değişsin
+    ic = gorunum_konumlari(plan, bina)
+    oranlar = [b["adim"] / math.dist(ic[b["a"]], ic[b["b"]]) for b in mekan["baglantilar"]
+               if (b.get("tur") or "yuru") not in bm.DIKEY_GECISLER and b["a"] in ic and b["b"] in ic
+               and math.dist(ic[b["a"]], ic[b["b"]]) > 0.01]
+    if oranlar:
+        plan.setdefault("icOlcek", {})[bina] = round(statistics.median(oranlar), 3)
+    plan.setdefault("tur", {})[bina] = "bina"
+    return len(alt["hedefler"])
+
+
+def sirala_adaylari(mekan: dict, plan: dict, merkez: str, gorunum: str | None = None) -> list[str]:
+    """Merkeze tek tek bağlı, başka hiçbir yere bağlı olmayan ve aynı yönde duran odalar (yıldız biçimi).
+    Yön, en uzaktaki odanın yönüdür; ondan 50°'den fazla sapanlar (ör. arkadaki merdiven) katılmaz."""
+    konum = gorunum_konumlari(plan, gorunum)
+    if merkez not in konum:
+        return []
+    derece: dict[str, int] = {}
+    for b in mekan["baglantilar"]:
+        for u in (b["a"], b["b"]):
+            derece[u] = derece.get(u, 0) + 1
+    yapraklar = [v for b in mekan["baglantilar"] if merkez in (b["a"], b["b"])
+                 and (b.get("tur") or "yuru") not in bm.DIKEY_GECISLER
+                 for v in [b["b"] if b["a"] == merkez else b["a"]]
+                 if derece.get(v) == 1 and v in konum and v != mekan.get("giris")]
+    if len(yapraklar) < 2:
+        return []
+    mx, my = konum[merkez]
+    uzak = max(yapraklar, key=lambda v: math.dist(konum[v], konum[merkez]))
+    yon = math.atan2(konum[uzak][1] - my, konum[uzak][0] - mx)
+
+    def sapma(v):
+        return abs((math.atan2(konum[v][1] - my, konum[v][0] - mx) - yon + math.pi) % (2 * math.pi) - math.pi)
+
+    secilen = [v for v in yapraklar if sapma(v) <= math.radians(50)]
+    return secilen if len(secilen) >= 2 else []
+
+
+def koridora_diz(mekan: dict, plan: dict, merkez: str, olc: float, gorunum: str | None = None) -> int:
+    """Merkeze ayrı ayrı bağlı odaları koridor gibi sıraya dizer: merkez → en yakın oda → sonraki → …
+    Odanın koridorun solunda mı sağında mı olduğu çizimden bulunur ve tarife yazılır. Dizilen oda sayısı döner."""
+    secilen = sirala_adaylari(mekan, plan, merkez, gorunum)
+    if not secilen:
+        return 0
+    konum = gorunum_konumlari(plan, gorunum)
+    mx, my = konum[merkez]
+    # Koridorun ekseni: merkezden odaların ortasına (kapılar eksenin iki yanına dağılır)
+    ux = sum(konum[v][0] for v in secilen) / len(secilen) - mx
+    uy = sum(konum[v][1] for v in secilen) / len(secilen) - my
+    boy = math.hypot(ux, uy) or 1
+    ux, uy = ux / boy, uy / boy
+    secilen.sort(key=lambda v: (konum[v][0] - mx) * ux + (konum[v][1] - my) * uy)
+    adlar = {h["nokta"]: bm.liste_adi(h) for h in mekan["hedefler"]}
+    adlar = {n["id"]: adlar.get(n["id"], n["ad"]) for n in mekan["noktalar"]}
+    mekan["baglantilar"] = [b for b in mekan["baglantilar"]
+                            if not ({b["a"], b["b"]} & set(secilen) and merkez in (b["a"], b["b"]))]
+    onceki = merkez
+    for i, v in enumerate(secilen):
+        # Planda y yukarı doğru artar: koridor yönüne göre çapraz çarpım artıysa oda solda
+        capraz = ux * (konum[v][1] - my) - uy * (konum[v][0] - mx)
+        taraf = "solunuzda" if capraz > 0 else "sağınızda"
+        mekan["baglantilar"].append({
+            "a": onceki, "b": v, "adim": _adim(konum, onceki, v, olc),
+            "tarif": f"Koridora girin, {adlar[v]} {taraf}" if i == 0
+            else f"Koridorda düz devam edin, {adlar[v]} {taraf}",
+            "geriTarif": f"Koridorda {adlar[merkez]} yönüne ilerleyin"})
+        onceki = v
+    return len(secilen)
+
+
 def yol_sil(mekan: dict, a: str, b: str) -> None:
     mekan["baglantilar"] = [y for y in mekan["baglantilar"] if {y["a"], y["b"]} != {a, b}]
 
@@ -279,7 +404,7 @@ svg.suruk { cursor: grabbing; }
 _JS = """
 const durumlar = new WeakMap()
 const NS = "http://www.w3.org/2000/svg"
-const SIMGE = {bina: "▣", oda: "□", kavsak: "◇", danisma: "ⓘ", wc: "WC", asansor: "⇅", merdiven: "≡"}
+const SIMGE = {bina: "▣", oda: "□", kavsak: "◇", danisma: "ⓘ", wc: "◫", asansor: "⇅", merdiven: "≡"}
 
 function el(ad, ozellik, ust) {
   const e = document.createElementNS(NS, ad)

@@ -6,42 +6,233 @@
  "surum": 1,
  "giris": "giris",
  "noktalar": [
-  {"id": "giris", "ad": "Ana giriş kapısı"},
-  {"id": "hol", "ad": "Giriş holü"},
-  {"id": "mudur", "ad": "Müdür odası kapısı"},
-  {"id": "ogretmenler", "ad": "Öğretmenler odası kapısı"},
-  {"id": "z-koridor", "ad": "Zemin kat koridoru"},
-  {"id": "wc-0", "ad": "Zemin kat tuvaleti"},
-  {"id": "kantin", "ad": "Kantin girişi"},
-  {"id": "merdiven-0", "ad": "Merdiven başı", "kat": 0},
-  {"id": "merdiven-1", "ad": "Merdiven başı", "kat": 1},
-  {"id": "k1-koridor", "ad": "1. kat koridoru", "kat": 1},
-  {"id": "sinif-101", "ad": "101 numaralı sınıf kapısı", "kat": 1},
-  {"id": "sinif-102", "ad": "102 numaralı sınıf kapısı", "kat": 1},
-  {"id": "kutuphane", "ad": "Kütüphane kapısı", "kat": 1}
+  {
+   "id": "giris",
+   "ad": "Ana giriş kapısı"
+  },
+  {
+   "id": "hol",
+   "ad": "Giriş holü"
+  },
+  {
+   "id": "mudur",
+   "ad": "Müdür odası kapısı"
+  },
+  {
+   "id": "ogretmenler",
+   "ad": "Öğretmenler odası kapısı"
+  },
+  {
+   "id": "z-koridor",
+   "ad": "Zemin kat koridoru"
+  },
+  {
+   "id": "wc-0",
+   "ad": "Zemin kat tuvaleti"
+  },
+  {
+   "id": "kantin",
+   "ad": "Kantin girişi"
+  },
+  {
+   "id": "merdiven-0",
+   "ad": "Merdiven başı",
+   "kat": 0
+  },
+  {
+   "id": "merdiven-1",
+   "ad": "Merdiven başı",
+   "kat": 1
+  },
+  {
+   "id": "k1-koridor",
+   "ad": "1. kat koridoru",
+   "kat": 1
+  },
+  {
+   "id": "sinif-101",
+   "ad": "101 numaralı sınıf kapısı",
+   "kat": 1
+  },
+  {
+   "id": "sinif-102",
+   "ad": "102 numaralı sınıf kapısı",
+   "kat": 1
+  },
+  {
+   "id": "kutuphane",
+   "ad": "Kütüphane kapısı",
+   "kat": 1
+  }
  ],
  "baglantilar": [
-  {"a": "giris", "b": "hol", "adim": 6, "tur": "rampa", "tarif": "Girişteki rampadan düz yukarı çıkın", "geriTarif": "Rampadan düz aşağı inin"},
-  {"a": "hol", "b": "mudur", "adim": 4, "tarif": "Holde sağa dönün, ilk kapı", "geriTarif": "Kapıdan çıkıp sola dönün"},
-  {"a": "hol", "b": "ogretmenler", "adim": 7, "tarif": "Holde sağa dönün, ikinci kapı", "geriTarif": "Kapıdan çıkıp sola dönün, hole doğru ilerleyin"},
-  {"a": "hol", "b": "z-koridor", "adim": 5, "tarif": "Holün sonundaki koridora düz girin", "geriTarif": "Koridorun başından hole doğru düz ilerleyin"},
-  {"a": "z-koridor", "b": "wc-0", "adim": 6, "tarif": "Koridorda düz ilerleyin, tuvalet solunuzda", "geriTarif": "Tuvaletten çıkıp sağa dönün"},
-  {"a": "z-koridor", "b": "kantin", "adim": 12, "tarif": "Koridorun sonuna kadar düz ilerleyin, kantin karşınızda", "geriTarif": "Kantinden çıkıp koridorda düz ilerleyin"},
-  {"a": "hol", "b": "merdiven-0", "adim": 4, "tarif": "Holde sola dönün, merdiven karşınızda", "geriTarif": "Merdivenden inince sağa dönün"},
-  {"a": "merdiven-0", "b": "merdiven-1", "adim": 25, "tur": "merdiven", "basamak": 22, "tarif": "Korkuluk sağınızda, ara sahanlıkta sola dönün.", "geriTarif": "Korkuluk solunuzda, ara sahanlıkta sağa dönün."},
-  {"a": "merdiven-1", "b": "k1-koridor", "adim": 3, "tarif": "Merdivenden çıkınca sağa dönün", "geriTarif": "Koridorun başındaki merdivene yönelin"},
-  {"a": "k1-koridor", "b": "sinif-101", "adim": 5, "tarif": "Koridorda düz ilerleyin, sınıf solunuzda", "geriTarif": "Sınıftan çıkıp sağa dönün"},
-  {"a": "sinif-101", "b": "sinif-102", "adim": 8, "tarif": "Koridorda düz devam edin, sınıf solunuzda", "geriTarif": "Koridorda geri dönün"},
-  {"a": "sinif-102", "b": "kutuphane", "adim": 6, "tarif": "Koridorun sonundaki kapı kütüphane", "geriTarif": "Kütüphaneden çıkıp koridorda düz ilerleyin"}
+  {
+   "a": "giris",
+   "b": "hol",
+   "adim": 6,
+   "tur": "rampa",
+   "tarif": "Girişteki rampadan düz yukarı çıkın",
+   "geriTarif": "Rampadan düz aşağı inin"
+  },
+  {
+   "a": "hol",
+   "b": "mudur",
+   "adim": 4,
+   "tarif": "Holde sağa dönün, ilk kapı",
+   "geriTarif": "Kapıdan çıkıp sola dönün, hole ulaşırsınız"
+  },
+  {
+   "a": "mudur",
+   "b": "ogretmenler",
+   "adim": 3,
+   "tarif": "Koridorda düz devam edin, sonraki kapı sağınızda",
+   "geriTarif": "Kapıdan çıkıp sola dönün, müdür odasının önünden hole doğru ilerleyin"
+  },
+  {
+   "a": "hol",
+   "b": "z-koridor",
+   "adim": 5,
+   "tarif": "Holün sonundaki koridora düz girin",
+   "geriTarif": "Koridorun başından hole doğru düz ilerleyin"
+  },
+  {
+   "a": "z-koridor",
+   "b": "wc-0",
+   "adim": 6,
+   "tarif": "Koridorda düz ilerleyin, tuvalet solunuzda",
+   "geriTarif": "Koridorda hole doğru düz ilerleyin"
+  },
+  {
+   "a": "wc-0",
+   "b": "kantin",
+   "adim": 6,
+   "tarif": "Koridorun sonuna kadar düz ilerleyin, kantin karşınızda",
+   "geriTarif": "Kantinden çıkıp koridorda düz ilerleyin, tuvaletin önünden geçin"
+  },
+  {
+   "a": "hol",
+   "b": "merdiven-0",
+   "adim": 4,
+   "tarif": "Holde sola dönün, merdiven karşınızda",
+   "geriTarif": "Merdivenden inince sağa dönün"
+  },
+  {
+   "a": "merdiven-0",
+   "b": "merdiven-1",
+   "adim": 25,
+   "tur": "merdiven",
+   "basamak": 22,
+   "tarif": "Korkuluk sağınızda, ara sahanlıkta sola dönün.",
+   "geriTarif": "Korkuluk solunuzda, ara sahanlıkta sağa dönün."
+  },
+  {
+   "a": "merdiven-1",
+   "b": "k1-koridor",
+   "adim": 3,
+   "tarif": "Merdivenden çıkınca sağa dönün",
+   "geriTarif": "Koridorun başındaki merdivene yönelin"
+  },
+  {
+   "a": "k1-koridor",
+   "b": "sinif-101",
+   "adim": 5,
+   "tarif": "Koridorda düz ilerleyin, sınıf solunuzda",
+   "geriTarif": "Sınıftan çıkıp sağa dönün"
+  },
+  {
+   "a": "sinif-101",
+   "b": "sinif-102",
+   "adim": 8,
+   "tarif": "Koridorda düz devam edin, sınıf solunuzda",
+   "geriTarif": "Koridorda geri dönün"
+  },
+  {
+   "a": "sinif-102",
+   "b": "kutuphane",
+   "adim": 6,
+   "tarif": "Koridorun sonundaki kapı kütüphane",
+   "geriTarif": "Kütüphaneden çıkıp koridorda düz ilerleyin"
+  }
  ],
  "hedefler": [
-  {"ad": "Müdür odası", "nokta": "mudur", "tarif": "Müdür odasının kapısı sağınızda.", "anahtarlar": ["müdür", "idare", "yönetim"], "kisiler": ["Müdür Ali Yılmaz"]},
-  {"ad": "Müdür yardımcısı", "nokta": "mudur", "tarif": "Müdür odasının yanındaki kapı.", "anahtarlar": ["müdür yardımcısı", "kayıt"]},
-  {"ad": "Öğretmenler odası", "nokta": "ogretmenler", "tarif": "Öğretmenler odasının kapısı sağınızda.", "anahtarlar": ["öğretmen", "öğretmenler"]},
-  {"ad": "Tuvalet", "nokta": "wc-0", "tarif": "Tuvalet kapısı solunuzda.", "anahtarlar": ["tuvalet", "wc", "lavabo"]},
-  {"ad": "Kantin", "nokta": "kantin", "tarif": "Kantin tezgâhı karşınızda.", "anahtarlar": ["kantin", "yemek", "su"]},
-  {"ad": "101 numaralı sınıf", "nokta": "sinif-101", "oda": "101", "tarif": "Sınıf kapısı solunuzda.", "anahtarlar": ["1-A", "birinci sınıf"]},
-  {"ad": "102 numaralı sınıf", "nokta": "sinif-102", "oda": "102", "tarif": "Sınıf kapısı solunuzda.", "anahtarlar": ["1-B"]},
-  {"ad": "Kütüphane", "nokta": "kutuphane", "tarif": "Kütüphane kapısı karşınızda.", "anahtarlar": ["kütüphane", "kitap"]}
+  {
+   "ad": "Müdür odası",
+   "nokta": "mudur",
+   "tarif": "Müdür odasının kapısı sağınızda.",
+   "anahtarlar": [
+    "müdür",
+    "idare",
+    "yönetim"
+   ],
+   "kisiler": [
+    "Müdür Ali Yılmaz"
+   ]
+  },
+  {
+   "ad": "Müdür yardımcısı",
+   "nokta": "mudur",
+   "tarif": "Müdür odasının yanındaki kapı.",
+   "anahtarlar": [
+    "müdür yardımcısı",
+    "kayıt"
+   ]
+  },
+  {
+   "ad": "Öğretmenler odası",
+   "nokta": "ogretmenler",
+   "tarif": "Öğretmenler odasının kapısı sağınızda.",
+   "anahtarlar": [
+    "öğretmen",
+    "öğretmenler"
+   ]
+  },
+  {
+   "ad": "Tuvalet",
+   "nokta": "wc-0",
+   "tarif": "Tuvalet kapısı solunuzda.",
+   "anahtarlar": [
+    "tuvalet",
+    "wc",
+    "lavabo"
+   ]
+  },
+  {
+   "ad": "Kantin",
+   "nokta": "kantin",
+   "tarif": "Kantin tezgâhı karşınızda.",
+   "anahtarlar": [
+    "kantin",
+    "yemek",
+    "su"
+   ]
+  },
+  {
+   "ad": "101 numaralı sınıf",
+   "nokta": "sinif-101",
+   "oda": "101",
+   "tarif": "Sınıf kapısı solunuzda.",
+   "anahtarlar": [
+    "1-A",
+    "birinci sınıf"
+   ]
+  },
+  {
+   "ad": "102 numaralı sınıf",
+   "nokta": "sinif-102",
+   "oda": "102",
+   "tarif": "Sınıf kapısı solunuzda.",
+   "anahtarlar": [
+    "1-B"
+   ]
+  },
+  {
+   "ad": "Kütüphane",
+   "nokta": "kutuphane",
+   "tarif": "Kütüphane kapısı karşınızda.",
+   "anahtarlar": [
+    "kütüphane",
+    "kitap"
+   ]
+  }
  ]
 }

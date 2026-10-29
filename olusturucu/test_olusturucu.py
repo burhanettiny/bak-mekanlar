@@ -507,3 +507,48 @@ def test_cizim_sayfasi_bos_ve_sablonla_acilir_modul_eklenir():
     assert at.session_state["cizim_secili"] == "kutuphane"
     at.switch_page("app_pages/yazdir.py").run()
     assert not at.error                                   # girişe bağlandı: QR üretilebilir
+
+
+def test_cizim_bina_ici_kat_listesinden_kurulur():
+    import cizim as cz
+    m = json.loads(json.dumps(bm.sablonlar()["Ardahan Üniversitesi Yenisey Kampüsü (OpenStreetMap yol ağından – sahada doğrulayın)"]))
+    plan = m.pop("plan")
+    plan["konum"] = cz.yerlesim(m, plan, cz.olcek(m, plan))
+    n = cz.binayi_doldur(m, plan, "rektorluk", "Zemin kat: Sekreterlik, Rektör odası, WC\n1. kat: 101, 102, WC")
+    assert n == 6
+    ic = cz.gorunum_noktalari(m, plan, "rektorluk", None)
+    assert "rektorluk" in ic and len(ic) > 6
+    assert all(i.startswith("rektorluk-") for i in ic - {"rektorluk"})
+    # Girişten bina içindeki odaya yol var; aynı adlı ikinci WC bina adıyla ayrılır
+    assert bm.dogrula(m)[0] == []
+    adlar = [h["ad"] for h in m["hedefler"]]
+    assert "WC" in adlar and "WC (Rektörlük)" in adlar
+    cz.binayi_doldur(m, plan, "konukevi", "Zemin kat: WC\n1. kat: WC")
+    assert {"WC (Konukevi)", "WC (Konukevi, 1. kat)"} <= {h["ad"] for h in m["hedefler"]}
+    assert any("1. kat" in s or "kat" in s.lower() for s in bm.rota_onizleme(m, "101"))
+    # İkinci binada aynı kimlikler çakışmaz
+    cz.binayi_doldur(m, plan, "iibf", "Zemin kat: Dekanlık, WC")
+    assert bm.dogrula(m)[0] == []
+    assert len({n["id"] for n in m["noktalar"]}) == len(m["noktalar"])
+
+
+def test_cizim_yildiz_bicimindeki_odalar_koridora_dizilir():
+    import cizim as cz
+    m = {"id": "q-x", "ad": "Okul", "tur": "kurum", "surum": 1, "giris": "giris",
+         "noktalar": [{"id": i, "ad": a} for i, a in [("giris", "Giriş"), ("hol", "Hol"), ("mudur", "Müdür odası"),
+                                                       ("ogretmen", "Öğretmenler odası"), ("merdiven", "Merdiven")]],
+         "baglantilar": [{"a": "giris", "b": "hol", "adim": 6, "tarif": "x", "geriTarif": "y"}] +
+                        [{"a": "hol", "b": v, "adim": 9, "tarif": "x", "geriTarif": "y"}
+                         for v in ("mudur", "ogretmen", "merdiven")],
+         "hedefler": [{"ad": "Müdür odası", "nokta": "mudur", "tarif": "t", "anahtarlar": ["müdür"]},
+                      {"ad": "Öğretmenler odası", "nokta": "ogretmen", "tarif": "t", "anahtarlar": ["öğretmen"]}]}
+    # Hol solda; müdür 4 adım ileride sağda, öğretmenler 10 adım ileride solda; merdiven arkada
+    plan = {"konum": {"giris": [-6, 0], "hol": [0, 0], "mudur": [4, -1], "ogretmen": [10, 1], "merdiven": [-2, 5]}}
+    assert set(cz.sirala_adaylari(m, plan, "hol")) == {"mudur", "ogretmen"}
+    assert cz.koridora_diz(m, plan, "hol", 1.0) == 2
+    yollar = {(b["a"], b["b"]): b for b in m["baglantilar"]}
+    assert ("hol", "mudur") in yollar and ("mudur", "ogretmen") in yollar and ("hol", "ogretmen") not in yollar
+    assert "sağınızda" in yollar[("hol", "mudur")]["tarif"] and "solunuzda" in yollar[("mudur", "ogretmen")]["tarif"]
+    assert yollar[("mudur", "ogretmen")]["adim"] == 6
+    assert ("hol", "merdiven") in yollar                     # arkadaki merdiven olduğu gibi kalır
+    assert bm.dogrula(m)[0] == []

@@ -70,8 +70,10 @@ st.caption("Binanızı modül modül çizin: bina, oda, kavşak, danışma, tuva
 # ── Hangi çizim: dış çizim ya da bir binanın içi; birden çok katta kat seçimi ──
 with st.container(horizontal=True, vertical_alignment="center"):
     if gorunum:
-        if st.button("Dış çizime dön", icon=":material/arrow_back:"):
-            st.session_state.cizim_gorunum, st.session_state.cizim_secili = None, gorunum
+        ust_gorunum = ust.get(gorunum)   # bina başka bir binanın içindeyse bir üst çizime dönülür
+        if st.button(f"{adlar[ust_gorunum]} çizimine dön" if ust_gorunum else "Dış çizime dön",
+                     icon=":material/arrow_back:"):
+            st.session_state.cizim_gorunum, st.session_state.cizim_secili = ust_gorunum, gorunum
             st.rerun()
         st.subheader(f"{bm.liste_adi(next((h for h in mekan['hedefler'] if h['nokta'] == gorunum), {'ad': adlar[gorunum]}))} – içi")
     elif mekan.get("ad"):
@@ -89,8 +91,8 @@ with st.container(horizontal=True, vertical_alignment="center"):
 
 gorunen = cz.gorunum_noktalari(mekan, plan, gorunum, kat)
 if gorunum and kat is not None:
-    gorunen = {i for i in gorunen if i == gorunum or next(
-        (n.get("kat") or 0) == kat for n in mekan["noktalar"] if n["id"] == i)}
+    # Binanın girişi yalnızca kendi katında görünür; üst katlara merdiven/asansörle çıkılır
+    gorunen = {i for i in gorunen if next((n.get("kat") or 0) == kat for n in mekan["noktalar"] if n["id"] == i)}
 hedef_noktalari = {h["nokta"] for h in mekan["hedefler"]}
 konum_g = cz.gorunum_konumlari(plan, gorunum)
 olc_g = cz.gorunum_olcegi(plan, gorunum, olc)
@@ -109,6 +111,30 @@ for b in mekan["baglantilar"]:
         continue
     if b["a"] in gorunen and b["b"] in gorunen:
         yollar.append({"a": b["a"], "b": b["b"], "adim": b.get("adim"), "dikey": False})
+
+# ── Boş binanın içini kat listesinden tek seferde kurma ──
+if gorunum and not icerik.get(gorunum):
+    with st.container(border=True):
+        st.markdown("**Binanın içini hızlıca kurun.** Her kat için odaları yazın; koridor, sırayla sol ve sağ "
+                    "kapılar, katlar arasında merdiven ve asansör kendiliğinden çizilir. Sonra sürükleyerek "
+                    "düzeltir, tek tek oda eklersiniz.")
+        with st.form("cizim-doldur", border=False):
+            liste_metni = st.text_area(
+                "Katlar ve odalar", height=130,
+                placeholder="Zemin kat: Sekreterlik, Dekan odası, Toplantı salonu, WC\n"
+                            "1. kat: 101, 102, 103, Öğretim üyesi odaları, WC")
+            dikey_secim = st.segmented_control(
+                "Katlar arası", ["ikisi", "merdiven", "asansor"], default="ikisi", required=True,
+                format_func={"ikisi": "Merdiven ve asansör", "merdiven": "Yalnızca merdiven",
+                             "asansor": "Yalnızca asansör"}.get)
+            if st.form_submit_button("Odaları ekle", icon=":material/playlist_add:", type="primary"):
+                eklenen = cz.binayi_doldur(mekan, plan, gorunum, liste_metni, dikey_secim)
+                if eklenen:
+                    kaydet(mekan, plan)
+                    st.toast(f"{eklenen} oda eklendi. Adımları sahada sayıp düzeltin.", icon=":material/check:")
+                    st.rerun()
+                st.warning("Liste okunamadı. Her satıra bir kat yazın: \"Zemin kat: Sekreterlik, WC\".",
+                           icon=":material/info:")
 
 # ── Modül ekleme ──────────────────────────────────────────
 with st.container(border=True):
@@ -194,7 +220,7 @@ if secili:
                 kaydet(mekan, plan)
                 st.rerun()
         with st.container(horizontal=True):
-            if tur == "bina" and not gorunum:
+            if tur == "bina" and secili != gorunum:
                 if st.button("İçini aç", icon=":material/door_open:", type="primary",
                              help="Bu binanın odalarını ayrı bir çizimde ekleyin"):
                     plan.setdefault("tur", {})[secili] = "bina"
@@ -205,6 +231,16 @@ if secili:
                                                           help="Büyük giriş QR'ı bu noktaya asılır"):
                 mekan["giris"] = secili
                 kaydet(mekan, plan)
+                st.rerun()
+            # Odalar bu noktaya ayrı ayrı bağlıysa (yıldız biçimi) gerçekteki gibi koridor boyunca sıraya dizilir
+            dizilecek = cz.sirala_adaylari(mekan, plan, secili, gorunum)
+            if dizilecek and st.button(
+                    f"Bağlı {len(dizilecek)} odayı koridor gibi sırala", icon=":material/linear_scale:",
+                    help="Odalara tek tek buradan gidiliyormuş gibi bağlı. Gerçekte koridor boyunca sırayla "
+                         "varılır: en yakın oda, sonraki, … Sağ/sol çizimden bulunur."):
+                n = cz.koridora_diz(mekan, plan, secili, olc_g, gorunum)
+                kaydet(mekan, plan)
+                st.toast(f"{n} oda koridor boyunca sıraya dizildi.", icon=":material/linear_scale:")
                 st.rerun()
             sil_yazi = "Binayı ve odalarını sil" if icerik.get(secili) else "Sil"
             if st.button(sil_yazi, icon=":material/delete:"):
