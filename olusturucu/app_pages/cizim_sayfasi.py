@@ -37,6 +37,13 @@ def olay_geldi() -> None:
         st.session_state.cizim_secili, st.session_state.cizim_yol = olay["id"], None
     elif tur == "secyol":
         st.session_state.cizim_secili, st.session_state.cizim_yol = None, [olay["a"], olay["b"]]
+    elif tur == "ac":
+        # Binanın içine gir: odaları ayrı çizimde
+        plan = json.loads(json.dumps(st.session_state.get("plan") or {}))
+        plan.setdefault("tur", {})[olay["id"]] = "bina"
+        st.session_state.plan = plan
+        st.session_state.cizim_gorunum, st.session_state.cizim_secili = olay["id"], None
+        st.session_state.cizim_yol = None
     elif tur == "bos":
         st.session_state.cizim_secili = st.session_state.cizim_yol = None
     elif tur in ("tasi", "bagla"):
@@ -69,7 +76,7 @@ if st.session_state.pop("yeni_olusturuldu", False):
                icon=":material/check_circle:")
 else:
     st.caption("Bir kutuya tıklayınca altında ayarları açılır. Sürükleyince aradaki adım sayısı yeniden hesaplanır. "
-               "Bina kutusunda **İçini aç** ile odalarını eklersiniz.")
+               "Bir binanın içine girmek için kutusunun yanındaki **İçi ›** düğmesine basın.")
 
 # Kampüs gibi sıfırdan çizilen düzende kurumun adı burada sorulur (sihirbaz kullanılmadı)
 bilgi = st.session_state.bilgi
@@ -189,7 +196,7 @@ with st.expander("Yer ekle", icon=":material/add_location_alt:", expanded=len(du
 
 # ── Çizim ─────────────────────────────────────────────────
 cz.cizim({"dugumler": dugumler, "yollar": yollar, "secili": secili, "seciliYol": st.session_state.cizim_yol,
-          "olcek": round(olc_g, 2), "gorunum": f"{gorunum}-{kat}"}, key="cizim", on_olay=olay_geldi)
+          "olcek": round(olc_g, 2), "ankraj": gorunum, "gorunum": f"{gorunum}-{kat}"}, key="cizim", on_olay=olay_geldi)
 if not dugumler:
     st.info("Çizim boş. Yukarıdan ilk modülü ekleyin: kampüs için **Bina**, tek bina için önce bir **Kavşak / "
             "koridor** (giriş) ekleyip odaları ona bağlayın.", icon=":material/draw:")

@@ -364,6 +364,8 @@ _HTML = """
 <div class="cizim">
   <div class="arac">
     <button type="button" class="bagla" aria-pressed="false" title="İki modüle sırayla tıklayın">Bağla</button>
+    <button type="button" class="yakin" title="Yakınlaştır" aria-label="Yakınlaştır">+</button>
+    <button type="button" class="uzak" title="Uzaklaştır" aria-label="Uzaklaştır">−</button>
     <button type="button" class="sigdir" title="Tüm çizimi ekrana sığdır">Sığdır</button>
     <span class="ipucu" aria-live="polite"></span>
   </div>
@@ -380,7 +382,7 @@ _CSS = """
 .arac button[aria-pressed="true"] { background: var(--st-primary-color); color: #fff;
   border-color: var(--st-primary-color); }
 .ipucu { font-size: .875rem; opacity: .75; }
-svg { width: 100%; height: 540px; display: block; touch-action: none; user-select: none;
+svg { width: 100%; height: 540px; display: block; touch-action: pan-y; user-select: none;
   background-color: var(--st-secondary-background-color); border-radius: var(--st-base-radius, .5rem);
   border: 1px solid var(--st-border-color); cursor: grab; }
 svg.suruk { cursor: grabbing; }
@@ -390,7 +392,8 @@ svg.suruk { cursor: grabbing; }
 .yolvurus { stroke: transparent; cursor: pointer; }
 .adim { fill: var(--st-text-color); opacity: .8; paint-order: stroke;
   stroke: var(--st-secondary-background-color); text-anchor: middle; dominant-baseline: central; }
-.modul { cursor: pointer; }
+.modul { cursor: pointer; touch-action: none; }
+.ic-ac { cursor: pointer; }
 .modul rect { fill: var(--st-background-color); stroke: var(--st-border-color); }
 .modul.hedef rect { stroke: var(--st-text-color); }
 .modul.bina rect { fill: var(--st-primary-color); fill-opacity: .14; stroke: var(--st-primary-color); }
@@ -480,13 +483,31 @@ export default function (component) {
       const t = el("text", { x: 0, y: 0, "font-size": px(13), "text-anchor": "middle",
         "font-weight": n.tur === "bina" ? 600 : 400 }, g)
       t.textContent = yazi
+      // Binanın içine girmek için kutunun sağında görünür bir düğme (çift tıklama keşfedilmiyor ve yeniden
+      // çizimde kayboluyor)
+      if (n.tur === "bina" && n.id !== data.ankraj) {
+        const dg = px(44), dy = px(24)
+        const ac = el("g", { class: "ic-ac", transform: `translate(${gen / 2 + px(6)} ${-dy / 2})`, role: "button",
+          tabindex: 0, "aria-label": `${n.ad} içini aç` }, g)
+        // Satır içi stil: bina kutusunun kuralları (yarı saydam dolgu, çerçeve) düğmeye geçmesin
+        el("rect", { x: 0, y: 0, width: dg, height: dy, rx: px(12),
+          style: "fill: var(--st-primary-color); fill-opacity: 1; stroke: none" }, ac)
+        const at = el("text", { x: dg / 2, y: dy / 2, "font-size": px(12), "text-anchor": "middle",
+          style: "fill: #fff; font-weight: 600" }, ac)
+        at.textContent = "İçi ›"
+        ac.onpointerdown = e => e.stopPropagation()
+        ac.onclick = e => { e.stopPropagation(); setTriggerValue("olay", { tur: "ac", id: n.id }) }
+        ac.onkeydown = e => {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setTriggerValue("olay", { tur: "ac", id: n.id }) }
+        }
+      }
       g.onpointerdown = e => surukBasla(e, n)
       g.onkeydown = e => tus(e, n)
     }
     baglaBtn.setAttribute("aria-pressed", String(d.bagla))
     ipucu.textContent = d.bagla
       ? (d.kaynak ? `${bul(d.kaynak)?.ad ?? ""} seçildi; bağlanacak ikinci modüle tıklayın.` : "Bağlanacak ilk modüle tıklayın.")
-      : "Kutuya tıklayın: ayarları açılır. Sürükleyin: aradaki adım sayısı değişir. Tekerlek: yakınlaştır."
+      : "Kutuya tıklayın: ayarları açılır. Sürükleyin: aradaki adım değişir. Binanın içine girmek için kutusundaki İçi › düğmesi."
   }
 
   function svgNokta(e) {
@@ -565,12 +586,20 @@ export default function (component) {
       if (!oynadi && (data.secili || data.seciliYol)) setTriggerValue("olay", { tur: "bos" })
     }
   }
-  svg.onwheel = e => {
-    e.preventDefault()
-    const p = svgNokta(e), f = e.deltaY > 0 ? 1.15 : 1 / 1.15
+  // Tekerlek sayfayı kaydırır (çizim üstünde kalınca sayfa takılmasın); yakınlaştırma Ctrl + tekerlek ya da
+  // + / − düğmeleriyle
+  function yakinlas(f, merkez) {
+    const p = merkez || { x: d.vb.x + d.vb.w / 2, y: d.vb.y + d.vb.h / 2 }
     d.vb = { x: p.x - (p.x - d.vb.x) * f, y: p.y - (p.y - d.vb.y) * f, w: d.vb.w * f, h: d.vb.h * f }
     ciz()
   }
+  svg.onwheel = e => {
+    if (!e.ctrlKey && !e.metaKey) return
+    e.preventDefault()
+    yakinlas(e.deltaY > 0 ? 1.15 : 1 / 1.15, svgNokta(e))
+  }
+  parentElement.querySelector(".yakin").onclick = () => yakinlas(1 / 1.3)
+  parentElement.querySelector(".uzak").onclick = () => yakinlas(1.3)
   baglaBtn.onclick = () => { d.bagla = !d.bagla; d.kaynak = null; ciz() }
   sigdirBtn.onclick = () => { d.vb = null; ciz() }
 
