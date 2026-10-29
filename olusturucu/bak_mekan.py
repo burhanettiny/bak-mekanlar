@@ -614,14 +614,18 @@ def _png_veri_adresi(metin: str) -> str:
     return "data:image/png;base64," + base64.b64encode(qr_png(metin, kutu=10)).decode()
 
 
-def etiket_sayfasi(mekan: dict, giris_verisi: str | None = None) -> str:
-    """A4'e yazdırılacak HTML: önce büyük giriş etiketi, sonra her nokta için küçük etiket."""
+def etiket_sayfasi(mekan: dict, giris_verisi: str | None = None, *, haric: set[str] | None = None,
+                   yalniz: str | None = None) -> str:
+    """A4'e yazdırılacak HTML: önce büyük giriş etiketi, sonra her nokta için küçük etiket.
+    haric: etiket asılmayacak noktalar (ör. kampüste yol ortasındaki kavşak). yalniz: tek bir noktanın etiketi
+    (yırtılan etiketi yeniden basmak için; giriş sayfası olmadan)."""
     ad = html.escape(mekan["ad"])
     giris = _png_veri_adresi(giris_verisi or qr_verisi(mekan))
     noktalar = "".join(
         f"""<div class="etiket"><img src="{_png_veri_adresi(nokta_qr_verisi(mekan['id'], n['id']))}" alt="">
         <b>{html.escape(n['ad'])}</b><small>BAK · {ad}</small></div>"""
-        for n in mekan["noktalar"] if n["id"] != mekan["giris"])
+        for n in mekan["noktalar"]
+        if (n["id"] == yalniz if yalniz else n["id"] != mekan["giris"] and n["id"] not in (haric or set())))
     return f"""<!doctype html><html lang="tr"><head><meta charset="utf-8">
 <title>BAK etiketleri – {ad}</title>
 <style>
@@ -640,12 +644,12 @@ def etiket_sayfasi(mekan: dict, giris_verisi: str | None = None) -> str:
   .etiket small {{ font-size: 9pt; color: #333; }}
   .not {{ font-size: 11pt; margin-bottom: 6mm; }}
 </style></head><body>
-<section class="giris">
+{"" if yalniz else f"""<section class="giris">
   <h1>BAK · {ad}</h1>
   <img src="{giris}" alt="BAK giriş QR kodu">
   <p><b>Görme engelli ziyaretçilerimiz için sesli yönlendirme</b></p>
   <p>BAK uygulamasını açıp bu kodu telefonun kamerasıyla okutun.</p>
-</section>
+</section>"""}
 <p class="not">Her etiketi üzerinde yazan noktaya, yerden yaklaşık 120 cm yüksekliğe ve her zaman aynı tarafa
 (ör. kapının sağına) yapıştırın. Altına kabartma bir işaret koymak, etiketin elle bulunmasını kolaylaştırır.</p>
 <div class="izgara">{noktalar}</div>

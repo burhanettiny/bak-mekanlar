@@ -4,6 +4,7 @@ import urllib.request
 import streamlit as st
 
 import bak_mekan as bm
+import cizim as cz
 import durum
 
 
@@ -13,8 +14,8 @@ def qr_resmi(metin: str) -> bytes:
 
 
 @st.cache_data(max_entries=20)
-def etiketler(mekan_json: str, giris_verisi: str) -> str:
-    return bm.etiket_sayfasi(json.loads(mekan_json), giris_verisi)
+def etiketler(mekan_json: str, giris_verisi: str, haric: tuple[str, ...] = ()) -> str:
+    return bm.etiket_sayfasi(json.loads(mekan_json), giris_verisi, haric=set(haric))
 
 
 def adresi_kontrol_et(adres: str, mekan: dict) -> tuple[bool, str]:
@@ -35,7 +36,8 @@ def adresi_kontrol_et(adres: str, mekan: dict) -> tuple[bool, str]:
     return True, "Dosya bulundu ve bu binayla aynı. Telefonlar bina bilgisini buradan indirecek."
 
 
-mekan = durum.guncel_mekan()
+# QR'a giden düzene çizimdeki yol yönleri eklenir: telefondaki uygulama her köşede dönüşü rotaya göre söyler
+mekan = cz.yonleri_ekle(durum.guncel_mekan(), st.session_state.get("plan") or {})
 hatalar, uyarilar = bm.dogrula(mekan)
 
 durum.adim_cubugu(3)
@@ -104,10 +106,15 @@ if not hatalar and veri:
     with sol, st.container(border=True):
         st.image(qr_resmi(veri), caption="Giriş QR'ı", alt=f"{mekan['ad']} için BAK giriş QR kodu")
     with sag:
-        st.success(f"Ziyaretçiye {len(mekan['hedefler'])} yer okunacak. {len(mekan['noktalar'])} etiket "
-                   "basılacak: biri girişe, diğerleri yol üstündeki noktalara.", title="QR hazır",
+        # Kurum Kontrol et adımında "buraya etiket asılmayacak" dediği noktalar (ör. yol ortasındaki kavşak)
+        etiketsiz = tuple(sorted(set((st.session_state.get("plan") or {}).get("etiketsiz") or [])
+                                 & {n["id"] for n in mekan["noktalar"]} - {mekan["giris"]}))
+        st.success(f"Ziyaretçiye {len(mekan['hedefler'])} yer okunacak. {len(mekan['noktalar']) - len(etiketsiz)} "
+                   "etiket basılacak: biri girişe, diğerleri yol üstündeki noktalara. Ziyaretçi bir etiketi okutunca "
+                   "nerede olduğunu duyar ve yol tarifi oradan sürer."
+                   + (f" {len(etiketsiz)} noktaya etiket asılmayacak." if etiketsiz else ""), title="QR hazır",
                    icon=":material/check_circle:")
-        st.download_button("Etiketleri indir (yazdırmak için)", etiketler(bm.sade_json(mekan), veri),
+        st.download_button("Etiketleri indir (yazdırmak için)", etiketler(bm.sade_json(mekan), veri, etiketsiz),
                            file_name=f"{mekan['id']}-etiketler.html", mime="text/html", type="primary",
                            icon=":material/print:", width="stretch")
         st.download_button("Daha sonra düzenlemek için kaydet (.json)", durum.dosya_icerigi(mekan),

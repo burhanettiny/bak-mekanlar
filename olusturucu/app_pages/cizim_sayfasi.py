@@ -266,6 +266,22 @@ if secili:
                                               "anahtarlar": [nokta["ad"].replace("I", "ı").replace("İ", "i").lower()]})
                 kaydet(mekan, plan)
                 st.rerun()
+        # Nokta etiketi: ziyaretçi okutunca "neredeyim" ve yol tarifi buradan sürer. Her nokta için basılır;
+        # gerekmeyen yerde (ör. yol ortasında) kapatılır. Yırtılan tek etiket buradan yeniden basılır.
+        if secili != mekan.get("giris"):
+            etiketsiz = set(plan.get("etiketsiz") or [])
+            with st.container(horizontal=True, vertical_alignment="center"):
+                asilacak = st.toggle("Buraya QR etiketi asılacak", value=secili not in etiketsiz,
+                                     key=f"cizim-etiket-{secili}",
+                                     help="Ziyaretçi bu etiketi okutunca nerede olduğunu duyar; yol tarifi buradan sürer. "
+                                          "Koridor başı, asansör önü, merdiven başı ve oda kapıları için önerilir.")
+                if asilacak == (secili in etiketsiz):
+                    plan["etiketsiz"] = sorted(etiketsiz - {secili} if asilacak else etiketsiz | {secili})
+                    st.session_state.plan = plan
+                if asilacak and mekan.get("ad"):
+                    st.download_button("Bu noktanın etiketini indir", bm.etiket_sayfasi(mekan, yalniz=secili),
+                                       file_name=f"{mekan['id']}-{secili}-etiket.html", mime="text/html",
+                                       icon=":material/qr_code_2:", key=f"cizim-tek-etiket-{secili}")
         with st.container(horizontal=True):
             if tur == "bina" and secili != gorunum:
                 if st.button("İçini aç", icon=":material/door_open:", type="primary",

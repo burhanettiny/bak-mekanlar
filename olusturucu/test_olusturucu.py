@@ -656,16 +656,45 @@ def test_cizimden_yon_tarifi_saga_sola_duz():
     m["baglantilar"].append({"a": "giris", "b": "x", "adim": 1, "tarif": "Rampadan çıkın", "geriTarif": "İnin"})
     cz.tarifleri_guncelle(m, plan)
     y = {(b["a"], b["b"]): b for b in m["baglantilar"]}
-    assert y[("hol", "sol")]["tarif"] == "Sola dönün, Sekreterlik yönüne ilerleyin"
-    assert y[("hol", "sol")]["geriTarif"] == "Geri dönün, Hol yönüne ilerleyin"       # odadan çıkış
-    assert y[("sag", "hol")]["geriTarif"] == "Sağa dönün, WC yönüne ilerleyin"        # ters yönde kaydedilmiş yol
+    assert y[("hol", "sol")]["tarif"] == "Sola dönün"
+    assert y[("hol", "sol")]["geriTarif"] == "Geri dönün"       # odadan çıkış
+    assert y[("sag", "hol")]["geriTarif"] == "Sağa dönün"        # ters yönde kaydedilmiş yol
     assert y[("hol", "ileri")]["tarif"].startswith("Düz ilerleyin")
-    assert y[("ileri", "ust")]["geriTarif"] == "Geri dönün, Kantin yönüne ilerleyin"
+    assert y[("ileri", "ust")]["geriTarif"] == "Geri dönün"
     assert y[("ileri", "ust")]["tarif"].startswith("Düz ilerleyin")
     # Arşivden kantine dönüp (tek çocuk) hole doğru: düz
-    assert y[("hol", "ileri")]["geriTarif"] == "Düz ilerleyin, Hol yönüne ilerleyin"
+    assert y[("hol", "ileri")]["geriTarif"] == "Düz ilerleyin"
     assert y[("giris", "x")]["tarif"] == "Rampadan çıkın"
     # Kantin bir hedefse ziyaretçi oraya holden gelmiştir: dönüşte geri döner
     m["hedefler"].append({"ad": "Kantin", "nokta": "ileri", "tarif": "t", "anahtarlar": ["kantin"]})
     cz.tarifleri_guncelle(m, plan)
-    assert y[("hol", "ileri")]["geriTarif"] == "Geri dönün, Hol yönüne ilerleyin"
+    assert y[("hol", "ileri")]["geriTarif"] == "Geri dönün"
+
+
+def test_otomatik_tarif_elle_degistirilince_korunur_ve_qrda_oto_isaretlenmez():
+    import cizim as cz
+    m = {"id": "q-x", "ad": "X", "tur": "kurum", "surum": 1, "giris": "giris",
+         "noktalar": [{"id": i, "ad": i} for i in ("giris", "hol", "oda")], "baglantilar": [], "hedefler": []}
+    plan = {"konum": {"giris": [0, 0], "hol": [0, 10], "oda": [-10, 10]}}
+    cz.bagla(m, plan, "giris", "hol", 1.0)
+    cz.bagla(m, plan, "hol", "oda", 1.0)
+    cz.tarifleri_guncelle(m, plan)
+    q = cz.yonleri_ekle(m, plan)
+    assert q["baglantilar"][1]["oto"] is True and q["baglantilar"][1]["yon"] == 270
+    m["baglantilar"][1]["tarif"] = "Panoyu geçince soldaki kapı"          # Tablolar sayfasında elle
+    cz.tarifleri_guncelle(m, plan)
+    assert m["baglantilar"][1]["tarif"] == "Panoyu geçince soldaki kapı"
+    assert "oto" not in cz.yonleri_ekle(m, plan)["baglantilar"][1]
+
+
+def test_nokta_etiketi_kapatilir_ve_tek_etiket_basilir():
+    m = bm.sablonlar()["Okul (iki katlı, merdivenli ve rampalı)"]
+    tumu = bm.etiket_sayfasi(m)
+    assert tumu.count('class="etiket"') == len(m["noktalar"]) - 1         # giriş dışındaki her nokta
+    assert bm.etiket_sayfasi(m, haric={"hol"}).count('class="etiket"') == len(m["noktalar"]) - 2
+    tek = bm.etiket_sayfasi(m, yalniz="hol")
+    assert tek.count('class="etiket"') == 1 and 'class="giris"' not in tek and "Giriş holü" in tek
+    at = sablon_ac(uygulama(), "Okul (iki katlı, merdivenli ve rampalı)")
+    at.session_state["plan"] = {**at.session_state["plan"], "etiketsiz": ["hol"]}
+    at.switch_page("app_pages/yazdir.py").run()
+    assert any("1 noktaya etiket asılmayacak" in str(s.value) for s in at.success)

@@ -17,6 +17,7 @@ plan anahtarları:
 from __future__ import annotations
 
 import heapq
+import json
 import math
 import re
 import statistics
@@ -30,7 +31,7 @@ import bak_mekan as bm
 MODULLER = {
     "bina": ("Bina", ":material/apartment:"),
     "oda": ("Oda / birim", ":material/meeting_room:"),
-    "kavsak": ("Kavşak / koridor", ":material/fork_right:"),
+    "kavsak": ("Nokta (koridor başı, kavşak)", ":material/fork_right:"),   # ör. yalnızca etiket asılacak yer
     "danisma": ("Danışma", ":material/support_agent:"),
     "wc": ("Tuvalet", ":material/wc:"),
     "asansor": ("Asansör", ":material/elevator:"),
@@ -166,6 +167,13 @@ def bagla(mekan: dict, plan: dict, a: str, b: str, olc: float, gorunum: str | No
 # açı tarife çevrilir. Dönüşte (geri tarif) aynı yolun tersi kullanılır. Elle yazılan ve örneklerden gelen tarifler
 # korunur: yalnızca BAK'ın ürettiği tarifler (plan["otoTarif"]) ve eski genel cümleler yeniden hesaplanır.
 _GENEL_TARIF = re.compile(r"^.+ yönüne ilerleyin\.?$")
+# BAK'ın ürettiği tarif kalıpları. "Otomatik" işaretli bir yolun tarifi bunlardan biri değilse kurum onu (ör.
+# Tablolar sayfasında) elle değiştirmiştir: korunur, telefondaki uygulama da onu okur.
+_OTO_TARIF = re.compile(r"^(Düz ilerleyin|Hafif (sağa|sola) yönelin|(Sağa|Sola) dönün|Geri dönün|.+ yönüne ilerleyin)$")
+
+
+def _oto_mu(b: dict) -> bool:
+    return bool(_OTO_TARIF.match(b.get("tarif") or "") and _OTO_TARIF.match(b.get("geriTarif") or ""))
 
 
 def donus_metni(gelis: tuple[float, float], gidis: tuple[float, float]) -> str:
@@ -234,20 +242,24 @@ def tarifleri_guncelle(mekan: dict, plan: dict) -> int:
             gelis = _yon(konum, p, u) if p else giris_bakisi
             if not p and math.hypot(*gelis) < 0.01:
                 return f"{adlar[v]} yönüne ilerleyin"
-            return f"{donus_metni(gelis, _yon(konum, u, v))}, {adlar[v]} yönüne ilerleyin"
+            # Yalnızca dönüş: uygulama "…, yaklaşık 8 adım. WC noktasına ulaşacaksınız." diye tamamlar (yer iki kez
+            # söylenmesin); art arda "Düz ilerleyin" bölümleri de uygulamada tek düz yürüyüş olarak birleşir
+            return donus_metni(gelis, _yon(konum, u, v))
 
         def donus(u: str, v: str) -> str:
             """u'dan girişe doğru v'ye. u bir oda/hedef ya da uç ise ziyaretçi oraya girişten gelmiştir: geri döner.
             Bir koridor noktasıysa içeriden (tek çocuğundan) geldiği varsayılır."""
             alt = cocuklar.get(u, [])
             if not alt or u in hedef_noktalari:
-                return f"Geri dönün, {adlar[v]} yönüne ilerleyin"
+                return "Geri dönün"
             if len(alt) == 1:
-                return f"{donus_metni(_yon(konum, alt[0], u), _yon(konum, u, v))}, {adlar[v]} yönüne ilerleyin"
+                return donus_metni(_yon(konum, alt[0], u), _yon(konum, u, v))
             return f"{adlar[v]} yönüne ilerleyin"
 
         for b in yollar:
             anahtar = (b["a"], b["b"])
+            if anahtar in oto and not _oto_mu(b):
+                oto.discard(anahtar)   # otomatikti ama kurum elle değiştirdi
             if anahtar not in oto and not (_GENEL_TARIF.match(b.get("tarif") or "")
                                            and _GENEL_TARIF.match(b.get("geriTarif") or "")):
                 continue   # elle yazılmış ya da örnekten gelen tarif
@@ -264,6 +276,33 @@ def tarifleri_guncelle(mekan: dict, plan: dict) -> int:
             oto.add(anahtar)
     plan["otoTarif"] = sorted(map(list, oto))
     return degisen
+
+
+def pusula_yonu(konum: dict, a: str, b: str) -> int:
+    """a'dan b'ye çizimdeki yön: kuzey (çizimin üstü) 0, doğu 90 (saat yönünde derece)."""
+    dx, dy = _yon(konum, a, b)
+    return round(math.degrees(math.atan2(dx, dy))) % 360
+
+
+def yonleri_ekle(mekan: dict, plan: dict) -> dict:
+    """QR'a girecek düzene her yürüme yolunun çizimdeki yönünü ("yon") ve BAK'ın ürettiği tarif işaretini ("oto")
+    ekler (kopya döner). Telefondaki uygulama, gerçekte izlenen rotada önceki yolun yönüyle karşılaştırıp her köşede
+    dönüşü kendisi söyler: WC'den müdür odasına giderken holde "düz", girişten gelirken "sola" der. Bina içi çizim
+    ayrı bir koordinat sistemi olduğu için bina girişine değen iç yollara yön yazılmaz (orada kayıtlı tarif okunur)."""
+    yeni = json.loads(json.dumps(mekan))
+    oto = {tuple(y) for y in plan.get("otoTarif") or []}
+    for gorunum in [None, *dict.fromkeys((plan.get("ust") or {}).values())]:
+        konum = gorunum_konumlari(plan, gorunum)
+        for b in yeni["baglantilar"]:
+            if (b.get("tur") or "yuru") in bm.DIKEY_GECISLER or b["a"] not in konum or b["b"] not in konum \
+                    or (gorunum and gorunum in (b["a"], b["b"])) or b["a"] == b["b"]:
+                continue
+            if math.dist(konum[b["a"]], konum[b["b"]]) < 0.01:
+                continue
+            b["yon"] = pusula_yonu(konum, b["a"], b["b"])
+            if (b["a"], b["b"]) in oto and _oto_mu(b):
+                b["oto"] = True
+    return yeni
 
 
 def modul_ekle(mekan: dict, plan: dict, tur: str, ad: str, *, yer: list[float], ust: str | None,
