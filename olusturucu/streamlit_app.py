@@ -14,7 +14,7 @@ import streamlit as st
 # Streamlit Cloud yeni bir push'ta sayfa dosyalarını yeniden çalıştırır ama önceden içe aktarılmış yardımcı
 # modülleri bellekte eski haliyle tutar (yeni sayfa eski modülde olmayan bir fonksiyonu çağırıp çöker).
 # Dosyası değişen yardımcı modül burada yeniden yüklenir.
-for _ad in ("bak_mekan", "plan", "sihirbaz", "durum"):
+for _ad in ("bak_mekan", "plan", "sihirbaz", "cizim", "durum"):
     _modul = sys.modules.get(_ad)
     _dosya = getattr(_modul, "__file__", None)
     if _dosya and os.path.exists(_dosya) and os.path.getmtime(_dosya) != getattr(_modul, "_yukleme_zamani", None):
@@ -33,6 +33,7 @@ DUZENLE = st.Page("app_pages/duzenle.py", title="Düzenle", icon=":material/edit
 sayfa = st.navigation([
     st.Page("app_pages/basla.py", title="Başla", icon=":material/home:", default=True),
     st.Page("app_pages/sihirbaz.py", title="Sihirbaz", icon=":material/auto_fix_high:"),
+    st.Page("app_pages/cizim_sayfasi.py", title="Çizim", icon=":material/draw:"),
     DUZENLE,
     st.Page("app_pages/plan_sayfasi.py", title="Plan", icon=":material/map:"),
     st.Page("app_pages/yazdir.py", title="QR ve etiketler", icon=":material/qr_code_2:"),

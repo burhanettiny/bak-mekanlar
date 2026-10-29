@@ -13,7 +13,7 @@ st.markdown(
 
 with st.container(horizontal=True):
     for ikon, baslik, metin in (
-        (":material/edit_square:", "1. Tarif edin", "Sihirbazla koridorları ve yerleri yazın"),
+        (":material/edit_square:", "1. Tarif edin", "Sihirbazla yazın ya da Çizim sayfasında modül modül çizin"),
         (":material/map:", "2. Kontrol edin", "Planı ve tarifleri gözden geçirin"),
         (":material/print:", "3. Yazdırın", "Giriş QR'ı ve nokta etiketleri"),
         (":material/check_circle:", "4. Asın", "Kapı yanına, 120 cm yüksekliğe"),

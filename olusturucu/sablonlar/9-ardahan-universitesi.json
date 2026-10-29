@@ -285,6 +285,21 @@
     4.7,
     -1.7
    ]
+  },
+  "tur": {
+   "rektorluk": "bina",
+   "kultur-merkezi": "bina",
+   "insani-bilimler": "bina",
+   "iibf": "bina",
+   "muhendislik": "bina",
+   "konukevi": "bina",
+   "cami": "bina",
+   "giris": "kavsak",
+   "kavsak-1": "kavsak",
+   "kavsak-2": "kavsak",
+   "kavsak-3": "kavsak",
+   "kavsak-4": "kavsak",
+   "kavsak-5": "kavsak"
   }
  }
 }

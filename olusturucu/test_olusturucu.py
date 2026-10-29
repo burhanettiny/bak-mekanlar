@@ -457,3 +457,53 @@ def test_qr_sayfasi_kopuk_baglantilari_tek_tikla_duzeltir():
     assert at.error
     next(b for b in at.button if b.label == "Bağlantıları düzelt").click().run()
     assert not at.exception and not at.error
+
+
+def test_cizim_modul_ekleme_tasima_ve_bina_ici():
+    import cizim as cz
+    m = json.loads(json.dumps(bm.sablonlar()["Ardahan Üniversitesi Yenisey Kampüsü (OpenStreetMap yol ağından – sahada doğrulayın)"]))
+    plan = m.pop("plan")
+    olc = cz.olcek(m, plan)
+    assert 10 < olc < 15                                  # haritadan: bir birim ~ 8 m ~ 11 adım
+    plan["konum"] = cz.yerlesim(m, plan, olc)
+
+    # Bina içine oda: binanın iç çiziminde, ölçek 1 kare = 1 adım
+    oda = cz.modul_ekle(m, plan, "oda", "Dekanlık", yer=[12, 0], ust="muhendislik", baglanacak="muhendislik",
+                        olc=cz.gorunum_olcegi(plan, "muhendislik", olc))
+    assert plan["ust"][oda] == "muhendislik"
+    yol = next(b for b in m["baglantilar"] if b["b"] == oda)
+    assert yol["adim"] == 12 and yol["tarif"] and yol["geriTarif"]
+    assert any(h["nokta"] == oda and "dekanlık" in h["anahtarlar"] for h in m["hedefler"])
+    assert cz.gorunum_noktalari(m, plan, "muhendislik", None) == {"muhendislik", oda}
+    assert oda not in cz.gorunum_noktalari(m, plan, None, None)
+
+    # Odayı taşımak yalnızca iç çizimdeki mesafeyi değiştirir
+    assert cz.tasi(m, plan, oda, 20, 0, 1.0, "muhendislik") == [("muhendislik", oda, 20)]
+    # Elle yazılan (sahada sayılan) adım sürüklenince değişmez
+    plan["sabitAdim"] = [["muhendislik", oda]]
+    assert cz.tasi(m, plan, oda, 40, 0, 1.0, "muhendislik") == [] and yol["adim"] == 20
+
+    # Dış çizimde binayı taşımak kampüs ölçeğiyle yolu yeniden hesaplar
+    x, y = plan["konum"]["rektorluk"]
+    eski = next(b["adim"] for b in m["baglantilar"] if b["b"] == "rektorluk")
+    assert cz.tasi(m, plan, "rektorluk", x / 2, y / 2, olc)
+    assert next(b["adim"] for b in m["baglantilar"] if b["b"] == "rektorluk") != eski
+
+    assert bm.dogrula(m)[0] == []
+    # Bina silinince odaları da gider
+    cz.nokta_sil(m, plan, "muhendislik")
+    assert oda not in {n["id"] for n in m["noktalar"]} and oda not in plan["ust"]
+
+
+def test_cizim_sayfasi_bos_ve_sablonla_acilir_modul_eklenir():
+    at = uygulama().switch_page("app_pages/cizim_sayfasi.py").run()
+    assert not at.exception
+    at = sablon_ac(uygulama())
+    at.switch_page("app_pages/cizim_sayfasi.py").run()
+    assert not at.exception
+    at.text_input[0].input("Kütüphane")
+    next(b for b in at.button if b.label == "Ekle").click().run()
+    assert not at.exception
+    assert at.session_state["cizim_secili"] == "kutuphane"
+    at.switch_page("app_pages/yazdir.py").run()
+    assert not at.error                                   # girişe bağlandı: QR üretilebilir

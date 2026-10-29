@@ -31,11 +31,13 @@ Bina bilgisi QR'ın içinde taşınır. Sunucu, hesap ya da internet bağlantıs
 |---|---|
 | Başla | Sihirbaz, hazır şablon ya da kayıtlı düzen dosyası ile başlama |
 | Sihirbaz | **Market:** her koridorun solunda ve sağında hangi reyonlar var. **AVM:** her katta mağazalar, bodrum/otopark, yürüyen merdiven. **Koridorlu bina:** her katta koridor boyunca kapılar sırayla. Noktalar, yollar ve sesli tarifler kendiliğinden üretilir |
+| Çizim | 2B sürükle-bırak düzenleyici: bina, oda, kavşak, danışma, tuvalet, asansör, merdiven modülleri eklenir; modül sürüklenince aradaki yolların adımı çizimdeki mesafeden hesaplanır. Binaya tıklayıp **İçini aç** denince odaları ayrı bir çizimde (1 kare = 1 adım) eklenir. Sahada sayılıp yazılan adımlar sürüklemeyle değişmez |
 | Düzenle | Noktalar, yollar ve hedefler tabloları; her şey elle değiştirilebilir |
 | Plan | Binanın 2D planı (katlar, merdiven, asansör, adım sayıları) ve tarif önizleme |
 | QR ve etiketler | Kontrol, giriş QR'ı, yazdırılabilir etiketler, düzen dosyası |
 
-`bak_mekan.py` (doğrulama, QR, etiketler), `sihirbaz.py` (düzen üretimi) ve `plan.py` (Graphviz planı)
+`bak_mekan.py` (doğrulama, QR, etiketler), `sihirbaz.py` (düzen üretimi), `plan.py` (Graphviz planı) ve `cizim.py`
+(çizim düzenleyicinin mantığı ve Streamlit özel bileşeni; çizime özgü bilgiler planda durur, QR'a girmez)
 Streamlit'ten bağımsızdır; `durum.py` sayfalar arasındaki oturum verisini tutar.
 
 Sihirbazla oluşturulan binalarda planın yerleşimi bilinir ve düzen dosyasının `plan` alanında saklanır.
