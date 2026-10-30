@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import pytest
 from streamlit.testing.v1 import AppTest
@@ -698,3 +699,20 @@ def test_nokta_etiketi_kapatilir_ve_tek_etiket_basilir():
     at.session_state["plan"] = {**at.session_state["plan"], "etiketsiz": ["hol"]}
     at.switch_page("app_pages/yazdir.py").run()
     assert any("1 noktaya etiket asılmayacak" in str(s.value) for s in at.success)
+
+
+def test_harita_konumu_qr_noktasina_yazilir_ve_kimlik_degisince_tasinir():
+    import cizim as cz
+    assert cz.gps_coz("41.130848, 42.786478") == (41.130848, 42.786478)
+    assert cz.gps_coz("41.13 42.78") == (41.13, 42.78)
+    assert cz.gps_coz([41.1, 42.7]) == (41.1, 42.7)
+    for bozuk in ("", "abc", "95, 10", "0, 0", None, "41.1"):
+        assert cz.gps_coz(bozuk) is None
+    sablon = json.loads((Path(__file__).parent / "sablonlar" / "9-ardahan-universitesi.json").read_text(encoding="utf-8"))
+    plan = sablon["plan"]
+    assert set(plan["gps"]) == {n["id"] for n in sablon["noktalar"]}
+    qr = cz.yonleri_ekle({k: v for k, v in sablon.items() if k != "plan"}, plan)
+    giris = next(n for n in qr["noktalar"] if n["id"] == "giris")
+    assert 41.0 < giris["enlem"] < 41.3 and 42.6 < giris["boylam"] < 42.9
+    cz.plan_kimlikleri_degistir(plan, {"giris": "ana-kapi"})
+    assert "ana-kapi" in plan["gps"] and "giris" not in plan["gps"] and "ana-kapi" in plan["konum"]

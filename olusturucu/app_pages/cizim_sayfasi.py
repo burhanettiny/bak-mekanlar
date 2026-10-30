@@ -251,8 +251,24 @@ if secili:
                 h_anahtar = st.text_input("Anahtar kelimeler", ", ".join(hedef.get("anahtarlar", [])))
             else:
                 hedef_yap = st.checkbox("Ziyaretçi burayı sorabilsin (hedef yap)")
+            # Açık alandaki noktalar (bina önü, kavşak) için: telefon "neredeyim"de GPS'ten en yakın noktayı söyler
+            gps_eski = (plan.get("gps") or {}).get(secili)
+            gps_metin = st.text_input(
+                "Harita konumu (isteğe bağlı)", ", ".join(map(str, gps_eski)) if gps_eski else "",
+                placeholder="ör. 41.130848, 42.786478",
+                help="Yalnızca açık alandaki noktalar için. Google Haritalar'da noktaya sağ tıklayıp ilk satırdaki "
+                     "sayıları kopyalayın. Ziyaretçi \"neredeyim\" deyince telefon GPS'le en yakın noktayı söyler.",
+            ) if not gorunum else ""
             if st.form_submit_button("Kaydet", icon=":material/save:"):
                 nokta["ad"] = nokta_ad.strip() or nokta["ad"]
+                if not gorunum:
+                    gps_k = cz.gps_coz(gps_metin)
+                    if gps_metin.strip() and not gps_k:
+                        st.warning("Harita konumu anlaşılamadı; \"enlem, boylam\" biçiminde yazın.")
+                    elif gps_k:
+                        plan.setdefault("gps", {})[secili] = list(gps_k)
+                    else:
+                        (plan.get("gps") or {}).pop(secili, None)
                 plan.setdefault("tur", {})[secili] = yeni_tur_sec
                 if hedef:
                     hedef.update(ad=h_ad.strip() or hedef["ad"], tarif=h_tarif.strip(),

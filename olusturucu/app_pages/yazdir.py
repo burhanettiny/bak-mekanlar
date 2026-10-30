@@ -114,7 +114,7 @@ if not hatalar and veri:
                    "nerede olduğunu duyar ve yol tarifi oradan sürer."
                    + (f" {len(etiketsiz)} noktaya etiket asılmayacak." if etiketsiz else ""), title="QR hazır",
                    icon=":material/check_circle:")
-        st.download_button("Etiketleri indir (yazdırmak için)", etiketler(bm.sade_json(mekan), veri, etiketsiz),
+        st.download_button("Etiketleri indir: giriş + her noktaya “neredeyim” etiketi", etiketler(bm.sade_json(mekan), veri, etiketsiz),
                            file_name=f"{mekan['id']}-etiketler.html", mime="text/html", type="primary",
                            icon=":material/print:", width="stretch")
         st.download_button("Daha sonra düzenlemek için kaydet (.json)", durum.dosya_icerigi(mekan),

@@ -302,7 +302,29 @@ def yonleri_ekle(mekan: dict, plan: dict) -> dict:
             b["yon"] = pusula_yonu(konum, b["a"], b["b"])
             if (b["a"], b["b"]) in oto and _oto_mu(b):
                 b["oto"] = True
+    # Açık alandaki noktaların harita koordinatı: uygulama "neredeyim"de GPS'ten en yakın noktayı söyler
+    gps = plan.get("gps") or {}
+    for n in yeni["noktalar"]:
+        k = gps_coz(gps.get(n["id"]))
+        if k:
+            n["enlem"], n["boylam"] = k
     return yeni
+
+
+def gps_coz(deger) -> tuple[float, float] | None:
+    """[enlem, boylam] ya da Google Haritalar'dan kopyalanan "41.1308, 42.7864" metni → (enlem, boylam)."""
+    if isinstance(deger, str):
+        parcalar = [p for p in deger.replace(";", ",").replace(" ", ",").split(",") if p]
+        if len(parcalar) != 2:
+            return None
+        deger = parcalar
+    try:
+        enlem, boylam = float(deger[0]), float(deger[1])
+    except (TypeError, ValueError, IndexError):
+        return None
+    if not (-90 <= enlem <= 90 and -180 <= boylam <= 180) or (enlem == 0 and boylam == 0):
+        return None
+    return round(enlem, 6), round(boylam, 6)
 
 
 def modul_ekle(mekan: dict, plan: dict, tur: str, ad: str, *, yer: list[float], ust: str | None,
@@ -362,6 +384,19 @@ def tasi(mekan: dict, plan: dict, kimlik: str, x: float, y: float, olc: float,
     return degisen
 
 
+def plan_kimlikleri_degistir(plan: dict, harita: dict[str, str]) -> None:
+    """Nokta kimliği değişince çizimdeki yeri, türü, harita konumu vb. de yeni kimliğe taşınır."""
+    for alan in ("konum", "icKonum", "tur", "ust", "gps", "icOlcek"):
+        sozluk = plan.get(alan)
+        if isinstance(sozluk, dict):
+            plan[alan] = {harita.get(k, k): (harita.get(v, v) if alan == "ust" else v) for k, v in sozluk.items()}
+    for alan in ("sabitAdim", "otoTarif"):
+        if plan.get(alan):
+            plan[alan] = [[harita.get(a, a), harita.get(b, b)] for a, b in plan[alan]]
+    if plan.get("etiketsiz"):
+        plan["etiketsiz"] = sorted(harita.get(i, i) for i in plan["etiketsiz"])
+
+
 def nokta_sil(mekan: dict, plan: dict, kimlik: str) -> None:
     """Modülü, ona bağlı yolları ve hedefleri siler; bina silinince içindeki odalar da silinir."""
     ust = plan.get("ust") or {}
@@ -369,7 +404,7 @@ def nokta_sil(mekan: dict, plan: dict, kimlik: str) -> None:
     mekan["noktalar"] = [n for n in mekan["noktalar"] if n["id"] not in silinecek]
     mekan["baglantilar"] = [b for b in mekan["baglantilar"] if b["a"] not in silinecek and b["b"] not in silinecek]
     mekan["hedefler"] = [h for h in mekan["hedefler"] if h["nokta"] not in silinecek]
-    for alan in ("konum", "tur", "ust"):
+    for alan in ("konum", "tur", "ust", "gps", "icKonum"):
         for i in silinecek:
             (plan.get(alan) or {}).pop(i, None)
     if mekan.get("giris") in silinecek:

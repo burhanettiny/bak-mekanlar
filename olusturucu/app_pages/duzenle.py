@@ -1,6 +1,7 @@
 import streamlit as st
 
 import bak_mekan as bm
+import cizim as cz
 import durum
 
 TUR_ADLARI = {"magaza": "Market / mağaza", "hastane": "Hastane / sağlık", "kurum": "Kamu kurumu / okul / ofis",
@@ -155,6 +156,8 @@ degisen = {eski_kimlikler[i]: yeni for i, yeni in yeni_kimlikler.items()
            and eski_kimlikler[i] not in yeni_kimlikler.values()}
 if degisen:
     durum.mekani_tablolara_yaz(bm.kimlikleri_degistir(durum.guncel_mekan(), degisen))
+    if st.session_state.get("plan"):
+        cz.plan_kimlikleri_degistir(st.session_state.plan, degisen)
     st.toast("Nokta kimliği değişti; bu noktayı kullanan yollar ve hedefler de güncellendi: " +
              ", ".join(f"{a} → {b}" for a, b in degisen.items()), icon=":material/link:")
     st.rerun()

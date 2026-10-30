@@ -623,7 +623,7 @@ def etiket_sayfasi(mekan: dict, giris_verisi: str | None = None, *, haric: set[s
     giris = _png_veri_adresi(giris_verisi or qr_verisi(mekan))
     noktalar = "".join(
         f"""<div class="etiket"><img src="{_png_veri_adresi(nokta_qr_verisi(mekan['id'], n['id']))}" alt="">
-        <b>{html.escape(n['ad'])}</b><small>BAK · {ad}</small></div>"""
+        <b>{html.escape(n['ad'])}</b><small>BAK · Neredeyim? Okutun</small><small>{ad}</small></div>"""
         for n in mekan["noktalar"]
         if (n["id"] == yalniz if yalniz else n["id"] != mekan["giris"] and n["id"] not in (haric or set())))
     return f"""<!doctype html><html lang="tr"><head><meta charset="utf-8">

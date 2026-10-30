@@ -19,28 +19,31 @@
 <body>
 <main>
 <h1>BAK gizlilik politikası</h1>
-<p class="tarih">Son güncelleme: 27 Ekim 2026</p>
+<p class="tarih">Son güncelleme: 31 Ekim 2026</p>
 
 <p>BAK, görme engelliler için bir alışveriş ve bina içi yönlendirme uygulamasıdır. Hesap açtırmaz, reklam
 göstermez ve kullanım istatistiği toplamaz. Bu sayfa uygulamanın hangi izinleri neden istediğini ve hangi
 bilgilerin telefonunuzdan çıktığını anlatır.</p>
 
 <h2>Telefonunuzda kalan bilgiler</h2>
-<p>Alışveriş listeniz, son taranan ürünler, ayarlarınız (konuşma hızı, adım boyu gibi), kaydettiğiniz yardım
-numarası ve ziyaret ettiğiniz binaların haritaları yalnızca telefonunuzda saklanır. Uygulamayı sildiğinizde
+<p>Alışveriş listeniz, son taranan ürünler, ayarlarınız (konuşma hızı, adım boyu, boyunuz ve ölçülen adım
+uzunluğunuz gibi), kaydettiğiniz alerjenleriniz, yardım numarası ve ziyaret ettiğiniz binaların haritaları yalnızca
+telefonunuzda saklanır. Alerjenleriniz ürün sorgularına eklenmez; ürünle karşılaştırma telefonda yapılır. Uygulamayı sildiğinizde
 bunların hepsi silinir. Bu bilgiler hiçbir sunucuya gönderilmez.</p>
 
 <h2>İzinler</h2>
 <ul>
   <li><strong>Kamera:</strong> barkod, QR kod, son kullanma tarihi, POS tutarı ve banknot okumak için. Görüntüler
-    telefonda işlenir. Yazı okumak için çekilen fotoğraf okunduktan hemen sonra silinir. Hiçbir görüntü
-    gönderilmez.</li>
+    telefonda işlenir. Yazı okumak için çekilen fotoğraf (ör. ürünün içindekiler bölümü ya da kod henüz
+    okunamazken "telefonu sola çevirin" gibi yönlendirme için çekilen sessiz kare) okunduktan hemen sonra silinir.
+    Hiçbir görüntü saklanmaz ya da gönderilmez.</li>
   <li><strong>Mikrofon:</strong> sesli komutlar için. Konuşmanız, telefonunuzun konuşma tanıma servisine
     (çoğu telefonda Google) iletilir ve o servis tarafından metne çevrilir. BAK ses kaydı tutmaz. Konuşma tanıma
     servisinin bu sesi nasıl işlediği servisin kendi gizlilik politikasına tabidir.</li>
   <li><strong>Fiziksel etkinlik:</strong> bina içinde adım adım yönlendirme sırasında adımlarınızı saymak için.
     Adım bilgisi telefonda kalır.</li>
-  <li><strong>Konum:</strong> yalnızca siz "konumumu gönder" dediğinizde, tek seferlik (aşağıda "Konum ve acil kişiler").</li>
+  <li><strong>Konum:</strong> yalnızca sizin komutunuzla ve uygulama açıkken, tek seferlik: "konumumu gönder",
+    adım ölçümü ve kampüs gibi açık alanlarda "neredeyim" (aşağıda "Konum ve acil kişiler").</li>
   <li><strong>Telefon araması:</strong> yalnızca siz "yardım çağır" ya da bir acil kişinin adıyla "ara" dediğinizde, kendi kaydettiğiniz yardım
     numarasını aramak için.</li>
 </ul>
@@ -62,8 +65,16 @@ politikalarına tabidir.</p>
 
 <h2>Konum ve acil kişiler</h2>
 <p>Bina içindeki konumunuz okuttuğunuz QR etiketinden ve attığınız adımlardan hesaplanır ve telefonda kalır.</p>
-<p>GPS konumu <strong>yalnızca siz "konumumu gönder" dediğinizde</strong> ve izin verdiyseniz, tek seferlik alınır;
-arka planda konum izlenmez. Konum, BAK'a ya da başka bir sunucuya gönderilmez: uygulama yalnızca seçtiğiniz kişiye
+<p>GPS konumu yalnızca izin verdiyseniz ve yalnızca şu komutlarda, tek seferlik alınır; arka planda konum izlenmez:</p>
+<ul>
+  <li><strong>"Konumumu gönder":</strong> konum seçtiğiniz kişiye gidecek mesaja yazılır (aşağıda).</li>
+  <li><strong>"Adımlarımı ölç":</strong> açık havada 80 adımlık yürüyüşün başında ve sonunda konum alınır; aradaki
+    mesafeden adım uzunluğunuz hesaplanır. Yalnızca hesaplanan adım uzunluğu telefonda saklanır, konumlar saklanmaz.</li>
+  <li><strong>Açık alanda "neredeyim" ya da "kayboldum":</strong> kampüs gibi, haritasında noktaların konumu yazılı
+    bir yerdeyseniz konumunuz haritadaki noktalarla telefonda karşılaştırılır ve en yakın nokta söylenir. Konum
+    saklanmaz ve gönderilmez.</li>
+</ul>
+<p>Konum hiçbir durumda BAK'a ya da başka bir sunucuya gönderilmez: "konumumu gönder" komutunda uygulama yalnızca seçtiğiniz kişiye
 gidecek mesajı telefonunuzun SMS ya da WhatsApp uygulamasında hazırlar ve mesajı siz gönderirsiniz (WhatsApp
 yardımcısını açtıysanız canlı konum komutunda gönderme işini o yapar; aşağıya bakın).</p>
 <p>Acil kişilerinizi telefon rehberinden kendiniz seçersiniz. BAK rehberinizin tamamını okumaz; yalnızca seçtiğiniz
