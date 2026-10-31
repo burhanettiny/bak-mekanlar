@@ -7,6 +7,7 @@ import streamlit as st
 import bak_mekan as bm
 import cizim as cz
 import durum
+import harita as hr
 
 st.session_state.setdefault("cizim_gorunum", None)   # None: dış çizim; bir bina kimliği: o binanın içi
 st.session_state.setdefault("cizim_secili", None)
@@ -64,6 +65,26 @@ def olay_geldi() -> None:
                       cz.gorunum_olcegi(plan, st.session_state.cizim_gorunum, olc), st.session_state.cizim_gorunum):
             st.session_state.cizim_secili, st.session_state.cizim_yol = None, [olay["a"], olay["b"]]
         kaydet(mekan, plan)
+
+
+def harita_olay() -> None:
+    """Haritadan gelen olay: nokta seçme ya da seçili noktanın konumu (tıklama veya "Buradayım")."""
+    olay = st.session_state["harita"].olay
+    if not olay:
+        return
+    if olay.get("tur") == "sec":
+        st.session_state.cizim_secili, st.session_state.cizim_yol = olay["id"], None
+    elif olay.get("tur") == "konum" and olay.get("id"):
+        plan = json.loads(json.dumps(st.session_state.get("plan") or {}))
+        k = cz.gps_coz([olay["enlem"], olay["boylam"]])
+        if k:
+            plan.setdefault("gps", {})[olay["id"]] = list(k)
+            plan["gpsTahmin"] = [i for i in plan.get("gpsTahmin") or [] if i != olay["id"]]
+            st.session_state.plan = plan
+            dogruluk = olay.get("dogruluk")
+            if dogruluk and dogruluk > 25:
+                st.toast(f"Telefonun konumu yaklaşık {round(dogruluk)} m hassas; açık havada tekrar deneyin ya da "
+                         "haritada düzeltin.", icon=":material/gps_not_fixed:")
 
 
 mekan, plan, olc = mekan_ve_plan()
@@ -256,7 +277,8 @@ if secili:
             gps_metin = st.text_input(
                 "Harita konumu (isteğe bağlı)", ", ".join(map(str, gps_eski)) if gps_eski else "",
                 placeholder="ör. 41.130848, 42.786478",
-                help="Yalnızca açık alandaki noktalar için. Google Haritalar'da noktaya sağ tıklayıp ilk satırdaki "
+                help="Yalnızca açık alandaki noktalar için. En kolayı aşağıdaki Harita konumu bölümünde haritaya tıklamak. "
+                     "Ya da Google Haritalar'da noktaya sağ tıklayıp ilk satırdaki "
                      "sayıları kopyalayın. Ziyaretçi \"neredeyim\" deyince telefon GPS'le en yakın noktayı söyler.",
             ) if not gorunum else ""
             if st.form_submit_button("Kaydet", icon=":material/save:"):
@@ -384,6 +406,47 @@ elif st.session_state.cizim_yol:
                 st.session_state.cizim_yol = None
                 kaydet(mekan, plan)
                 st.rerun()
+
+# ── Harita konumu (kampüs gibi açık alanlar için, isteğe bağlı) ──
+if not gorunum and dugumler:
+    dis = cz.gorunum_konumlari(plan, None)
+    gps = {i: cz.gps_coz(v) for i, v in (plan.get("gps") or {}).items() if i in dis}
+    gps = {i: k for i, k in gps.items() if k}
+    tahmin = set(plan.get("gpsTahmin") or []) & set(gps)
+    with st.expander(f"Harita konumu (açık alan) · {len(gps)}/{len(dis)} nokta", icon=":material/map:",
+                     expanded=bool(gps)):
+        st.caption("Kampüs gibi açık alanlarda ziyaretçi QR okutmadan **neredeyim** diyebilsin diye. Bir nokta seçin, "
+                   "haritada yerine tıklayın; sahadaysanız noktanın yanında durup **Buradayım**'a basın. İki noktayı "
+                   "yerleştirince diğerlerini çizimden hesaplayabilirsiniz. Bina içi için gerekmez.")
+        hr.harita({"noktalar": [{"id": i, "ad": adlar[i], "enlem": gps[i][0] if i in gps else None,
+                                 "boylam": gps[i][1] if i in gps else None, "tahmin": i in tahmin}
+                                for i in dis if i in adlar],
+                   "secili": secili if secili in dis else None,
+                   "anahtar": ",".join(sorted(gps)), "sigdir": False}, key="harita", on_olay=harita_olay)
+        if tahmin:
+            st.caption(f":orange[●] Sarı noktalar çizimden hesaplandı ({len(tahmin)}); yerinde değilse tıklayıp düzeltin.")
+        eksik = [i for i in dis if i not in gps]
+        with st.container(horizontal=True):
+            if len(gps) - len(tahmin) >= 2 and eksik and st.button(
+                    f"Kalan {len(eksik)} noktayı çizimden hesapla", icon=":material/auto_fix_high:",
+                    help="Elle yerleştirdiğiniz noktalara göre çizim haritaya oturtulur"):
+                elle = {**plan, "gps": {i: k for i, k in plan.get("gps", {}).items() if i not in tahmin}}
+                hesap, uyum = hr.cizimden_hesapla(elle)
+                plan.setdefault("gps", {}).update(hesap)
+                plan["gpsTahmin"] = sorted(set(plan.get("gpsTahmin") or []) | set(hesap))
+                st.session_state.plan = plan
+                if uyum > 15:
+                    st.session_state["harita_uyari"] = (
+                        f"Çizim haritaya tam oturmadı (elle yerleştirdiğiniz noktalarda {round(uyum)} m sapma). "
+                        "Hesaplanan sarı noktaları haritada kontrol edin.")
+                st.rerun()
+            if gps and st.button("Harita konumlarını sil", icon=":material/delete:", type="tertiary"):
+                plan.pop("gps", None)
+                plan.pop("gpsTahmin", None)
+                st.session_state.plan = plan
+                st.rerun()
+        if st.session_state.get("harita_uyari"):
+            st.warning(st.session_state.pop("harita_uyari"), icon=":material/warning:")
 
 # ── Tarifi deneyin: ziyaretçinin duyacağı tarif ──
 if mekan["hedefler"] and mekan.get("giris") in adlar:

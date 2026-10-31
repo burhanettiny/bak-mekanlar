@@ -12,6 +12,8 @@ plan anahtarları:
   icKonum {bina: [x, y]}  bina girişinin, binanın iç çizimindeki yeri
   icOlcek {bina: adım}    iç çizimde bir birimin kaç adım olduğu (varsayılan 1)
   sabitAdim [[a, b]]      sahada sayılıp elle yazılmış adımlar: sürükleyince değişmez
+  gps    {nokta: [enlem, boylam]}  açık alandaki noktaların harita konumu (QR'a enlem/boylam olarak girer)
+  gpsTahmin [nokta]       harita konumu elle değil çizimden hesaplananlar (haritada sarı)
 """
 
 from __future__ import annotations
@@ -393,8 +395,9 @@ def plan_kimlikleri_degistir(plan: dict, harita: dict[str, str]) -> None:
     for alan in ("sabitAdim", "otoTarif"):
         if plan.get(alan):
             plan[alan] = [[harita.get(a, a), harita.get(b, b)] for a, b in plan[alan]]
-    if plan.get("etiketsiz"):
-        plan["etiketsiz"] = sorted(harita.get(i, i) for i in plan["etiketsiz"])
+    for alan in ("etiketsiz", "gpsTahmin"):
+        if plan.get(alan):
+            plan[alan] = sorted(harita.get(i, i) for i in plan[alan])
 
 
 def nokta_sil(mekan: dict, plan: dict, kimlik: str) -> None:
@@ -407,6 +410,8 @@ def nokta_sil(mekan: dict, plan: dict, kimlik: str) -> None:
     for alan in ("konum", "tur", "ust", "gps", "icKonum"):
         for i in silinecek:
             (plan.get(alan) or {}).pop(i, None)
+    if plan.get("gpsTahmin"):
+        plan["gpsTahmin"] = [i for i in plan["gpsTahmin"] if i not in silinecek]
     if mekan.get("giris") in silinecek:
         mekan["giris"] = mekan["noktalar"][0]["id"] if mekan["noktalar"] else ""
     if mekan.get("kasa") in silinecek:

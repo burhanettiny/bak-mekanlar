@@ -727,3 +727,29 @@ def test_cizimde_harita_konumu_gosterilir_ve_kaydedilir():
     kutu.set_value("41.2, 42.7")
     next(b for b in at.button if b.label == "Kaydet").click().run()
     assert at.session_state["plan"]["gps"]["giris"] == [41.2, 42.7]
+
+
+def test_harita_konumu_iki_noktadan_cizimle_hesaplanir():
+    import harita as hr
+    sablon = json.loads((Path(__file__).parent / "sablonlar" / "9-ardahan-universitesi.json").read_text(encoding="utf-8"))
+    plan = sablon["plan"]
+    gercek = dict(plan["gps"])
+    ikisi = dict(list(gercek.items())[:2])
+    hesap, uyum = hr.cizimden_hesapla({**plan, "gps": ikisi})
+    assert set(hesap) == set(gercek) - set(ikisi) and uyum < 1
+    for i, (enlem, boylam) in hesap.items():
+        # Çizim OSM'den ölçekli üretildi: hesaplanan konum gerçeğine birkaç metre içinde olmalı
+        assert abs(enlem - gercek[i][0]) * 110540 < 5 and abs(boylam - gercek[i][1]) * 83800 < 5, i
+    assert hr.cizimden_hesapla({**plan, "gps": dict(list(gercek.items())[:1])}) == ({}, 0.0)
+
+
+def test_cizimde_harita_bolumu_ve_cizimden_hesaplama():
+    at = sablon_ac(uygulama(), "Ardahan Üniversitesi Yenisey Kampüsü (OpenStreetMap yol ağından – sahada doğrulayın)")
+    plan = at.session_state["plan"]
+    at.session_state["plan"] = {**plan, "gps": dict(list(plan["gps"].items())[:3])}
+    at.switch_page("app_pages/cizim_sayfasi.py").run()
+    assert not at.exception
+    assert any(e.label.startswith("Harita konumu (açık alan) · 3/") for e in at.expander)
+    next(b for b in at.button if b.label.startswith("Kalan ")).click().run()
+    yeni = at.session_state["plan"]
+    assert len(yeni["gps"]) == len(plan["gps"]) and len(yeni["gpsTahmin"]) == len(plan["gps"]) - 3
