@@ -12,8 +12,11 @@ plan anahtarları:
   icKonum {bina: [x, y]}  bina girişinin, binanın iç çizimindeki yeri
   icOlcek {bina: adım}    iç çizimde bir birimin kaç adım olduğu (varsayılan 1)
   sabitAdim [[a, b]]      sahada sayılıp elle yazılmış adımlar: sürükleyince değişmez
-  gps    {nokta: [enlem, boylam]}  açık alandaki noktaların harita konumu (QR'a enlem/boylam olarak girer)
-  gpsTahmin [nokta]       harita konumu elle değil çizimden hesaplananlar (haritada sarı)
+  harita {enlem, boylam}  dış çizim haritaya oturtulduysa çizimin (0, 0) noktasının konumu. O zaman dış çizim gerçek
+                          ölçekte ve kuzey yukarıdadır (bir birim = olcek × 0,7 m); noktaların harita konumu
+                          çizimdeki yerinden hesaplanır, arka planda harita görünür
+  gps    {nokta: [enlem, boylam]}  çizim henüz haritaya oturtulmadıysa elle yerleştirilen noktalar (en az ikisi
+                          girilince çizim haritaya oturtulur, bkz. harita.py)
 """
 
 from __future__ import annotations
@@ -305,12 +308,46 @@ def yonleri_ekle(mekan: dict, plan: dict) -> dict:
             if (b["a"], b["b"]) in oto and _oto_mu(b):
                 b["oto"] = True
     # Açık alandaki noktaların harita koordinatı: uygulama "neredeyim"de GPS'ten en yakın noktayı söyler
-    gps = plan.get("gps") or {}
+    gps = dis_gps(plan)
     for n in yeni["noktalar"]:
-        k = gps_coz(gps.get(n["id"]))
-        if k:
-            n["enlem"], n["boylam"] = k
+        if n["id"] in gps:
+            n["enlem"], n["boylam"] = gps[n["id"]]
     return yeni
+
+
+# ── Çizim ↔ harita ────────────────────────────────────────
+# Haritaya oturtulmuş dış çizimde x doğu, y kuzey yönünde metredir (bir birim = olcek × standart adım). Kampüs
+# ölçeğinde (birkaç km) dünyanın eğriliği önemsizdir: enlem/boylam farkı metreye doğrusal çevrilir.
+_KY = 110540.0   # 1 derece enlem, metre
+
+
+def _kx(enlem: float) -> float:
+    return 111320.0 * math.cos(math.radians(enlem))
+
+
+def harita_birimi(plan: dict) -> float:
+    """Haritaya oturtulmuş çizimde bir birimin kaç metre olduğu."""
+    return float(plan.get("olcek") or 1.0) * bm.STANDART_ADIM_M
+
+
+def konumdan_gps(plan: dict, p) -> tuple[float, float]:
+    h, m = plan["harita"], harita_birimi(plan)
+    return (round(h["enlem"] + p[1] * m / _KY, 6), round(h["boylam"] + p[0] * m / _kx(h["enlem"]), 6))
+
+
+def gpsden_konum(plan: dict, enlem: float, boylam: float) -> list[float]:
+    h, m = plan["harita"], harita_birimi(plan)
+    return [round((boylam - h["boylam"]) * _kx(h["enlem"]) / m, 2), round((enlem - h["enlem"]) * _KY / m, 2)]
+
+
+def dis_gps(plan: dict) -> dict[str, tuple[float, float]]:
+    """Dış çizimdeki noktaların harita konumu: çizim haritaya oturtulduysa hepsi çizimden; değilse yalnızca elle
+    yerleştirilenler."""
+    dis = gorunum_konumlari(plan, None)
+    if plan.get("harita"):
+        return {i: konumdan_gps(plan, p) for i, p in dis.items()}
+    gps = {i: gps_coz(v) for i, v in (plan.get("gps") or {}).items() if i in dis}
+    return {i: k for i, k in gps.items() if k}
 
 
 def gps_coz(deger) -> tuple[float, float] | None:
@@ -395,9 +432,8 @@ def plan_kimlikleri_degistir(plan: dict, harita: dict[str, str]) -> None:
     for alan in ("sabitAdim", "otoTarif"):
         if plan.get(alan):
             plan[alan] = [[harita.get(a, a), harita.get(b, b)] for a, b in plan[alan]]
-    for alan in ("etiketsiz", "gpsTahmin"):
-        if plan.get(alan):
-            plan[alan] = sorted(harita.get(i, i) for i in plan[alan])
+    if plan.get("etiketsiz"):
+        plan["etiketsiz"] = sorted(harita.get(i, i) for i in plan["etiketsiz"])
 
 
 def nokta_sil(mekan: dict, plan: dict, kimlik: str) -> None:
@@ -410,8 +446,6 @@ def nokta_sil(mekan: dict, plan: dict, kimlik: str) -> None:
     for alan in ("konum", "tur", "ust", "gps", "icKonum"):
         for i in silinecek:
             (plan.get(alan) or {}).pop(i, None)
-    if plan.get("gpsTahmin"):
-        plan["gpsTahmin"] = [i for i in plan["gpsTahmin"] if i not in silinecek]
     if mekan.get("giris") in silinecek:
         mekan["giris"] = mekan["noktalar"][0]["id"] if mekan["noktalar"] else ""
     if mekan.get("kasa") in silinecek:
@@ -564,9 +598,13 @@ _HTML = """
     <button type="button" class="yakin" title="Yakınlaştır" aria-label="Yakınlaştır">+</button>
     <button type="button" class="uzak" title="Uzaklaştır" aria-label="Uzaklaştır">−</button>
     <button type="button" class="sigdir" title="Tüm çizimi ekrana sığdır">Sığdır</button>
+    <button type="button" class="zemin-sec" title="Arka plan: harita, uydu ya da boş" hidden>Zemin: Harita</button>
     <span class="ipucu" aria-live="polite"></span>
   </div>
-  <svg role="application" aria-label="Bina çizimi" tabindex="-1"></svg>
+  <div class="tuval">
+    <svg role="application" aria-label="Bina çizimi" tabindex="-1"></svg>
+    <span class="atif" hidden></span>
+  </div>
 </div>
 """
 
@@ -579,6 +617,9 @@ _CSS = """
 .arac button[aria-pressed="true"] { background: var(--st-primary-color); color: #fff;
   border-color: var(--st-primary-color); }
 .ipucu { font-size: .875rem; opacity: .75; }
+.tuval { position: relative; }
+.atif { position: absolute; right: 4px; bottom: 3px; font-size: 11px; padding: 0 4px; border-radius: 3px;
+  background: rgba(255, 255, 255, .8); color: #333; pointer-events: none; }
 svg { width: 100%; height: 540px; display: block; touch-action: pan-y; user-select: none;
   background-color: var(--st-secondary-background-color); border-radius: var(--st-base-radius, .5rem);
   border: 1px solid var(--st-border-color); cursor: grab; }
@@ -600,6 +641,15 @@ svg.suruk { cursor: grabbing; }
 .modul.kaynak rect { stroke: var(--st-primary-color); stroke-dasharray: 3 2; }
 .modul:focus { outline: none; }
 .modul text { fill: var(--st-text-color); dominant-baseline: central; }
+/* Harita zemininde: kutu yerine haritadaki gibi nokta ve hâlesi olan ad; renkler temadan bağımsız */
+svg.haritali .modul circle { fill: #fff; stroke: #1c3d6e; }
+svg.haritali .modul.bina circle { fill: #1c62b9; stroke: #fff; }
+svg.haritali .modul.giris circle { fill: #21c354; stroke: #fff; }
+svg.haritali .modul.secili circle, svg.haritali .modul:focus circle { stroke: #ff4b4b; }
+svg.haritali .modul text { fill: #111; paint-order: stroke; stroke: rgba(255, 255, 255, .9); stroke-linejoin: round; }
+svg.haritali .yol { stroke: #1c3d6e; opacity: .8; }
+svg.haritali .yol.secili { stroke: #ff4b4b; }
+svg.haritali .adim { fill: #1c3d6e; stroke: rgba(255, 255, 255, .9); }
 """
 
 _JS = """
@@ -624,7 +674,7 @@ export default function (component) {
 
   let d = durumlar.get(parentElement)
   if (!d) {
-    d = { vb: null, gorunum: null, bagla: false, kaynak: null }
+    d = { vb: null, gorunum: null, bagla: false, kaynak: null, zemin: null, karolar: new Map(), zeminTuru: 0 }
     durumlar.set(parentElement, d)
   }
   const dugumler = (data.dugumler || []).map(n => ({ ...n }))
@@ -649,13 +699,61 @@ export default function (component) {
                                                            n.y < d.vb.y || n.y > d.vb.y + d.vb.h)) d.vb = null
   d.idler = idler
 
+  // ── Harita zemini: çizim haritaya oturtulduysa (data.harita) OpenStreetMap ya da uydu karoları çizimin
+  // birimlerine çevrilip arkaya döşenir. Kampüs ölçeğinde Mercator karosu ile düz metre ızgarası örtüşür.
+  const ZEMINLER = [
+    { ad: "Harita", url: (z, x, y) => `https://tile.openstreetmap.org/${z}/${x}/${y}.png`, atif: "© OpenStreetMap katkıcıları" },
+    { ad: "Uydu", url: (z, x, y) => `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}`,
+      atif: "Uydu: Esri, Maxar, Earthstar Geographics" },
+    { ad: "Yok" },
+  ]
+  const zeminBtn = parentElement.querySelector(".zemin-sec")
+  const atif = parentElement.querySelector(".atif")
+  const H = data.harita
+  zeminBtn.hidden = !H
+  if (!d.zemin) d.zemin = document.createElementNS(NS, "g")
+
+  function zeminCiz() {
+    const tur = ZEMINLER[d.zeminTuru]
+    zeminBtn.textContent = "Zemin: " + tur.ad
+    atif.hidden = !H || !tur.url
+    if (!H || !tur.url) { d.zemin.replaceChildren(); d.karolar.clear(); return }
+    atif.textContent = tur.atif
+    const { x, y, w, h } = d.vb
+    const m = H.m, kx = 111320 * Math.cos(H.enlem * Math.PI / 180), ky = 110540
+    const metrePiksel = w * m / (svg.clientWidth || 800)
+    const z = Math.max(3, Math.min(19, Math.round(Math.log2(156543.03 * Math.cos(H.enlem * Math.PI / 180) / metrePiksel))))
+    const n2 = 2 ** z
+    const boylam = X => H.boylam + X * m / kx, enlem = Y => H.enlem - Y * m / ky
+    const kX = lon => Math.floor((lon + 180) / 360 * n2)
+    const kY = lat => { const r = lat * Math.PI / 180; return Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n2) }
+    const karoBoylam = i => i / n2 * 360 - 180
+    const karoEnlem = j => 180 / Math.PI * Math.atan(Math.sinh(Math.PI - 2 * Math.PI * j / n2))
+    const X = lon => (lon - H.boylam) * kx / m, Y = lat => -(lat - H.enlem) * ky / m
+    const x0 = kX(boylam(x)), x1 = kX(boylam(x + w)), y0 = kY(enlem(y)), y1 = kY(enlem(y + h))
+    if ((x1 - x0 + 1) * (y1 - y0 + 1) > 120) return
+    const istenen = new Set()
+    for (let i = x0; i <= x1; i++) for (let j = y0; j <= y1; j++) {
+      const anahtar = `${d.zeminTuru}/${z}/${i}/${j}`
+      istenen.add(anahtar)
+      if (d.karolar.has(anahtar)) continue
+      const sx = X(karoBoylam(i)), sy = Y(karoEnlem(j))
+      d.karolar.set(anahtar, el("image", { href: tur.url(z, i, j), x: sx, y: sy, width: X(karoBoylam(i + 1)) - sx,
+        height: Y(karoEnlem(j + 1)) - sy, preserveAspectRatio: "none" }, d.zemin))
+    }
+    for (const [anahtar, resim] of d.karolar) if (!istenen.has(anahtar)) { resim.remove(); d.karolar.delete(anahtar) }
+  }
+  zeminBtn.onclick = () => { d.zeminTuru = (d.zeminTuru + 1) % ZEMINLER.length; ciz() }
+
   function ciz() {
     if (!d.vb) sigdir()
     const { x, y, w, h } = d.vb
     svg.setAttribute("viewBox", `${x} ${y} ${w} ${h}`)
     const k = (svg.clientWidth || 800) / w       // piksel / birim
     const px = p => p / k
-    svg.replaceChildren()
+    svg.classList.toggle("haritali", !!H && !!ZEMINLER[d.zeminTuru].url)
+    svg.replaceChildren(d.zemin)
+    zeminCiz()
     const katman = el("g", {}, svg)
     for (const yol of yollar) {
       const a = bul(yol.a), b = bul(yol.b)
@@ -682,13 +780,26 @@ export default function (component) {
         n.id === data.secili ? "secili" : "", n.id === d.kaynak ? "kaynak" : ""].join(" ")
       const g = el("g", { class: sinif, transform: `translate(${n.x} ${n.y})`, tabindex: 0, role: "button",
         "aria-label": `${n.ad}${n.icerik ? `, içinde ${n.icerik} oda` : ""}`, "data-id": n.id }, katman)
-      const yazi = (SIMGE[n.tur] || "") + " " + n.ad + (n.icerik ? ` (${n.icerik})` : "")
-      const gen = px(Math.max(70, yazi.length * 7.2 + 20)), yuk = px(n.tur === "bina" ? 40 : 28)
-      el("rect", { x: -gen / 2, y: -yuk / 2, width: gen, height: yuk, rx: px(n.tur === "bina" ? 6 : 14),
-        "stroke-width": px(n.id === data.secili ? 3 : 1.5) }, g)
-      const t = el("text", { x: 0, y: 0, "font-size": px(13), "text-anchor": "middle",
-        "font-weight": n.tur === "bina" ? 600 : 400 }, g)
-      t.textContent = yazi
+      const haritali = svg.classList.contains("haritali")
+      const yazi = haritali ? n.ad + (n.icerik ? ` (${n.icerik})` : "")
+        : (SIMGE[n.tur] || "") + " " + n.ad + (n.icerik ? ` (${n.icerik})` : "")
+      let gen = px(Math.max(70, yazi.length * 7.2 + 20))
+      if (haritali) {
+        // Haritada kutu yolu ve binayı örter: noktanın kendisi küçük bir daire, adı yanında
+        const r = px(n.tur === "bina" ? 8 : 6)
+        el("circle", { r, "stroke-width": px(n.id === data.secili ? 3.5 : 2) }, g)
+        const t = el("text", { x: r + px(4), y: 0, "font-size": px(12.5), "text-anchor": "start",
+          "font-weight": n.tur === "bina" ? 600 : 500, "stroke-width": px(3.5) }, g)
+        t.textContent = yazi
+        gen = 2 * (r + px(8) + px(yazi.length * 6.8))
+      } else {
+        const yuk = px(n.tur === "bina" ? 40 : 28)
+        el("rect", { x: -gen / 2, y: -yuk / 2, width: gen, height: yuk, rx: px(n.tur === "bina" ? 6 : 14),
+          "stroke-width": px(n.id === data.secili ? 3 : 1.5) }, g)
+        const t = el("text", { x: 0, y: 0, "font-size": px(13), "text-anchor": "middle",
+          "font-weight": n.tur === "bina" ? 600 : 400 }, g)
+        t.textContent = yazi
+      }
       // Binanın içine girmek için kutunun sağında görünür bir düğme (çift tıklama keşfedilmiyor ve yeniden
       // çizimde kayboluyor)
       if (n.tur === "bina" && n.id !== data.ankraj) {
@@ -817,5 +928,6 @@ _CIZIM = st.components.v2.component("bak_cizim", html=_HTML, css=_CSS, js=_JS)
 
 
 def cizim(veri: dict, *, key: str, on_olay: Callable[[], None]):
-    """Çizim bileşeni. veri: dugumler, yollar, secili, seciliYol, olcek, gorunum. Olaylar on_olay ile gelir."""
+    """Çizim bileşeni. veri: dugumler, yollar, secili, seciliYol, olcek, gorunum; haritaya oturtulmuş dış çizimde
+    harita {enlem, boylam, m} (m: bir birimin metresi). Olaylar on_olay ile gelir."""
     return _CIZIM(data=veri, key=key, on_olay_change=on_olay)

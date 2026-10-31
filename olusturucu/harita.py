@@ -1,58 +1,67 @@
-"""Açık alandaki noktaların harita konumu (isteğe bağlı).
+"""Açık alandaki noktaların harita konumu (isteğe bağlı) ve çizimin haritaya oturtulması.
 
 Kampüs gibi açık alanlarda noktaların gerçek konumu bilinirse ziyaretçi QR okutmadan "neredeyim" diyebilir:
-telefon GPS'le en yakın noktayı söyler. Konum üç yoldan girilir:
-  - haritada (sokak ya da uydu görüntüsü) noktanın yerine tıklanır,
-  - sahadaysanız noktanın yanında durup "Buradayım"a basılır (telefonun GPS'i),
-  - en az iki noktanın konumu girildiyse diğerleri çizimden hesaplanır (çizimdeki yerleşim ölçekli olduğu için
-    döndürme + ölçek + kaydırma ile haritaya oturtulur).
-Konumlar plan["gps"] = {nokta: [enlem, boylam]} olarak tutulur; QR'a cizim.yonleri_ekle yazar.
+telefon GPS'le en yakın noktayı söyler. Elle çizilmiş bir kampüste kurum iki noktayı haritada yerine koyar
+(tıklayarak ya da sahada "Buradayım" ile); çizimin tamamı döndürülüp ölçeklenerek haritaya oturtulur. Bundan sonra
+çizim gerçek ölçekte, kuzey yukarıdadır, arkasında harita görünür ve her noktanın harita konumu çizimdeki yerinden
+hesaplanır (bkz. cizim.dis_gps): haritada taşınan nokta çizimde de taşınmış olur.
+OpenStreetMap'ten kurulan kampüsler (osm_kampus.py) baştan haritaya oturtulmuş gelir.
 """
 import math
 from typing import Callable
 
 import streamlit as st
 
+import bak_mekan as bm
 import cizim as cz
 
-_KY = 110540.0   # 1 derece enlem, metre
 
-
-def _kx(enlem: float) -> float:
-    return 111320.0 * math.cos(math.radians(enlem))
-
-
-def cizimden_hesapla(plan: dict) -> tuple[dict[str, list[float]], float]:
-    """Harita konumu bilinen (en az iki) dış noktadan, konumu bilinmeyen dış noktaların konumu.
-    Döner: {nokta: [enlem, boylam]} ve bilinen noktalarda çizimin haritaya en kötü uyumu (metre). Uyum kötüyse
-    (çizim ölçekli değilse) hesaplanan konumlar da yanlıştır; çağıran uyarır."""
+def haritaya_oturt(mekan: dict, plan: dict) -> float:
+    """Elle yerleştirilmiş (plan["gps"], en az iki) dış noktalara göre dış çizimi haritaya oturtur: döndürme +
+    ölçek + kaydırma (en küçük kareler). Yerleştirilen noktalar tam haritadaki yerlerine konur, diğerleri çizimdeki
+    düzenleriyle taşınır; yürüme yollarının adımı gerçek mesafeden yeniden hesaplanır (sahada sayılıp elle yazılanlar
+    korunur). Döner: yerleştirilen noktalarda çizimin haritaya en kötü uyumu (metre); kötüyse çizim ölçekli
+    değildir ve kurum diğer noktaları da haritada düzeltmelidir. İkiden az nokta varsa bir şey yapmaz (-1)."""
     konum = cz.gorunum_konumlari(plan, None)
-    gps = {i: cz.gps_coz(v) for i, v in (plan.get("gps") or {}).items()}
-    bilinen = [i for i in konum if gps.get(i)]
-    if len(bilinen) < 2:
-        return {}, 0.0
-    enlem0 = sum(gps[i][0] for i in bilinen) / len(bilinen)
-    boylam0 = sum(gps[i][1] for i in bilinen) / len(bilinen)
-    kx = _kx(enlem0)
+    gps = {i: k for i, k in cz.dis_gps({**plan, "harita": None}).items() if i in konum}
+    if len(gps) < 2:
+        return -1.0
+    olc = cz.olcek(mekan, plan)
+    plan["olcek"] = olc
+    enlem0 = sum(k[0] for k in gps.values()) / len(gps)
+    boylam0 = sum(k[1] for k in gps.values()) / len(gps)
+    kx = cz._kx(enlem0)
     # Çizimde x doğu, y kuzey (bkz. cizim.pusula_yonu); haritada da doğu/kuzey metre. Karmaşık sayılarla
-    # benzerlik dönüşümü: w = a·z + b (a döndürme ve ölçek, b kaydırma), en küçük kareler.
-    z = {i: complex(*konum[i]) for i in bilinen}
-    w = {i: complex((gps[i][1] - boylam0) * kx, (gps[i][0] - enlem0) * _KY) for i in bilinen}
-    zm = sum(z.values()) / len(z)
-    wm = sum(w.values()) / len(w)
-    payda = sum(abs(z[i] - zm) ** 2 for i in bilinen)
-    if payda < 1e-9:
-        return {}, 0.0
-    a = sum((w[i] - wm) * (z[i] - zm).conjugate() for i in bilinen) / payda
+    # benzerlik dönüşümü: w = a·z + b (a döndürme ve ölçek, b kaydırma)
+    z = {i: complex(*konum[i]) for i in gps}
+    w = {i: complex((k[1] - boylam0) * kx, (k[0] - enlem0) * cz._KY) for i, k in gps.items()}
+    zm, wm = sum(z.values()) / len(z), sum(w.values()) / len(w)
+    payda = sum(abs(z[i] - zm) ** 2 for i in gps)
+    if payda < 1e-9:   # yerleştirilen noktalar çizimde üst üste: döndürme bulunamaz
+        return -1.0
+    a = sum((w[i] - wm) * (z[i] - zm).conjugate() for i in gps) / payda
     b = wm - a * zm
-    uyum = max(abs(a * z[i] + b - w[i]) for i in bilinen)
-    sonuc = {}
+    uyum = max(abs(a * z[i] + b - w[i]) for i in gps)
+    m = cz.harita_birimi(plan)
     for i, p in konum.items():
-        if i in bilinen:
+        t = w[i] if i in gps else a * complex(*p) + b
+        plan.setdefault("konum", {})[i] = [round(t.real / m, 2), round(t.imag / m, 2)]
+    plan["harita"] = {"enlem": round(enlem0, 6), "boylam": round(boylam0, 6)}
+    plan.pop("gps", None)
+    adimlari_yenile(mekan, plan)
+    return uyum
+
+
+def adimlari_yenile(mekan: dict, plan: dict) -> None:
+    """Dış çizimdeki yürüme yollarının adımı çizimdeki (artık gerçek) mesafeden; elle yazılanlar korunur."""
+    konum = cz.gorunum_konumlari(plan, None)
+    sabit = {tuple(y) for y in plan.get("sabitAdim") or []}
+    olc = cz.olcek(mekan, plan)
+    for y in mekan["baglantilar"]:
+        if (y["a"], y["b"]) in sabit or (y.get("tur") or "yuru") in bm.DIKEY_GECISLER:
             continue
-        t = a * complex(*p) + b
-        sonuc[i] = [round(enlem0 + t.imag / _KY, 6), round(boylam0 + t.real / kx, 6)]
-    return sonuc, uyum
+        if y["a"] in konum and y["b"] in konum and math.dist(konum[y["a"]], konum[y["b"]]) > 0.01:
+            y["adim"] = max(1, round(math.dist(konum[y["a"]], konum[y["b"]]) * olc))
 
 
 _HTML = """
