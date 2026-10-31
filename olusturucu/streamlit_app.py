@@ -14,7 +14,7 @@ import streamlit as st
 # Streamlit Cloud yeni bir push'ta sayfa dosyalarını yeniden çalıştırır ama önceden içe aktarılmış yardımcı
 # modülleri bellekte eski haliyle tutar (yeni sayfa eski modülde olmayan bir fonksiyonu çağırıp çöker).
 # Dosyası değişen yardımcı modül burada yeniden yüklenir.
-for _ad in ("bak_mekan", "plan", "sihirbaz", "cizim", "durum"):
+for _ad in ("bak_mekan", "plan", "sihirbaz", "cizim", "durum", "harita", "osm_kampus"):
     _modul = sys.modules.get(_ad)
     _dosya = getattr(_modul, "__file__", None)
     if _dosya and os.path.exists(_dosya) and os.path.getmtime(_dosya) != getattr(_modul, "_yukleme_zamani", None):
