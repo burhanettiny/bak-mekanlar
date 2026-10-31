@@ -133,6 +133,17 @@ if not gorunum:
         bilgi["ad"] = yeni_ad.strip()
         mekan["ad"] = bilgi["ad"]
 
+if st.session_state.get("osm_kuruldu"):
+    with st.container(border=True):
+        st.markdown(":material/map: **Haritadan kuruldu.** Yerler ve yollar OpenStreetMap'ten tahmin edildi; "
+                    "harita gönüllülerce hazırlanır, eksik ya da eski olabilir. Sahada doğrulayın:")
+        st.markdown("- Noktaları sürükleyerek gerçek yerine koyun (arka planı **Zemin** düğmesiyle uyduya çevirin)\n"
+                    "- Gereksiz yerleri silin, eksikleri **Yer ekle** ile ekleyin; bina adlarını kısaltın\n"
+                    "- Binaların içini **İçi ›** ile ekleyin; girişin doğru kapı olduğunu kontrol edin")
+        if st.button("Anladım", icon=":material/check:"):
+            st.session_state.osm_kuruldu = False
+            st.rerun()
+
 # ── Hangi çizim: dış çizim ya da bir binanın içi; birden çok katta kat seçimi ──
 with st.container(horizontal=True, vertical_alignment="center"):
     if gorunum:

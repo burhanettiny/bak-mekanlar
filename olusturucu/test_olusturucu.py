@@ -1,3 +1,4 @@
+import math
 import json
 from pathlib import Path
 
@@ -701,55 +702,94 @@ def test_nokta_etiketi_kapatilir_ve_tek_etiket_basilir():
     assert any("1 noktaya etiket asılmayacak" in str(s.value) for s in at.success)
 
 
-def test_harita_konumu_qr_noktasina_yazilir_ve_kimlik_degisince_tasinir():
+ARDAHAN = "Ardahan Üniversitesi Yenisey Kampüsü (OpenStreetMap yol ağından – sahada doğrulayın)"
+
+
+def _ardahan():
+    return json.loads((Path(__file__).parent / "sablonlar" / "9-ardahan-universitesi.json").read_text(encoding="utf-8"))
+
+
+def test_haritali_cizimde_konum_cizimden_hesaplanir_qrya_girer_ve_kimlikle_tasinir():
     import cizim as cz
     assert cz.gps_coz("41.130848, 42.786478") == (41.130848, 42.786478)
     assert cz.gps_coz("41.13 42.78") == (41.13, 42.78)
-    assert cz.gps_coz([41.1, 42.7]) == (41.1, 42.7)
     for bozuk in ("", "abc", "95, 10", "0, 0", None, "41.1"):
         assert cz.gps_coz(bozuk) is None
-    sablon = json.loads((Path(__file__).parent / "sablonlar" / "9-ardahan-universitesi.json").read_text(encoding="utf-8"))
-    plan = sablon["plan"]
-    assert set(plan["gps"]) == {n["id"] for n in sablon["noktalar"]}
-    qr = cz.yonleri_ekle({k: v for k, v in sablon.items() if k != "plan"}, plan)
+    sablon = _ardahan()
+    plan = sablon.pop("plan")
+    gps = cz.dis_gps(plan)
+    assert set(gps) == {n["id"] for n in sablon["noktalar"]}
+    # Çizim ↔ harita gidiş-dönüş aynı yere varır
+    x, y = cz.gpsden_konum(plan, *gps["cami"])
+    assert math.dist((x, y), plan["konum"]["cami"]) < 0.05
+    qr = cz.yonleri_ekle(sablon, plan)
     giris = next(n for n in qr["noktalar"] if n["id"] == "giris")
-    assert 41.0 < giris["enlem"] < 41.3 and 42.6 < giris["boylam"] < 42.9
+    assert (giris["enlem"], giris["boylam"]) == gps["giris"]
     cz.plan_kimlikleri_degistir(plan, {"giris": "ana-kapi"})
-    assert "ana-kapi" in plan["gps"] and "giris" not in plan["gps"] and "ana-kapi" in plan["konum"]
+    assert "ana-kapi" in cz.dis_gps(plan)
 
 
-def test_cizimde_harita_konumu_gosterilir_ve_kaydedilir():
-    at = sablon_ac(uygulama(), "Ardahan Üniversitesi Yenisey Kampüsü (OpenStreetMap yol ağından – sahada doğrulayın)")
-    at.session_state["cizim_secili"] = "giris"
-    at.switch_page("app_pages/cizim_sayfasi.py").run()
-    kutu = next(t for t in at.text_input if t.label == "Harita konumu (isteğe bağlı)")
-    assert kutu.value.startswith("41.13")
-    kutu.set_value("41.2, 42.7")
-    next(b for b in at.button if b.label == "Kaydet").click().run()
-    assert at.session_state["plan"]["gps"]["giris"] == [41.2, 42.7]
-
-
-def test_harita_konumu_iki_noktadan_cizimle_hesaplanir():
+def test_elle_cizim_iki_noktayla_haritaya_oturtulur():
+    import cizim as cz
     import harita as hr
-    sablon = json.loads((Path(__file__).parent / "sablonlar" / "9-ardahan-universitesi.json").read_text(encoding="utf-8"))
-    plan = sablon["plan"]
-    gercek = dict(plan["gps"])
-    ikisi = dict(list(gercek.items())[:2])
-    hesap, uyum = hr.cizimden_hesapla({**plan, "gps": ikisi})
-    assert set(hesap) == set(gercek) - set(ikisi) and uyum < 1
-    for i, (enlem, boylam) in hesap.items():
-        # Çizim OSM'den ölçekli üretildi: hesaplanan konum gerçeğine birkaç metre içinde olmalı
-        assert abs(enlem - gercek[i][0]) * 110540 < 5 and abs(boylam - gercek[i][1]) * 83800 < 5, i
-    assert hr.cizimden_hesapla({**plan, "gps": dict(list(gercek.items())[:1])}) == ({}, 0.0)
+    sablon = _ardahan()
+    plan = sablon.pop("plan")
+    gercek = cz.dis_gps(plan)
+    # Kurum kampüsü elle, yamuk ve yarı ölçekte çizmiş olsun: 40° döndürülmüş, 0,5 kat
+    aci, k = math.radians(40), 0.5
+    elle = {**plan, "konum": {i: [k * (x * math.cos(aci) - y * math.sin(aci)), k * (x * math.sin(aci) + y * math.cos(aci))]
+                              for i, (x, y) in plan["konum"].items()}}
+    elle.pop("harita")
+    elle["gps"] = {i: list(gercek[i]) for i in ("giris", "cami")}
+    uyum = hr.haritaya_oturt(sablon, elle)
+    assert 0 <= uyum < 1 and "harita" in elle and "gps" not in elle
+    for i, (enlem, boylam) in cz.dis_gps(elle).items():
+        assert math.dist(((enlem - gercek[i][0]) * 110540, (boylam - gercek[i][1]) * 83800), (0, 0)) < 3, i
+    assert hr.haritaya_oturt(sablon, {**plan, "harita": None, "gps": {"giris": [41.1, 42.7]}}) == -1
 
 
-def test_cizimde_harita_bolumu_ve_cizimden_hesaplama():
-    at = sablon_ac(uygulama(), "Ardahan Üniversitesi Yenisey Kampüsü (OpenStreetMap yol ağından – sahada doğrulayın)")
-    plan = at.session_state["plan"]
-    at.session_state["plan"] = {**plan, "gps": dict(list(plan["gps"].items())[:3])}
+def test_osmden_kampus_kurulur():
+    import osm_kampus as ok
+    import cizim as cz
+    elemanlar = json.loads((Path(__file__).parent / "test_veri" / "ardahan-osm.json").read_text(encoding="utf-8"))["elements"]
+    m = ok.kampus_kur(elemanlar, 662891327, "Ardahan Üniversitesi Yenisey Kampüsü")
+    plan = m.pop("plan")
+    hatalar, _ = bm.dogrula(m)
+    assert hatalar == []
+    adlar = {h["ad"] for h in m["hedefler"]}
+    assert {"Rektörlük", "Mühendislik Fakültesi", "Konukevi"} <= adlar
+    assert not any("Lojman" in a for a in adlar)                       # ziyaret yeri olmayan yapılar atlanır
+    assert next(h for h in m["hedefler"] if h["ad"] == "Mühendislik Fakültesi")["kisaAd"] == "Mühendislik"
+    # Elle hazırlanan şablonla aynı yol ağı ve mesafeler
+    sablon = _ardahan()
+    assert sorted(b["adim"] for b in m["baglantilar"]) == sorted(b["adim"] for b in sablon["baglantilar"])
+    assert cz.dis_gps(plan)["giris"] == pytest.approx(cz.dis_gps(sablon["plan"])["giris"], abs=1e-4)
+    assert all(b["tarif"] for b in m["baglantilar"])
+    assert ok.kisa_ad("Ardahan Üniversitesi Rektörlük Binası", "Ardahan Üniversitesi") == "Rektörlük"
+
+
+def test_cizim_sayfasinda_konum_yazilinca_cizim_haritaya_oturur_ve_tasinir():
+    at = sablon_ac(uygulama())   # hastane örneği: haritasız
     at.switch_page("app_pages/cizim_sayfasi.py").run()
-    assert not at.exception
-    assert any(e.label.startswith("Harita konumu (açık alan) · 3/") for e in at.expander)
-    next(b for b in at.button if b.label.startswith("Kalan ")).click().run()
-    yeni = at.session_state["plan"]
-    assert len(yeni["gps"]) == len(plan["gps"]) and len(yeni["gpsTahmin"]) == len(plan["gps"]) - 3
+    assert any(e.label.startswith("Haritaya yerleştir") for e in at.expander)
+    ilk = bm.sablonlar()["Hastane / poliklinik (iki katlı, asansörlü)"]["giris"]
+
+    def konum_yaz(kimlik, metin):
+        at.session_state["cizim_secili"] = kimlik
+        at.run()
+        next(t for t in at.text_input if t.label == "Harita konumu (isteğe bağlı)").set_value(metin)
+        next(b for b in at.button if b.label == "Kaydet").click().run()
+
+    konum_yaz(ilk, "41.0000, 29.0000")
+    assert "harita" not in at.session_state["plan"]
+    import cizim as cz
+    dis = cz.gorunum_konumlari(at.session_state["plan"], None)
+    noktalar = [ilk, max(dis, key=lambda i: math.dist(dis[i], dis[ilk]))]
+    konum_yaz(noktalar[1], "41.0003, 29.0004")
+    plan = at.session_state["plan"]
+    assert plan.get("harita") and not plan.get("gps")
+    assert any(e.label == "Harita" for e in at.expander)
+    assert cz.dis_gps(plan)[noktalar[1]] == pytest.approx((41.0003, 29.0004), abs=2e-5)
+    # Haritalı çizimde konum yazmak noktayı taşır
+    konum_yaz(noktalar[1], "41.0006, 29.0004")
+    assert cz.dis_gps(at.session_state["plan"])[noktalar[1]] == pytest.approx((41.0006, 29.0004), abs=2e-5)
