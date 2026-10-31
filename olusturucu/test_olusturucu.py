@@ -760,9 +760,12 @@ def test_osmden_kampus_kurulur():
     assert {"Rektörlük", "Mühendislik Fakültesi", "Konukevi"} <= adlar
     assert not any("Lojman" in a for a in adlar)                       # ziyaret yeri olmayan yapılar atlanır
     assert next(h for h in m["hedefler"] if h["ad"] == "Mühendislik Fakültesi")["kisaAd"] == "Mühendislik"
-    # Elle hazırlanan şablonla aynı yol ağı ve mesafeler
+    # Elle hazırlanan şablonla aynı yol ağı: toplam yürüme mesafesi aynı (kıvrımlara dönemeç eklenince parçalanır)
     sablon = _ardahan()
-    assert sorted(b["adim"] for b in m["baglantilar"]) == sorted(b["adim"] for b in sablon["baglantilar"])
+    assert abs(sum(b["adim"] for b in m["baglantilar"]) - sum(b["adim"] for b in sablon["baglantilar"])) <= len(m["baglantilar"])
+    donemecler = [n["id"] for n in m["noktalar"] if n["id"].startswith("donemec-")]
+    assert donemecler and set(donemecler) <= set(plan["etiketsiz"])
+    assert any(b["tarif"] in ("Sağa dönün", "Sola dönün") for b in m["baglantilar"])
     assert cz.dis_gps(plan)["giris"] == pytest.approx(cz.dis_gps(sablon["plan"])["giris"], abs=1e-4)
     assert all(b["tarif"] for b in m["baglantilar"])
     assert ok.kisa_ad("Ardahan Üniversitesi Rektörlük Binası", "Ardahan Üniversitesi") == "Rektörlük"
@@ -793,3 +796,35 @@ def test_cizim_sayfasinda_konum_yazilinca_cizim_haritaya_oturur_ve_tasinir():
     # Haritalı çizimde konum yazmak noktayı taşır
     konum_yaz(noktalar[1], "41.0006, 29.0004")
     assert cz.dis_gps(at.session_state["plan"])[noktalar[1]] == pytest.approx((41.0006, 29.0004), abs=2e-5)
+
+
+def test_yola_kavsak_eklenir_ve_kosesine_surukleninca_tarif_doner():
+    import cizim as cz
+    sablon = _ardahan()
+    plan = sablon.pop("plan")
+    yol = next(y for y in sablon["baglantilar"] if y["b"] == "kultur-merkezi")
+    a, b, toplam = yol["a"], yol["b"], yol["adim"]
+    yeni = cz.yolu_bol(sablon, plan, a, b)
+    assert yeni and yeni in plan["konum"] and yeni in plan["etiketsiz"]
+    parcalar = [y for y in sablon["baglantilar"] if yeni in (y["a"], y["b"])]
+    assert len(parcalar) == 2 and sum(y["adim"] for y in parcalar) == toplam
+    assert not any({y["a"], y["b"]} == {a, b} for y in sablon["baglantilar"])
+    assert bm.dogrula(sablon)[0] == []
+    # Köşeye sürükle: a'dan önce güneye, sonra batıya gidilen bir L
+    ka, kb = plan["konum"][a], plan["konum"][b]
+    cz.tasi(sablon, plan, yeni, ka[0], kb[1], cz.olcek(sablon, plan))
+    cz.tarifleri_guncelle(sablon, plan)
+    ikinci = next(y for y in sablon["baglantilar"] if y["a"] == yeni)
+    assert ikinci["tarif"] in ("Sağa dönün", "Sola dönün")
+    # Düşey geçiş (merdiven, asansör) bölünmez
+    sablon["baglantilar"].append({"a": a, "b": b, "adim": 5, "tur": "merdiven", "tarif": "", "geriTarif": ""})
+    sablon["baglantilar"] = [y for y in sablon["baglantilar"] if {y["a"], y["b"]} != {a, b} or y.get("tur")]
+    assert cz.yolu_bol(sablon, plan, a, b) is None
+
+
+def test_bos_cizimde_harita_bolumu_ve_haritadan_kur_formu_gorunur():
+    at = uygulama()
+    next(b for b in at.button if b.label == "Boş başla" and b.key == "bos-kampus").click().run()
+    assert not at.exception
+    assert any(e.label.startswith("Harita: kampüsü haritadan kurun") for e in at.expander)
+    assert any(f.label == "Haritada ara" for f in at.button) or at.text_input(key="osm-sorgu-cizim")

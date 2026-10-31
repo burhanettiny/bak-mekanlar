@@ -4,7 +4,7 @@ import streamlit as st
 
 import bak_mekan as bm
 import durum
-import osm_kampus as ok
+import harita as hr
 
 durum.adim_cubugu(0)
 st.title("BAK QR oluşturucu")
@@ -26,16 +26,6 @@ MEVCUT = durum.guncel_mekan()
 YARIM_IS = bool(MEVCUT["ad"] and MEVCUT["hedefler"])
 
 
-@st.cache_data(ttl=86400, show_spinner=False)
-def osm_ara(sorgu: str) -> list[dict]:
-    return ok.ara(sorgu)
-
-
-@st.cache_data(ttl=86400, show_spinner=False)
-def osm_veri(tur: str, kimlik: int) -> list[dict]:
-    return ok.veri_cek(tur, kimlik)
-
-
 def yap(eylem: tuple) -> None:
     """("bos", tur), ("ornek", şablon adı) ya da ("osm", haritadan kurulan düzen). Boş başlangıçta önceki iş
     temizlenir ("yarım kalan" yanıltmasın)."""
@@ -44,7 +34,6 @@ def yap(eylem: tuple) -> None:
         st.session_state.yeni_olusturuldu = True
         st.session_state.osm_kuruldu = True
         st.session_state.pop("ornek_adi", None)
-        st.session_state.pop("osm_adaylar", None)
         st.session_state.cizim_gorunum = st.session_state.cizim_secili = None
         st.switch_page("app_pages/cizim_sayfasi.py")
     if eylem[0] == "ornek":
@@ -126,35 +115,9 @@ with st.container(border=True):
     st.caption("Üniversite, şehir hastanesi ya da birden çok binalı bir kurumun alanı OpenStreetMap'te kayıtlıysa "
                "adını yazın: binalar ve yürüme yolları haritadan alınır, yerler, mesafeler ve sağa / sola tarifleri "
                "kendiliğinden hazırlanır. Sonra haritanın üstünde sürükleyerek düzeltir, binaların içini eklersiniz.")
-    with st.form("osm-ara", border=False):
-        with st.container(horizontal=True, vertical_alignment="bottom"):
-            sorgu = st.text_input("Kurumun adı", placeholder="ör. Ardahan Üniversitesi Yenisey Kampüsü")
-            aranacak = st.form_submit_button("Haritada ara", icon=":material/search:")
-    if aranacak and sorgu.strip():
-        try:
-            st.session_state.osm_adaylar = osm_ara(sorgu.strip())
-        except Exception:
-            st.session_state.pop("osm_adaylar", None)
-            st.error("Haritada arama yapılamadı; internet bağlantısını kontrol edip biraz sonra yeniden deneyin.")
-    adaylar = st.session_state.get("osm_adaylar")
-    if adaylar == []:
-        st.info("Bu adla haritada bir alan bulunamadı. İl ya da ilçe adını ekleyerek deneyin; bulunmazsa yukarıdan "
-                "**Kampüs** kartıyla binaları kendiniz ekleyin.", icon=":material/search_off:")
-    elif adaylar:
-        secim = st.radio("Hangisi?", range(len(adaylar)), format_func=lambda i: adaylar[i]["aciklama"])
-        if st.button("Bu alanı kur", type="primary", icon=":material/construction:"):
-            aday = adaylar[secim]
-            with st.spinner("Binalar ve yollar haritadan alınıyor; yarım dakika kadar sürebilir…"):
-                try:
-                    kurulan = ok.kampus_kur(osm_veri(aday["tur"], aday["kimlik"]), aday["kimlik"], aday["ad"])
-                except ValueError as hata:
-                    kurulan = None
-                    st.error(f"{hata} Haritada bu alanda yeterli bilgi yok; **Kampüs** kartıyla kendiniz çizin.")
-                except Exception:
-                    kurulan = None
-                    st.error("OpenStreetMap'e ulaşılamadı; biraz sonra yeniden deneyin.")
-            if kurulan:
-                sec(("osm", kurulan))
+    kurulan = hr.haritadan_kur_formu("basla")
+    if kurulan:
+        sec(("osm", kurulan))
 
 if YARIM_IS:
     with st.container(border=True, horizontal=True, vertical_alignment="center"):

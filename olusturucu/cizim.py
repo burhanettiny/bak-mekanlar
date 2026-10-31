@@ -570,6 +570,59 @@ def koridora_diz(mekan: dict, plan: dict, merkez: str, olc: float, gorunum: str 
     return len(secilen)
 
 
+def yolu_bol(mekan: dict, plan: dict, a: str, b: str, yer: tuple[float, float] | None = None,
+             gorunum: str | None = None) -> str | None:
+    """a–b yolunun üstüne yeni bir kavşak (ya da köşe) noktası koyar; yol ikiye bölünür. Yol gerçekte dönerek
+    gidiyorsa nokta köşeye sürüklenir ve tarif "…sonra sola dönün" diye doğru söylenir. yer verilirse (çizimde
+    çift tıklanan yer) yolun en yakın yerine, verilmezse ortasına konur. Toplam adım korunur; elle yazılmış
+    (sahada sayılmış) mesafe iki parçaya oranla bölünür ve elle sayılmış kalır. Yeni noktanın kimliği döner."""
+    yol = next((y for y in mekan["baglantilar"] if {y["a"], y["b"]} == {a, b}), None)
+    konum = gorunum_konumlari(plan, gorunum)
+    if not yol or (yol.get("tur") or "yuru") in bm.DIKEY_GECISLER or yol["a"] not in konum or yol["b"] not in konum:
+        return None
+    (ax, ay), (bx, by) = konum[yol["a"]], konum[yol["b"]]
+    dx, dy = bx - ax, by - ay
+    u = 0.5
+    if yer and (dx or dy):
+        u = ((yer[0] - ax) * dx + (yer[1] - ay) * dy) / (dx * dx + dy * dy)
+    u = min(0.9, max(0.1, u))
+    numaralar = [int(m.group(1)) for n in mekan["noktalar"] if (m := re.match(r"^(\d+)\. kavşak$", n["ad"]))]
+    no = max(numaralar, default=0) + 1
+    kimlik = f"kavsak-{no}"
+    mevcut = {n["id"] for n in mekan["noktalar"]}
+    while kimlik in mevcut:
+        no += 1
+        kimlik = f"kavsak-{no}"
+    nokta = {"id": kimlik, "ad": f"{no}. kavşak"}
+    kat = next((n.get("kat") for n in mekan["noktalar"] if n["id"] == yol["a"]), None)
+    if kat:
+        nokta["kat"] = kat
+    mekan["noktalar"].append(nokta)
+    plan.setdefault("konum", {})[kimlik] = [round(ax + u * dx, 2), round(ay + u * dy, 2)]
+    plan.setdefault("tur", {})[kimlik] = "kavsak"
+    if gorunum:
+        plan.setdefault("ust", {})[kimlik] = gorunum
+    # Köşe noktasına QR etiketi gerekmez; isteyen panelden açar
+    plan["etiketsiz"] = sorted(set(plan.get("etiketsiz") or []) | {kimlik})
+    toplam = int(yol.get("adim") or 1)
+    ilk = min(max(1, round(toplam * u)), max(1, toplam - 1))
+    adlar = {n["id"]: n["ad"] for n in mekan["noktalar"]}
+    parcalar = []
+    for p, q, adim in ((yol["a"], kimlik, ilk), (kimlik, yol["b"], max(1, toplam - ilk))):
+        parca = {k: v for k, v in yol.items() if k not in ("a", "b", "adim", "tarif", "geriTarif")}
+        parca.update(a=p, b=q, adim=adim, tarif=f"{adlar[q]} yönüne ilerleyin", geriTarif=f"{adlar[p]} yönüne ilerleyin")
+        parcalar.append(parca)
+    i = mekan["baglantilar"].index(yol)
+    mekan["baglantilar"][i:i + 1] = parcalar
+    eski = {(yol["a"], yol["b"]), (yol["b"], yol["a"])}
+    sabit = [s for s in plan.get("sabitAdim") or [] if tuple(s) not in eski]
+    if len(sabit) != len(plan.get("sabitAdim") or []):
+        sabit += [[p["a"], p["b"]] for p in parcalar]
+    plan["sabitAdim"] = sabit
+    plan["otoTarif"] = [o for o in plan.get("otoTarif") or [] if tuple(o) not in eski] + [[p["a"], p["b"]] for p in parcalar]
+    return kimlik
+
+
 def yol_sil(mekan: dict, a: str, b: str) -> None:
     mekan["baglantilar"] = [y for y in mekan["baglantilar"] if {y["a"], y["b"]} != {a, b}]
 
@@ -647,6 +700,7 @@ svg.haritali .modul.bina circle { fill: #1c62b9; stroke: #fff; }
 svg.haritali .modul.giris circle { fill: #21c354; stroke: #fff; }
 svg.haritali .modul.secili circle, svg.haritali .modul:focus circle { stroke: #ff4b4b; }
 svg.haritali .modul text { fill: #111; paint-order: stroke; stroke: rgba(255, 255, 255, .9); stroke-linejoin: round; }
+svg.haritali .ic-ac text { stroke: none; fill: #fff; }
 svg.haritali .yol { stroke: #1c3d6e; opacity: .8; }
 svg.haritali .yol.secili { stroke: #ff4b4b; }
 svg.haritali .adim { fill: #1c3d6e; stroke: rgba(255, 255, 255, .9); }
@@ -767,6 +821,9 @@ export default function (component) {
       const yoluSec = e => { e.stopPropagation(); setTriggerValue("olay", { tur: "secyol", a: yol.a, b: yol.b }) }
       vurus.onpointerdown = e => e.stopPropagation()
       vurus.onclick = yoluSec
+      // Haritada kısa yolların mesafe yazısı üst üste biner: seçili değilse gösterilmez (yola tıklayınca görünür)
+      if (svg.classList.contains("haritali") && !secili && Math.hypot(b.x - a.x, b.y - a.y) * k < 55) continue
+
       const t = el("text", { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, class: "adim", "font-size": px(13),
         "stroke-width": px(5), role: "button", tabindex: 0,
         "aria-label": `${yol.etiket}. Mesafeyi değiştirmek için seçin` }, katman)
@@ -788,10 +845,21 @@ export default function (component) {
         // Haritada kutu yolu ve binayı örter: noktanın kendisi küçük bir daire, adı yanında
         const r = px(n.tur === "bina" ? 8 : 6)
         el("circle", { r, "stroke-width": px(n.id === data.secili ? 3.5 : 2) }, g)
+        // Haritada yalnızca ziyaretçinin gideceği yerlerin, girişin ve seçili noktanın adı yazılır; kavşak ve
+        // dönemeçlerin adı üstüne gelince görünür (kalabalık olmasın)
+        if (!(n.hedef || n.giris || n.tur === "bina" || n.id === data.secili)) {
+          el("title", {}, g).textContent = yazi
+          g.onpointerdown = e => surukBasla(e, n)
+          g.onkeydown = e => tus(e, n)
+          continue
+        }
         const t = el("text", { x: r + px(4), y: 0, "font-size": px(12.5), "text-anchor": "start",
           "font-weight": n.tur === "bina" ? 600 : 500, "stroke-width": px(3.5) }, g)
         t.textContent = yazi
-        gen = 2 * (r + px(8) + px(yazi.length * 6.8))
+        // "İçi ›" adın hemen sağında dursun: yazının gerçek genişliği (çizim biriminde) ölçülür
+        let yaziGen = px(yazi.length * 6.8)
+        try { yaziGen = t.getComputedTextLength() || yaziGen } catch (e) {}
+        gen = 2 * (r + px(4) + yaziGen)
       } else {
         const yuk = px(n.tur === "bina" ? 40 : 28)
         el("rect", { x: -gen / 2, y: -yuk / 2, width: gen, height: yuk, rx: px(n.tur === "bina" ? 6 : 14),
@@ -824,7 +892,8 @@ export default function (component) {
     baglaBtn.setAttribute("aria-pressed", String(d.bagla))
     ipucu.textContent = d.bagla
       ? (d.kaynak ? `${bul(d.kaynak)?.ad ?? ""} seçildi; bağlanacak ikinci modüle tıklayın.` : "Bağlanacak ilk modüle tıklayın.")
-      : "Kutuya tıklayın: ayarları açılır. Mesafe yazısına (ör. 12 m) tıklayın: mesafeyi girin. İçi › : binanın içi."
+      : "Kutuya tıklayın: ayarları açılır. Mesafe yazısına (ör. 12 m) tıklayın: mesafeyi girin. Yola çift tıklayın: " +
+        "oraya kavşak / köşe eklenir. İçi › : binanın içi."
   }
 
   function svgNokta(e) {
@@ -902,6 +971,22 @@ export default function (component) {
       svg.onpointermove = null; svg.onpointerup = null
       if (!oynadi && (data.secili || data.seciliYol)) setTriggerValue("olay", { tur: "bos" })
     }
+  }
+  // Yola çift tıklama: tıklanan yere en yakın yolun o yerine kavşak / köşe noktası (sonra köşeye sürüklenir).
+  // Çizim alanında yakalanır: ilk tıklamalar yolu seçip çizimi yeniden kurunca hedef öğe değişebiliyor
+  svg.ondblclick = e => {
+    if (e.target.closest && e.target.closest(".modul")) return
+    const p = svgNokta(e), esik = 12 * d.vb.w / (svg.clientWidth || 800)
+    let en = null
+    for (const yol of yollar) {
+      const a = bul(yol.a), b = bul(yol.b)
+      if (!a || !b || yol.dikey) continue
+      const dx = b.x - a.x, dy = b.y - a.y
+      const u = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / (dx * dx + dy * dy || 1)))
+      const uz = Math.hypot(a.x + u * dx - p.x, a.y + u * dy - p.y)
+      if (uz < esik && (!en || uz < en.uz)) en = { uz, yol }
+    }
+    if (en) setTriggerValue("olay", { tur: "bol", a: en.yol.a, b: en.yol.b, x: p.x, y: p.y })
   }
   // Tekerlek sayfayı kaydırır (çizim üstünde kalınca sayfa takılmasın); yakınlaştırma Ctrl + tekerlek ya da
   // + / − düğmeleriyle

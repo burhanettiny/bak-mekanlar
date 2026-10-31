@@ -50,6 +50,14 @@ def olay_geldi() -> None:
         st.session_state.cizim_yol = None
     elif tur == "bos":
         st.session_state.cizim_secili = st.session_state.cizim_yol = None
+    elif tur == "bol":
+        mekan, plan, _ = mekan_ve_plan()
+        yeni = cz.yolu_bol(mekan, plan, olay["a"], olay["b"], (float(olay["x"]), -float(olay["y"])),
+                           st.session_state.cizim_gorunum)
+        if yeni:
+            st.session_state.cizim_secili, st.session_state.cizim_yol = yeni, None
+            kaydet(mekan, plan)
+            st.toast("Yola kavşak eklendi. Yolun döndüğü köşeye sürükleyin.", icon=":material/alt_route:")
     elif tur in ("tasi", "bagla"):
         mekan, plan, olc = mekan_ve_plan()
         if tur == "tasi":
@@ -87,6 +95,30 @@ def harita_olay() -> None:
         return
     if olay.get("tur") == "sec":
         st.session_state.cizim_secili, st.session_state.cizim_yol = olay["id"], None
+    elif olay.get("tur") == "ekle":
+        # Haritaya tıklanan yere yeni yer; seçili (bir önceki) yerle yolla bağlanır: tıklaya tıklaya yol çizilir
+        mekan, plan, _ = mekan_ve_plan()
+        dis = cz.gorunum_konumlari(plan, None)
+        if not plan.get("harita"):
+            if len(dis) > 1:
+                st.toast("Önce çizimdeki iki noktayı haritada yerine koyun (noktayı seçip haritaya tıklayın); çizim "
+                         "haritaya oturunca haritadan yer eklenebilir.", icon=":material/info:")
+                return
+            # Boş çizim: ilk tıklanan yer çizimin başlangıcı olur; bir birim 8 m (kampüs ölçeği)
+            plan["harita"] = {"enlem": round(float(olay["enlem"]), 6), "boylam": round(float(olay["boylam"]), 6)}
+            plan["olcek"] = round(8 / bm.STANDART_ADIM_M, 4)
+            if dis:   # boş başlangıçtaki tek nokta (giriş) tıklanan yere konur
+                tek = next(iter(dis))
+                plan["konum"][tek] = [0.0, 0.0]
+                st.session_state.cizim_secili, st.session_state.cizim_yol = tek, None
+                kaydet(mekan, plan)
+                return
+        x, y = cz.gpsden_konum(plan, float(olay["enlem"]), float(olay["boylam"]))
+        onceki = st.session_state.cizim_secili if st.session_state.cizim_secili in dis else None
+        kimlik = cz.modul_ekle(mekan, plan, "kavsak" if not dis else "bina", "Giriş" if not dis else "",
+                               yer=[x, y], ust=None, baglanacak=onceki, olc=cz.olcek(mekan, plan))
+        st.session_state.cizim_secili, st.session_state.cizim_yol = kimlik, None
+        kaydet(mekan, plan)
     elif olay.get("tur") == "konum" and olay.get("id"):
         k = cz.gps_coz([olay["enlem"], olay["boylam"]])
         if not k:
@@ -275,7 +307,8 @@ cz.cizim({"dugumler": dugumler, "yollar": yollar, "secili": secili, "seciliYol":
          key="cizim", on_olay=olay_geldi)
 if not dugumler:
     st.info("Çizim boş. Yukarıdan ilk modülü ekleyin: kampüs için **Bina**, tek bina için önce bir **Kavşak / "
-            "koridor** (giriş) ekleyip odaları ona bağlayın.", icon=":material/draw:")
+            "koridor** (giriş) ekleyip odaları ona bağlayın. Kampüsünüz için aşağıdaki **Harita** bölümünde adını "
+            "aratıp haritadan kurabilir ya da yerleri haritaya tıklayarak ekleyebilirsiniz.", icon=":material/draw:")
 
 # ── Seçili modül ya da yol ────────────────────────────────
 if secili:
@@ -427,6 +460,15 @@ elif st.session_state.cizim_yol:
                 plan.setdefault("otoTarif", []).append([yol["a"], yol["b"]])
                 kaydet(mekan, plan)
                 st.rerun()
+            if (yol.get("tur") or "yuru") not in bm.DIKEY_GECISLER and st.button(
+                    "Yola kavşak ekle", icon=":material/alt_route:",
+                    help="Yol gerçekte dönerek gidiyorsa: ortasına bir nokta konur, onu köşeye sürüklersiniz. "
+                         "Çizimde yola çift tıklamak da aynı şeyi yapar."):
+                yeni = cz.yolu_bol(mekan, plan, a, b, None, gorunum)
+                if yeni:
+                    st.session_state.cizim_secili, st.session_state.cizim_yol = yeni, None
+                    kaydet(mekan, plan)
+                    st.rerun()
             if st.button("Yolu sil", icon=":material/delete:"):
                 cz.yol_sil(mekan, a, b)
                 st.session_state.cizim_yol = None
@@ -435,14 +477,30 @@ elif st.session_state.cizim_yol:
 
 # ── Harita (kampüs gibi açık alanlar için, isteğe bağlı) ──
 # Çizim haritaya oturtulduysa noktalar haritada da taşınır (çizimle aynı şey); değilse iki nokta yerleştirilince
-# çizim kendiliğinden haritaya oturtulur ve arkasında harita görünür.
-if not gorunum and dugumler:
+# çizim kendiliğinden haritaya oturtulur ve arkasında harita görünür. Boş çizimde kurum alanını OpenStreetMap'ten
+# kurabilir ya da yerleri haritaya tıklayarak ekleyebilir.
+if not gorunum:
     dis = cz.gorunum_konumlari(plan, None)
     gps = cz.dis_gps(plan)
     oturmus = bool(plan.get("harita"))
-    baslik = "Harita" if oturmus else f"Haritaya yerleştir (açık alan) · {len(gps)}/2 nokta"
-    with st.expander(baslik, icon=":material/map:", expanded=bool(gps)):
-        if oturmus:
+    bos_gibi = len(dis) <= 1 and not oturmus   # boş başlangıçta yalnızca giriş noktası vardır
+    baslik = ("Harita" if oturmus else "Harita: kampüsü haritadan kurun ya da yerleri haritaya ekleyin" if bos_gibi
+              else f"Haritaya yerleştir (açık alan) · {len(gps)}/2 nokta")
+    with st.expander(baslik, icon=":material/map:", expanded=bool(gps) or bos_gibi):
+        with st.container() if bos_gibi else st.popover("Haritadan kur (OpenStreetMap)", icon=":material/travel_explore:"):
+            st.markdown("**Kurumun adını yazın:** alanı OpenStreetMap'te kayıtlıysa binalar ve yürüme yolları "
+                        "haritadan alınır, tahmini yürüyüş yolları çizilir; sonra düzeltir, eksikleri eklersiniz.")
+            kurulan = hr.haritadan_kur_formu("cizim", uyari=None if bos_gibi else "Şimdiki çizimin yerine geçer.")
+            if kurulan:
+                durum.mekani_yukle(kurulan, yeni_kimlik=bos_gibi)
+                st.session_state.osm_kuruldu = True
+                st.session_state.cizim_secili = st.session_state.cizim_yol = None
+                st.rerun()
+        if bos_gibi:
+            st.caption("Haritada OpenStreetMap kaydı yoksa: haritada kurumu bulun, **Yer ekle**'yi açıp girişine, "
+                       "sonra yürüyüş yolu boyunca köşelere ve binalara sırayla tıklayın; her yer bir öncekine yolla "
+                       "bağlanır, mesafeler haritadan ölçülür.")
+        elif oturmus:
             st.caption("Çizim haritaya oturtuldu: yukarıdaki çizimin arkasında harita var (Zemin düğmesiyle uydu). "
                        "Bir noktayı burada haritaya tıklayarak, sahadaysanız **Buradayım** ile ya da çizimde sürükleyerek "
                        "taşıyın; ikisi aynı şeydir. Ziyaretçi açık alanda **neredeyim** deyince telefon GPS'le en yakın "
@@ -452,7 +510,10 @@ if not gorunum and dugumler:
                        "haritanın üstünde görünsün diye. Çizimde ya da haritada bir nokta seçip haritada yerine tıklayın "
                        "(sahadaysanız noktanın yanında **Buradayım**). İki nokta yerleşince çizimin tamamı haritaya "
                        "oturtulur. Bina içi için gerekmez.")
-        hr.harita({"noktalar": [{"id": i, "ad": adlar[i], "enlem": gps[i][0] if i in gps else None,
+        ekle = st.toggle("Yer ekle: haritaya tıklayınca oraya yeni yer konur", key="harita_ekle",
+                         help="Her yeni yer seçili (bir önceki) yerle yolla bağlanır: girişten başlayıp yol boyunca "
+                              "köşelere ve binalara sırayla tıklayın. Kapalıyken tıklama seçili noktayı taşır.")
+        hr.harita({"ekle": ekle, "noktalar": [{"id": i, "ad": adlar[i], "enlem": gps[i][0] if i in gps else None,
                                  "boylam": gps[i][1] if i in gps else None} for i in dis if i in adlar],
                    "secili": secili if secili in dis else None,
                    "anahtar": f"{oturmus}-{len(gps)}", "sigdir": False}, key="harita", on_olay=harita_olay)

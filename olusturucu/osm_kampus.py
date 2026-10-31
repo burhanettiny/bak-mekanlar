@@ -15,11 +15,14 @@ import unicodedata
 import urllib.parse
 import urllib.request
 
+import streamlit as st
+
 import bak_mekan as bm
 import cizim as cz
 
 BIRIM_M = 8.0                     # çizimde bir birim kaç metre (kampüs ölçeğinde okunaklı)
 EN_FAZLA_BINA = 20                # QR ve liste uzamasın: en büyük binalar
+DONEMEC_M = 15.0                  # yol, iki nokta arasındaki düz çizgiden bu kadar saparsa araya dönemeç konur
 _YOL_DISI = {"motorway", "motorway_link", "trunk", "trunk_link", "track", "construction", "proposed", "raceway",
              "bus_guideway", "escape", "bridleway", "corridor", "elevator", "platform"}
 _ONEM = {"primary": 6, "secondary": 5, "tertiary": 4, "unclassified": 3, "residential": 3, "service": 2,
@@ -75,21 +78,7 @@ def ara(sorgu: str) -> list[dict]:
     return sonuc
 
 
-def veri_cek(tur: str, kimlik: int) -> list[dict]:
-    """Alanın sınırı, içindeki yollar, adlı binalar ve sınırdaki kapılar (Overpass, "out geom")."""
-    secici = "rel" if tur == "relation" else "way"
-    alan_kimligi = (3600000000 if tur == "relation" else 2400000000) + kimlik
-    sorgu = f"""[out:json][timeout:90];
-{secici}({kimlik})->.sinir;
-.sinir out geom;
-area({alan_kimligi})->.alan;
-(
-  way["highway"](area.alan);
-  way["building"]["name"](area.alan);
-  relation["building"]["name"](area.alan);
-  node["barrier"~"^(gate|lift_gate|entrance)$"](around.sinir:40);
-);
-out geom;"""
+def _overpass(sorgu: str) -> list[dict]:
     hata = None
     for adres in OVERPASS:
         try:
@@ -97,6 +86,39 @@ out geom;"""
         except Exception as e:   # bir ayna meşgulse sıradakine geçilir
             hata = e
     raise RuntimeError(f"OpenStreetMap verisi alınamadı: {hata}")
+
+
+def veri_cek(tur: str, kimlik: int) -> list[dict]:
+    """Alanın sınırı; sınırı çevreleyen kutudaki yollar, adlı binalar ve kapılar (Overpass, "out geom"). Kutunun
+    sınır dışında kalan kısmı kurulumda atılır. (Overpass'ın "area" araması her alan için hazır olmadığından
+    kullanılmaz.)"""
+    secici = "rel" if tur == "relation" else "way"
+    sinir = _overpass(f"[out:json][timeout:60];{secici}({kimlik});out geom;")
+    noktalar = [p for e in sinir for p in _geometri(e)]
+    if not noktalar:
+        raise ValueError("Alanın sınırı bulunamadı.")
+    pay = 0.0006   # ~60 m: sınırdaki kapı ve sınırı kesen yollar da gelsin
+    kutu = (f"{min(p['lat'] for p in noktalar) - pay},{min(p['lon'] for p in noktalar) - pay},"
+            f"{max(p['lat'] for p in noktalar) + pay},{max(p['lon'] for p in noktalar) + pay}")
+    icerik = _overpass(f"""[out:json][timeout:90][bbox:{kutu}];
+(
+  way["highway"];
+  way["building"]["name"];
+  relation["building"]["name"];
+  node["barrier"~"^(gate|lift_gate|entrance)$"];
+);
+out geom;""")
+    return sinir + icerik
+
+
+@st.cache_data(ttl=86400, show_spinner=False)
+def ara_onbellek(sorgu: str) -> list[dict]:
+    return ara(sorgu)
+
+
+@st.cache_data(ttl=86400, show_spinner=False)
+def veri_onbellek(tur: str, kimlik: int) -> list[dict]:
+    return veri_cek(tur, kimlik)
 
 
 # ── Kurulum ───────────────────────────────────────────────
@@ -261,8 +283,29 @@ def kampus_kur(elemanlar: list[dict], sinir_kimligi: int, ad: str) -> dict:
             k += "-2"
         kullanilan.add(k)
         kimlik[n], ad_[n] = k, f"{adlar[0]} önü"
-    kavsak = 0
-    baglantilar, sabit = [], []
+    def donemecler(yol: list) -> list[int]:
+        """Yolun belirgin kıvrımları (Douglas–Peucker): çizim gerçek yolu izlesin, tarif "sola dönün" desin."""
+        tut = {0, len(yol) - 1}
+
+        def bol(i: int, j: int) -> None:
+            (ax, ay), (bx, by) = konum[yol[i]], konum[yol[j]]
+            uz_ = math.hypot(bx - ax, by - ay) or 1e-9
+            en, k = 0.0, None
+            for t in range(i + 1, j):
+                px, py = konum[yol[t]]
+                d = abs((bx - ax) * (ay - py) - (ax - px) * (by - ay)) / uz_
+                if d > en:
+                    en, k = d, t
+            if k is not None and en > DONEMEC_M:
+                tut.add(k)
+                bol(i, k)
+                bol(k, j)
+
+        bol(0, len(yol) - 1)
+        return sorted(tut)
+
+    kavsak = donemec = 0
+    baglantilar, sabit, etiketsiz = [], [], []
     sira = [giris]
     while sira:
         u = sira.pop(0)
@@ -274,12 +317,19 @@ def kampus_kur(elemanlar: list[dict], sinir_kimligi: int, ad: str) -> dict:
             if son not in kimlik:
                 kavsak += 1
                 kimlik[son], ad_[son] = f"kavsak-{kavsak}", f"{kavsak}. kavşak"
-            metre = sum(math.dist(konum[a], konum[b]) for a, b in zip(yol, yol[1:]))
-            baglantilar.append({"a": kimlik[u], "b": kimlik[son], "adim": bm.metreden_adim(metre),
-                                "tarif": f"{ad_[son]} yönüne ilerleyin", "geriTarif": f"{ad_[u]} yönüne ilerleyin"})
-            # Kıvrımlı yolda çizimdeki düz çizgi gerçek yürüyüşten kısadır: yol boyu ölçüsü korunur
-            if metre > 1.15 * math.dist(konum[u], konum[son]):
-                sabit.append([kimlik[u], kimlik[son]])
+            sirala = donemecler(yol)
+            for i, j in zip(sirala, sirala[1:]):
+                p, q = yol[i], yol[j]
+                if q not in kimlik:   # ara dönemeç: QR etiketi gerekmez
+                    donemec += 1
+                    kimlik[q], ad_[q] = f"donemec-{donemec}", f"{donemec}. dönemeç"
+                    etiketsiz.append(kimlik[q])
+                metre = sum(math.dist(konum[a], konum[b]) for a, b in zip(yol[i:j], yol[i + 1:j + 1]))
+                baglantilar.append({"a": kimlik[p], "b": kimlik[q], "adim": bm.metreden_adim(metre),
+                                    "tarif": f"{ad_[q]} yönüne ilerleyin", "geriTarif": f"{ad_[p]} yönüne ilerleyin"})
+                # Kalan küçük kıvrımlarda düz çizgi gerçek yürüyüşten kısadır: yol boyu ölçüsü korunur
+                if metre > 1.15 * math.dist(konum[p], konum[q]):
+                    sabit.append([kimlik[p], kimlik[q]])
             sira.append(son)
 
     hedefler = []
@@ -297,7 +347,7 @@ def kampus_kur(elemanlar: list[dict], sinir_kimligi: int, ad: str) -> dict:
     plan = {"olcek": olcek, "harita": {"enlem": round(enlem0, 6), "boylam": round(boylam0, 6)},
             "konum": {kimlik[n]: [round(konum[n][0] / BIRIM_M, 2), round(konum[n][1] / BIRIM_M, 2)] for n in kimlik},
             "tur": {kimlik[n]: ("bina" if n in hedef_dugum and n != giris else "kavsak") for n in kimlik},
-            "otoTarif": [[b["a"], b["b"]] for b in baglantilar], "sabitAdim": sabit}
+            "otoTarif": [[b["a"], b["b"]] for b in baglantilar], "sabitAdim": sabit, "etiketsiz": etiketsiz}
     mekan = {"id": "q-" + kisalt(ad, 30), "ad": ad, "tur": "kurum", "surum": 1, "giris": "giris",
              "noktalar": [{"id": kimlik[n], "ad": ad_[n]} for n in kimlik],
              "baglantilar": baglantilar, "hedefler": hedefler}

@@ -83,6 +83,7 @@ _CSS = """
   background: var(--st-background-color); color: inherit; }
 .arac button { font: inherit; padding: .3rem .8rem; border-radius: var(--st-button-radius, .5rem);
   border: 1px solid var(--st-border-color); background: var(--st-background-color); color: inherit; cursor: pointer; }
+.arac button[aria-pressed="true"] { background: var(--st-primary-color); color: #fff; border-color: var(--st-primary-color); }
 .ipucu { font-size: .875rem; opacity: .75; }
 .kutu { width: 100%; height: 460px; border-radius: var(--st-base-radius, .5rem);
   border: 1px solid var(--st-border-color); cursor: crosshair; }
@@ -112,7 +113,9 @@ export default function (component) {
   if (!kutu) return
   const secili = data.secili
   const seciliAd = (data.noktalar.find(n => n.id === secili) || {}).ad
-  ipucu.textContent = seciliAd ? `Seçili: ${seciliAd} — haritada yerine tıklayın` : "Önce çizimde ya da haritada bir nokta seçin"
+  ipucu.textContent = data.ekle
+    ? (seciliAd ? `Tıkladığınız yere yeni yer eklenir ve ${seciliAd} ile yolla bağlanır` : "Tıkladığınız yere yeni yer eklenir")
+    : seciliAd ? `Seçili: ${seciliAd} — haritada yerine tıklayın` : "Bir nokta seçin ya da Yer ekle'yi açın"
   buradayim.disabled = !secili
 
   buradayim.onclick = () => {
@@ -138,25 +141,33 @@ export default function (component) {
       d = { harita, katman: L.layerGroup().addTo(harita), anahtar: null, secili: null }
       durumlar.set(parentElement, d)
       harita.on("click", e => {
-        if (!d.secili) { ipucu.textContent = "Önce bir nokta seçin"; return }
+        // Uzaktan (il, ülke ölçeğinde) tıklama yanlış yere düşer: önce kurumun üstüne yakınlaştırılmalı
+        if ((d.ekle || d.secili) && harita.getZoom() < 15) {
+          ipucu.textContent = "Önce haritayı kurumun üstüne yakınlaştırın (ya da adını arayın)"
+          return
+        }
+        if (d.ekle) { setTriggerValue("olay", { tur: "ekle", enlem: e.latlng.lat, boylam: e.latlng.lng }); return }
+        if (!d.secili) { ipucu.textContent = "Önce bir nokta seçin ya da ➕ Yer ekle'yi açın"; return }
         setTriggerValue("olay", { tur: "konum", id: d.secili, enlem: e.latlng.lat, boylam: e.latlng.lng })
       })
-      ara.addEventListener("keydown", e => {
-        if (e.key !== "Enter" || !ara.value.trim()) return
-        e.preventDefault()
-        ipucu.textContent = "Aranıyor…"
-        fetch("https://nominatim.openstreetmap.org/search?format=json&limit=1&accept-language=tr&q=" +
-              encodeURIComponent(ara.value.trim()))
-          .then(r => r.json())
-          .then(s => {
-            if (!s.length) { ipucu.textContent = "Bulunamadı"; return }
-            d.harita.setView([+s[0].lat, +s[0].lon], 17)
-            ipucu.textContent = s[0].display_name.split(",").slice(0, 2).join(",")
-          })
-          .catch(() => { ipucu.textContent = "Arama yapılamadı" })
-      })
+    }
+    // Her çizimde yeniden bağlanır: Streamlit bileşenin öğelerini yeniden kurabilir
+    ara.onkeydown = e => {
+      if (e.key !== "Enter" || !ara.value.trim()) return
+      e.preventDefault()
+      ipucu.textContent = "Aranıyor…"
+      fetch("https://nominatim.openstreetmap.org/search?format=json&limit=1&accept-language=tr&q=" +
+            encodeURIComponent(ara.value.trim()))
+        .then(r => r.json())
+        .then(s => {
+          if (!s.length) { ipucu.textContent = "Bulunamadı"; return }
+          d.harita.setView([+s[0].lat, +s[0].lon], 17)
+          ipucu.textContent = s[0].display_name.split(",").slice(0, 2).join(",")
+        })
+        .catch(() => { ipucu.textContent = "Arama yapılamadı" })
     }
     d.secili = secili
+    d.ekle = !!data.ekle
     d.katman.clearLayers()
     const konumlu = data.noktalar.filter(n => n.enlem != null)
     for (const n of konumlu) {
@@ -185,6 +196,50 @@ export default function (component) {
 _HARITA = st.components.v2.component("bak_harita", html=_HTML, css=_CSS, js=_JS)
 
 
+def haritadan_kur_formu(anahtar: str, *, uyari: str | None = None) -> dict | None:
+    """Kurum adıyla OpenStreetMap'te arama ve seçilen alanın kurulumu (Başla ve çizim sayfasında ortak). Kurulan
+    düzen döner (kullanıcı "Bu alanı kur"a bastıysa ve kurulum başarılıysa); yoksa None."""
+    import osm_kampus as ok
+    with st.form(f"osm-ara-{anahtar}", border=False):
+        with st.container(horizontal=True, vertical_alignment="bottom"):
+            sorgu = st.text_input("Kurumun adı", placeholder="ör. Ardahan Üniversitesi Yenisey Kampüsü",
+                                  key=f"osm-sorgu-{anahtar}")
+            aranacak = st.form_submit_button("Haritada ara", icon=":material/search:")
+    aday_anahtari = f"osm_adaylar_{anahtar}"
+    if aranacak and sorgu.strip():
+        try:
+            st.session_state[aday_anahtari] = ok.ara_onbellek(sorgu.strip())
+        except Exception:
+            st.session_state.pop(aday_anahtari, None)
+            st.error("Haritada arama yapılamadı; internet bağlantısını kontrol edip biraz sonra yeniden deneyin.")
+    adaylar = st.session_state.get(aday_anahtari)
+    if adaylar == []:
+        st.info("Bu adla haritada bir alan bulunamadı. İl ya da ilçe adını ekleyerek deneyin; bulunmazsa yerleri "
+                "haritaya tıklayarak kendiniz ekleyin.", icon=":material/search_off:")
+        return None
+    if not adaylar:
+        return None
+    secim = st.radio("Hangisi?", range(len(adaylar)), format_func=lambda i: adaylar[i]["aciklama"],
+                     key=f"osm-secim-{anahtar}")
+    if uyari:
+        st.caption(uyari)
+    if not st.button("Bu alanı kur", type="primary", icon=":material/construction:", key=f"osm-kur-{anahtar}"):
+        return None
+    aday = adaylar[secim]
+    with st.spinner("Binalar ve yollar haritadan alınıyor; bir dakika kadar sürebilir…"):
+        try:
+            kurulan = ok.kampus_kur(ok.veri_onbellek(aday["tur"], aday["kimlik"]), aday["kimlik"], aday["ad"])
+        except ValueError as hata:
+            st.error(f"{hata} Haritada bu alanda yeterli bilgi yok; yerleri haritaya tıklayarak kendiniz ekleyin.")
+            return None
+        except Exception:
+            st.error("OpenStreetMap'e ulaşılamadı; biraz sonra yeniden deneyin.")
+            return None
+    st.session_state.pop(aday_anahtari, None)
+    return kurulan
+
+
 def harita(veri: dict, *, key: str, on_olay: Callable[[], None]):
-    """Harita bileşeni. veri: noktalar [{id, ad, enlem?, boylam?}], secili, anahtar, sigdir."""
+    """Harita bileşeni. veri: noktalar [{id, ad, enlem?, boylam?}], secili, ekle (tıklayınca yer eklenir),
+    anahtar, sigdir."""
     return _HARITA(data=veri, key=key, on_olay_change=on_olay)
