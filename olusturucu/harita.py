@@ -162,7 +162,7 @@ export default function (component) {
     for (const n of konumlu) {
       const s = n.id === secili
       const m = L.circleMarker([n.enlem, n.boylam], {
-        radius: s ? 9 : 6, weight: 2, color: s ? "#ff4b4b" : (n.tahmin ? "#e0a800" : "#1c62b9"), fillOpacity: .85,
+        radius: s ? 9 : 6, weight: 2, color: s ? "#ff4b4b" : "#1c62b9", fillOpacity: .85,
       }).addTo(d.katman)
       m.bindTooltip(n.ad, { permanent: konumlu.length <= 30, direction: "top", offset: [0, -6] })
       m.on("click", e => { L.DomEvent.stopPropagation(e); setTriggerValue("olay", { tur: "sec", id: n.id }) })
@@ -186,5 +186,5 @@ _HARITA = st.components.v2.component("bak_harita", html=_HTML, css=_CSS, js=_JS)
 
 
 def harita(veri: dict, *, key: str, on_olay: Callable[[], None]):
-    """Harita bileşeni. veri: noktalar [{id, ad, enlem?, boylam?, tahmin?}], secili, anahtar, sigdir."""
+    """Harita bileşeni. veri: noktalar [{id, ad, enlem?, boylam?}], secili, anahtar, sigdir."""
     return _HARITA(data=veri, key=key, on_olay_change=on_olay)
