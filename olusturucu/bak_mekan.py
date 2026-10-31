@@ -620,7 +620,8 @@ def etiket_sayfasi(mekan: dict, giris_verisi: str | None = None, *, haric: set[s
     haric: etiket asılmayacak noktalar (ör. kampüste yol ortasındaki kavşak). yalniz: tek bir noktanın etiketi
     (yırtılan etiketi yeniden basmak için; giriş sayfası olmadan)."""
     ad = html.escape(mekan["ad"])
-    giris = _png_veri_adresi(giris_verisi or qr_verisi(mekan))
+    # Tek nokta etiketinde giriş sayfası yok: büyük kampüste QR'a sığmayan giriş verisi üretilmeye çalışılmasın
+    giris = "" if yalniz else _png_veri_adresi(giris_verisi or qr_verisi(mekan))
     noktalar = "".join(
         f"""<div class="etiket"><img src="{_png_veri_adresi(nokta_qr_verisi(mekan['id'], n['id']))}" alt="">
         <b>{html.escape(n['ad'])}</b><small>BAK · Neredeyim? Okutun</small><small>{ad}</small></div>"""

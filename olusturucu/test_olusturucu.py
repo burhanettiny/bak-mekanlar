@@ -828,3 +828,19 @@ def test_bos_cizimde_harita_bolumu_ve_haritadan_kur_formu_gorunur():
     assert not at.exception
     assert any(e.label.startswith("Harita: kampüsü haritadan kurun") for e in at.expander)
     assert any(f.label == "Haritada ara" for f in at.button) or at.text_input(key="osm-sorgu-cizim")
+
+
+def test_buyuk_kampuste_tek_nokta_etiketi_basilir():
+    import osm_kampus as ok
+    elemanlar = json.loads((Path(__file__).parent / "test_veri" / "ardahan-osm.json").read_text(encoding="utf-8"))["elements"]
+    m = ok.kampus_kur(elemanlar, 662891327, "Ardahan Üniversitesi Yenisey Kampüsü")
+    m.pop("plan")
+    m["id"] = "q-ardahan"
+    # Çok binalı büyük alan: giriş QR'ı 40. sürüme bile sığmaz (yazdırmada adres yöntemi kullanılır)
+    for i in range(400):
+        m["hedefler"].append({"ad": f"Birim {i} Uzun Adlı Daire Başkanlığı", "nokta": "rektorluk", "tarif": "Burada.",
+                              "anahtarlar": [f"birim {i}"]})
+    with pytest.raises(ValueError):
+        bm.qr_png(bm.qr_verisi(m))
+    tek = bm.etiket_sayfasi(m, yalniz="rektorluk")
+    assert tek.count('class="etiket"') == 1
