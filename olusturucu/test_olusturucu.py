@@ -716,3 +716,14 @@ def test_harita_konumu_qr_noktasina_yazilir_ve_kimlik_degisince_tasinir():
     assert 41.0 < giris["enlem"] < 41.3 and 42.6 < giris["boylam"] < 42.9
     cz.plan_kimlikleri_degistir(plan, {"giris": "ana-kapi"})
     assert "ana-kapi" in plan["gps"] and "giris" not in plan["gps"] and "ana-kapi" in plan["konum"]
+
+
+def test_cizimde_harita_konumu_gosterilir_ve_kaydedilir():
+    at = sablon_ac(uygulama(), "Ardahan Üniversitesi Yenisey Kampüsü (OpenStreetMap yol ağından – sahada doğrulayın)")
+    at.session_state["cizim_secili"] = "giris"
+    at.switch_page("app_pages/cizim_sayfasi.py").run()
+    kutu = next(t for t in at.text_input if t.label == "Harita konumu (isteğe bağlı)")
+    assert kutu.value.startswith("41.13")
+    kutu.set_value("41.2, 42.7")
+    next(b for b in at.button if b.label == "Kaydet").click().run()
+    assert at.session_state["plan"]["gps"]["giris"] == [41.2, 42.7]
