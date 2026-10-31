@@ -31,15 +31,15 @@ Bina bilgisi QR'ın içinde taşınır. Sunucu, hesap ya da internet bağlantıs
 |---|---|
 | 1. Başla | Tek soru: ne için QR? (Hastane/okul/kurum, Market, AVM, Kampüs). Hazır örnek ve kayıtlı dosya kapalı kutularda. "Kampüsünüzü haritadan kurun": kurum adı OpenStreetMap'te aranır, binalar ve yollar haritadan kurulur |
 | 2. Yerleri yazın | Varsayılan: ad + "Zemin kat: Danışma, Vezne, WC" gibi tek bir liste; kurumun sitesindeki kat planı yapıştırılabilir. Market için koridor koridor solda/sağda reyonlar. Ayrıntılı tablo (sağ/sol, adım, oda no) isteğe bağlı |
-| 3. Kontrol ve çizim | Oluşan düzen 2B çizimde: tıklayıp düzeltme, sürükleme (adımlar mesafeden), yer ekleme, binanın içini açma, "koridor gibi sırala", yola kavşak ekleme (çift tıklama), ziyaretçinin duyacağı tarifin önizlemesi. Kampüs burada sıfırdan çizilir. Harita bölümü: kampüsü haritadan kurma, haritaya tıklayarak yer ekleme, iki noktayla çizimi haritaya oturtma; oturtulmuş çizimin arkasında harita/uydu görünür ve noktaların konumu QR'a girer (telefon açık alanda GPS'le en yakın noktayı söyler) |
+| 3. Kontrol ve çizim | Oluşan düzen 2B çizimde: tıklayıp düzeltme, sürükleme (adımlar mesafeden), yer ekleme, binanın içini açma, "koridor gibi sırala", yola kavşak ekleme (çift tıklama), ziyaretçinin duyacağı tarifin önizlemesi. Kampüs burada sıfırdan çizilir. Harita ayrı değil, çizimin arka planıdır: çizimin üstündeki kutuda kurum aranınca çizim oraya konur (harita/uydu), "Tıklayarak ekle" ile yerler yerine tıklanarak eklenir ve bir öncekine bağlanır, "Buradayım" seçili noktayı telefonun konumuna taşır. Boş çizimde kurum adıyla OpenStreetMap'ten kurulur. Haritadaki noktaların konumu QR'a girer (telefon açık alanda GPS'le en yakın noktayı söyler) |
 | 4. Yazdır | Giriş QR'ı ve etiketler. Bina bilgisi kendiliğinden QR'ın içine konur; QR'a sığmayan büyük binada kurumun sitesindeki adres yolu açılır |
 | Gelişmiş › Tablolar | Noktalar, yollar ve hedefler tabloları; her şey elle değiştirilebilir |
 | Gelişmiş › Teknik plan | Graphviz planı ve tarif önizleme |
 
 `bak_mekan.py` (doğrulama, QR, etiketler), `sihirbaz.py` (düzen üretimi), `plan.py` (Graphviz planı) ve `cizim.py`
 (çizim düzenleyicinin mantığı ve Streamlit özel bileşeni; çizime özgü bilgiler planda durur, QR'a girmez)
-Streamlit'ten bağımsızdır; `durum.py` sayfalar arasındaki oturum verisini tutar. `harita.py` harita bileşeni ve
-çizimi haritaya oturtma, `osm_kampus.py` OpenStreetMap'ten kampüs kurulumu (Nominatim araması, Overpass verisi;
+Streamlit'ten bağımsızdır; `durum.py` sayfalar arasındaki oturum verisini tutar. `harita.py` çizimi haritaya koyma / oturtma
+ve OpenStreetMap formu, `osm_kampus.py` OpenStreetMap'ten kampüs kurulumu (Nominatim araması, Overpass verisi;
 `test_veri/ardahan-osm.json` testler için kayıtlı veri). Yeni yardımcı modül eklenirse `streamlit_app.py`'deki
 yeniden yükleme listesine de eklenmeli (Streamlit Cloud eski modülü bellekte tutar).
 

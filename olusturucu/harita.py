@@ -1,14 +1,14 @@
 """Açık alandaki noktaların harita konumu (isteğe bağlı) ve çizimin haritaya oturtulması.
 
 Kampüs gibi açık alanlarda noktaların gerçek konumu bilinirse ziyaretçi QR okutmadan "neredeyim" diyebilir:
-telefon GPS'le en yakın noktayı söyler. Elle çizilmiş bir kampüste kurum iki noktayı haritada yerine koyar
-(tıklayarak ya da sahada "Buradayım" ile); çizimin tamamı döndürülüp ölçeklenerek haritaya oturtulur. Bundan sonra
+telefon GPS'le en yakın noktayı söyler. Harita ayrı bir bileşen değildir: çizimin arka planıdır (cizim.py). Kurum
+çizimin üstündeki kutuda kurumunu arar, çizim bulunan yere konur (cizimi_yere_koy) ve noktaları sürükleyerek
+gerçek yerlerine taşır; ya da iki noktanın konumunu yazar, çizimin tamamı döndürülüp ölçeklenerek oturtulur. Bundan sonra
 çizim gerçek ölçekte, kuzey yukarıdadır, arkasında harita görünür ve her noktanın harita konumu çizimdeki yerinden
 hesaplanır (bkz. cizim.dis_gps): haritada taşınan nokta çizimde de taşınmış olur.
 OpenStreetMap'ten kurulan kampüsler (osm_kampus.py) baştan haritaya oturtulmuş gelir.
 """
 import math
-from typing import Callable
 
 import streamlit as st
 
@@ -64,136 +64,21 @@ def adimlari_yenile(mekan: dict, plan: dict) -> None:
             y["adim"] = max(1, round(math.dist(konum[y["a"]], konum[y["b"]]) * olc))
 
 
-_HTML = """
-<div class="bak-harita">
-  <div class="arac">
-    <input class="ara" type="search" placeholder="Haritada ara: kurum ya da adres" aria-label="Haritada ara">
-    <button type="button" class="buradayim" title="Telefonunuzun konumunu seçili noktaya yazar">📍 Buradayım</button>
-    <span class="ipucu" aria-live="polite"></span>
-  </div>
-  <div class="kutu" role="application" aria-label="Harita"></div>
-</div>
-"""
-
-_CSS = """
-.bak-harita { font-family: var(--st-font); color: var(--st-text-color); }
-.arac { display: flex; gap: .5rem; align-items: center; margin-bottom: .5rem; flex-wrap: wrap; }
-.arac input { font: inherit; padding: .3rem .6rem; min-width: 14rem; flex: 1 1 14rem;
-  border-radius: var(--st-button-radius, .5rem); border: 1px solid var(--st-border-color);
-  background: var(--st-background-color); color: inherit; }
-.arac button { font: inherit; padding: .3rem .8rem; border-radius: var(--st-button-radius, .5rem);
-  border: 1px solid var(--st-border-color); background: var(--st-background-color); color: inherit; cursor: pointer; }
-.arac button[aria-pressed="true"] { background: var(--st-primary-color); color: #fff; border-color: var(--st-primary-color); }
-.ipucu { font-size: .875rem; opacity: .75; }
-.kutu { width: 100%; height: 460px; border-radius: var(--st-base-radius, .5rem);
-  border: 1px solid var(--st-border-color); cursor: crosshair; }
-"""
-
-_JS = """
-const LEAFLET = "https://unpkg.com/leaflet@1.9.4/dist/"
-const durumlar = new WeakMap()
-let yukleme = null
-
-function leaflet(ust) {
-  if (!ust.querySelector("link[data-leaflet]")) {
-    const l = document.createElement("link")
-    l.rel = "stylesheet"; l.href = LEAFLET + "leaflet.css"; l.dataset.leaflet = "1"
-    ust.prepend(l)
-  }
-  if (!yukleme) yukleme = import(LEAFLET + "leaflet-src.esm.js")
-  return yukleme
-}
-
-export default function (component) {
-  const { data, parentElement, setTriggerValue } = component
-  const kutu = parentElement.querySelector(".kutu")
-  const ipucu = parentElement.querySelector(".ipucu")
-  const ara = parentElement.querySelector(".ara")
-  const buradayim = parentElement.querySelector(".buradayim")
-  if (!kutu) return
-  const secili = data.secili
-  const seciliAd = (data.noktalar.find(n => n.id === secili) || {}).ad
-  ipucu.textContent = data.ekle
-    ? (seciliAd ? `Tıkladığınız yere yeni yer eklenir ve ${seciliAd} ile yolla bağlanır` : "Tıkladığınız yere yeni yer eklenir")
-    : seciliAd ? `Seçili: ${seciliAd} — haritada yerine tıklayın` : "Bir nokta seçin ya da Yer ekle'yi açın"
-  buradayim.disabled = !secili
-
-  buradayim.onclick = () => {
-    if (!navigator.geolocation) { ipucu.textContent = "Bu tarayıcı konum vermiyor"; return }
-    ipucu.textContent = "Konum alınıyor…"
-    navigator.geolocation.getCurrentPosition(
-      p => setTriggerValue("olay", { tur: "konum", id: secili, enlem: p.coords.latitude,
-                                     boylam: p.coords.longitude, dogruluk: p.coords.accuracy }),
-      h => { ipucu.textContent = "Konum alınamadı: " + (h.code === 1 ? "izin verilmedi" : h.message) },
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 })
-  }
-
-  leaflet(parentElement).then(L => {
-    let d = durumlar.get(parentElement)
-    if (!d) {
-      const harita = L.map(kutu, { zoomControl: true })
-      const sokak = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-        { maxZoom: 19, attribution: "© OpenStreetMap katkıcıları" })
-      const uydu = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-        { maxZoom: 19, attribution: "Uydu: Esri, Maxar, Earthstar Geographics" })
-      sokak.addTo(harita)
-      L.control.layers({ "Harita": sokak, "Uydu": uydu }, null, { position: "topright" }).addTo(harita)
-      d = { harita, katman: L.layerGroup().addTo(harita), anahtar: null, secili: null }
-      durumlar.set(parentElement, d)
-      harita.on("click", e => {
-        // Uzaktan (il, ülke ölçeğinde) tıklama yanlış yere düşer: önce kurumun üstüne yakınlaştırılmalı
-        if ((d.ekle || d.secili) && harita.getZoom() < 15) {
-          ipucu.textContent = "Önce haritayı kurumun üstüne yakınlaştırın (ya da adını arayın)"
-          return
-        }
-        if (d.ekle) { setTriggerValue("olay", { tur: "ekle", enlem: e.latlng.lat, boylam: e.latlng.lng }); return }
-        if (!d.secili) { ipucu.textContent = "Önce bir nokta seçin ya da ➕ Yer ekle'yi açın"; return }
-        setTriggerValue("olay", { tur: "konum", id: d.secili, enlem: e.latlng.lat, boylam: e.latlng.lng })
-      })
-    }
-    // Her çizimde yeniden bağlanır: Streamlit bileşenin öğelerini yeniden kurabilir
-    ara.onkeydown = e => {
-      if (e.key !== "Enter" || !ara.value.trim()) return
-      e.preventDefault()
-      ipucu.textContent = "Aranıyor…"
-      fetch("https://nominatim.openstreetmap.org/search?format=json&limit=1&accept-language=tr&q=" +
-            encodeURIComponent(ara.value.trim()))
-        .then(r => r.json())
-        .then(s => {
-          if (!s.length) { ipucu.textContent = "Bulunamadı"; return }
-          d.harita.setView([+s[0].lat, +s[0].lon], 17)
-          ipucu.textContent = s[0].display_name.split(",").slice(0, 2).join(",")
-        })
-        .catch(() => { ipucu.textContent = "Arama yapılamadı" })
-    }
-    d.secili = secili
-    d.ekle = !!data.ekle
-    d.katman.clearLayers()
-    const konumlu = data.noktalar.filter(n => n.enlem != null)
-    for (const n of konumlu) {
-      const s = n.id === secili
-      const m = L.circleMarker([n.enlem, n.boylam], {
-        radius: s ? 9 : 6, weight: 2, color: s ? "#ff4b4b" : "#1c62b9", fillOpacity: .85,
-      }).addTo(d.katman)
-      m.bindTooltip(n.ad, { permanent: konumlu.length <= 30, direction: "top", offset: [0, -6] })
-      m.on("click", e => { L.DomEvent.stopPropagation(e); setTriggerValue("olay", { tur: "sec", id: n.id }) })
-    }
-    // Görünüm yalnızca ilk açılışta ya da noktalar değişince sığdırılır; tıklayıp yerleştirirken harita kaymasın
-    const anahtar = data.anahtar
-    if (d.anahtar !== anahtar) {
-      if (d.anahtar === null || !konumlu.length || data.sigdir) {
-        if (konumlu.length > 1) d.harita.fitBounds(konumlu.map(n => [n.enlem, n.boylam]), { padding: [40, 40], maxZoom: 18 })
-        else if (konumlu.length === 1) d.harita.setView([konumlu[0].enlem, konumlu[0].boylam], 17)
-        else d.harita.setView([39.0, 35.2], 6)
-      }
-      d.anahtar = anahtar
-    }
-    setTimeout(() => d.harita.invalidateSize(), 60)
-  }).catch(() => { ipucu.textContent = "Harita yüklenemedi (internet bağlantısını kontrol edin)" })
-}
-"""
-
-_HARITA = st.components.v2.component("bak_harita", html=_HTML, css=_CSS, js=_JS)
+def cizimi_yere_koy(mekan: dict, plan: dict, enlem: float, boylam: float) -> None:
+    """Haritada aranan yer: henüz haritada olmayan çizimin ortası oraya konur, ölçeği korunur (bir birim olcek ×
+    0,7 m), kuzey yukarı kabul edilir. Arkasında harita görünür; kurum noktaları sürükleyerek gerçek yerlerine
+    taşır. Boş çizimde ölçek kampüse uygun seçilir (bir birim 8 m)."""
+    dis = cz.gorunum_konumlari(plan, None)
+    dis_yol = any(y["a"] in dis and y["b"] in dis for y in mekan["baglantilar"])
+    if len(dis) <= 1 and not dis_yol:
+        plan["olcek"] = round(8 / bm.STANDART_ADIM_M, 4)
+    else:
+        plan["olcek"] = cz.olcek(mekan, plan)
+    m = cz.harita_birimi(plan)
+    cx = sum(p[0] for p in dis.values()) / len(dis) if dis else 0.0
+    cy = sum(p[1] for p in dis.values()) / len(dis) if dis else 0.0
+    plan["harita"] = {"enlem": round(enlem - cy * m / cz._KY, 6), "boylam": round(boylam - cx * m / cz._kx(enlem), 6)}
+    plan.pop("gps", None)
 
 
 def haritadan_kur_formu(anahtar: str, *, uyari: str | None = None) -> dict | None:
@@ -237,9 +122,3 @@ def haritadan_kur_formu(anahtar: str, *, uyari: str | None = None) -> dict | Non
             return None
     st.session_state.pop(aday_anahtari, None)
     return kurulan
-
-
-def harita(veri: dict, *, key: str, on_olay: Callable[[], None]):
-    """Harita bileşeni. veri: noktalar [{id, ad, enlem?, boylam?}], secili, ekle (tıklayınca yer eklenir),
-    anahtar, sigdir."""
-    return _HARITA(data=veri, key=key, on_olay_change=on_olay)

@@ -652,8 +652,13 @@ _HTML = """
     <button type="button" class="uzak" title="Uzaklaştır" aria-label="Uzaklaştır">−</button>
     <button type="button" class="sigdir" title="Tüm çizimi ekrana sığdır">Sığdır</button>
     <button type="button" class="zemin-sec" title="Arka plan: harita, uydu ya da boş" hidden>Zemin: Harita</button>
-    <span class="ipucu" aria-live="polite"></span>
+    <button type="button" class="ekle" aria-pressed="false"
+      title="Açıkken çizimde boş bir yere tıklayınca oraya yeni yer eklenir ve seçili yere yolla bağlanır">➕ Tıklayarak ekle</button>
+    <button type="button" class="buradayim" hidden
+      title="Sahadaysanız: telefonunuzun konumunu seçili noktaya yazar">📍 Buradayım</button>
+    <input class="ara" type="search" placeholder="Haritada ara: kurum, adres" aria-label="Haritada ara" hidden>
   </div>
+  <div class="ipucu" aria-live="polite"></div>
   <div class="tuval">
     <svg role="application" aria-label="Bina çizimi" tabindex="-1"></svg>
     <span class="atif" hidden></span>
@@ -669,7 +674,11 @@ _CSS = """
   cursor: pointer; }
 .arac button[aria-pressed="true"] { background: var(--st-primary-color); color: #fff;
   border-color: var(--st-primary-color); }
-.ipucu { font-size: .875rem; opacity: .75; }
+.ipucu { font-size: .875rem; opacity: .75; margin-bottom: .4rem; min-height: 1.2em; }
+.arac input { font: inherit; padding: .3rem .6rem; flex: 1 1 12rem; min-width: 10rem;
+  border-radius: var(--st-button-radius, .5rem); border: 1px solid var(--st-border-color);
+  background: var(--st-background-color); color: inherit; }
+svg.ekleniyor { cursor: crosshair; }
 .tuval { position: relative; }
 .atif { position: absolute; right: 4px; bottom: 3px; font-size: 11px; padding: 0 4px; border-radius: 3px;
   background: rgba(255, 255, 255, .8); color: #333; pointer-events: none; }
@@ -728,7 +737,7 @@ export default function (component) {
 
   let d = durumlar.get(parentElement)
   if (!d) {
-    d = { vb: null, gorunum: null, bagla: false, kaynak: null, zemin: null, karolar: new Map(), zeminTuru: 0 }
+    d = { vb: null, gorunum: null, bagla: false, kaynak: null, zemin: null, karolar: new Map(), zeminTuru: 0, ekle: false }
     durumlar.set(parentElement, d)
   }
   const dugumler = (data.dugumler || []).map(n => ({ ...n }))
@@ -798,6 +807,49 @@ export default function (component) {
     for (const [anahtar, resim] of d.karolar) if (!istenen.has(anahtar)) { resim.remove(); d.karolar.delete(anahtar) }
   }
   zeminBtn.onclick = () => { d.zeminTuru = (d.zeminTuru + 1) % ZEMINLER.length; ciz() }
+
+  // ── Haritada ara ve Buradayım (yalnızca dış çizimde) ──
+  const araKutu = parentElement.querySelector(".ara")
+  const buradaBtn = parentElement.querySelector(".buradayim")
+  const ekleBtn = parentElement.querySelector(".ekle")
+  const disCizim = !data.ankraj
+  araKutu.hidden = buradaBtn.hidden = !disCizim
+  araKutu.onkeydown = e => {
+    if (e.key !== "Enter" || !araKutu.value.trim()) return
+    e.preventDefault()
+    ipucu.textContent = "Aranıyor…"
+    fetch("https://nominatim.openstreetmap.org/search?format=json&limit=1&accept-language=tr&q=" +
+          encodeURIComponent(araKutu.value.trim()))
+      .then(r => r.json())
+      .then(s => {
+        if (!s.length) { ipucu.textContent = "Bulunamadı; il ya da ilçe adını ekleyerek deneyin."; return }
+        const enlem = +s[0].lat, boylam = +s[0].lon
+        if (H) {
+          // Çizim haritadaysa görünüm oraya kayar (yaklaşık 500 m genişlik)
+          const kx = 111320 * Math.cos(H.enlem * Math.PI / 180)
+          const X = (boylam - H.boylam) * kx / H.m, Y = -(enlem - H.enlem) * 110540 / H.m
+          const w = 500 / H.m, h = w * (svg.clientHeight || 540) / (svg.clientWidth || 800)
+          d.vb = { x: X - w / 2, y: Y - h / 2, w, h }
+          ciz()
+          ipucu.textContent = s[0].display_name.split(",").slice(0, 2).join(",")
+        } else {
+          // Çizim henüz haritada değil: bulunan yere konur, arkasında harita görünür
+          setTriggerValue("olay", { tur: "merkez", enlem, boylam })
+        }
+      })
+      .catch(() => { ipucu.textContent = "Arama yapılamadı (internet bağlantısını kontrol edin)." })
+  }
+  buradaBtn.onclick = () => {
+    if (!data.secili) { ipucu.textContent = "Önce yanında durduğunuz noktayı seçin."; return }
+    if (!navigator.geolocation) { ipucu.textContent = "Bu tarayıcı konum vermiyor."; return }
+    ipucu.textContent = "Konum alınıyor…"
+    navigator.geolocation.getCurrentPosition(
+      p => setTriggerValue("olay", { tur: "buradayim", id: data.secili, enlem: p.coords.latitude,
+                                     boylam: p.coords.longitude, dogruluk: p.coords.accuracy }),
+      h => { ipucu.textContent = "Konum alınamadı: " + (h.code === 1 ? "izin verilmedi." : h.message) },
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 })
+  }
+  ekleBtn.onclick = () => { d.ekle = !d.ekle; if (d.ekle) { d.bagla = false; d.kaynak = null } ciz() }
 
   function ciz() {
     if (!d.vb) sigdir()
@@ -890,7 +942,12 @@ export default function (component) {
       g.onkeydown = e => tus(e, n)
     }
     baglaBtn.setAttribute("aria-pressed", String(d.bagla))
-    ipucu.textContent = d.bagla
+    ekleBtn.setAttribute("aria-pressed", String(d.ekle))
+    svg.classList.toggle("ekleniyor", d.ekle)
+    const seciliAd = data.secili && bul(data.secili)?.ad
+    ipucu.textContent = d.ekle
+      ? `Boş bir yere tıklayın: yeni yer oraya eklenir${seciliAd ? ` ve ${seciliAd} ile yolla bağlanır` : ""}. Bitince düğmeyi kapatın.`
+      : d.bagla
       ? (d.kaynak ? `${bul(d.kaynak)?.ad ?? ""} seçildi; bağlanacak ikinci modüle tıklayın.` : "Bağlanacak ilk modüle tıklayın.")
       : "Kutuya tıklayın: ayarları açılır. Mesafe yazısına (ör. 12 m) tıklayın: mesafeyi girin. Yola çift tıklayın: " +
         "oraya kavşak / köşe eklenir. İçi › : binanın içi."
@@ -957,7 +1014,7 @@ export default function (component) {
 
   svg.onpointerdown = e => {
     if (e.target !== svg && e.target.closest(".modul")) return
-    const bas = { x: e.clientX, y: e.clientY }, vb0 = { ...d.vb }
+    const bas = { x: e.clientX, y: e.clientY }, vb0 = { ...d.vb }, yer = svgNokta(e)
     let oynadi = false
     svg.setPointerCapture(e.pointerId)
     svg.onpointermove = m => {
@@ -969,7 +1026,9 @@ export default function (component) {
     }
     svg.onpointerup = () => {
       svg.onpointermove = null; svg.onpointerup = null
-      if (!oynadi && (data.secili || data.seciliYol)) setTriggerValue("olay", { tur: "bos" })
+      if (oynadi) return
+      if (d.ekle) setTriggerValue("olay", { tur: "ekle", x: yer.x, y: yer.y })
+      else if (data.secili || data.seciliYol) setTriggerValue("olay", { tur: "bos" })
     }
   }
   // Yola çift tıklama: tıklanan yere en yakın yolun o yerine kavşak / köşe noktası (sonra köşeye sürüklenir).
@@ -1002,7 +1061,7 @@ export default function (component) {
   }
   parentElement.querySelector(".yakin").onclick = () => yakinlas(1 / 1.3)
   parentElement.querySelector(".uzak").onclick = () => yakinlas(1.3)
-  baglaBtn.onclick = () => { d.bagla = !d.bagla; d.kaynak = null; ciz() }
+  baglaBtn.onclick = () => { d.bagla = !d.bagla; d.kaynak = null; if (d.bagla) d.ekle = false; ciz() }
   sigdirBtn.onclick = () => { d.vb = null; ciz() }
 
   ciz()

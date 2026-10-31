@@ -774,7 +774,6 @@ def test_osmden_kampus_kurulur():
 def test_cizim_sayfasinda_konum_yazilinca_cizim_haritaya_oturur_ve_tasinir():
     at = sablon_ac(uygulama())   # hastane örneği: haritasız
     at.switch_page("app_pages/cizim_sayfasi.py").run()
-    assert any(e.label.startswith("Haritaya yerleştir") for e in at.expander)
     ilk = bm.sablonlar()["Hastane / poliklinik (iki katlı, asansörlü)"]["giris"]
 
     def konum_yaz(kimlik, metin):
@@ -791,7 +790,7 @@ def test_cizim_sayfasinda_konum_yazilinca_cizim_haritaya_oturur_ve_tasinir():
     konum_yaz(noktalar[1], "41.0003, 29.0004")
     plan = at.session_state["plan"]
     assert plan.get("harita") and not plan.get("gps")
-    assert any(e.label == "Harita" for e in at.expander)
+    assert any(b.label == "Haritadan ayır" for b in at.button)
     assert cz.dis_gps(plan)[noktalar[1]] == pytest.approx((41.0003, 29.0004), abs=2e-5)
     # Haritalı çizimde konum yazmak noktayı taşır
     konum_yaz(noktalar[1], "41.0006, 29.0004")
@@ -826,8 +825,27 @@ def test_bos_cizimde_harita_bolumu_ve_haritadan_kur_formu_gorunur():
     at = uygulama()
     next(b for b in at.button if b.label == "Boş başla" and b.key == "bos-kampus").click().run()
     assert not at.exception
-    assert any(e.label.startswith("Harita: kampüsü haritadan kurun") for e in at.expander)
-    assert any(f.label == "Haritada ara" for f in at.button) or at.text_input(key="osm-sorgu-cizim")
+    assert any("Haritadan kurun" in m.value for m in at.markdown)
+    assert at.text_input(key="osm-sorgu-cizim").label == "Kurumun adı"
+    assert not any(b.label == "Haritadan ayır" for b in at.button)
+
+
+def test_bos_cizim_aranan_yere_konur():
+    import cizim as cz
+    import harita as hr
+    mekan = {"noktalar": [{"id": "giris", "ad": "Giriş"}], "baglantilar": [], "hedefler": [], "giris": "giris"}
+    plan = {"konum": {"giris": [3.0, -2.0]}, "olcek": 1.0}
+    hr.cizimi_yere_koy(mekan, plan, 41.13, 42.78)
+    assert plan["olcek"] == pytest.approx(8 / bm.STANDART_ADIM_M, abs=1e-3)
+    assert cz.dis_gps(plan)["giris"] == pytest.approx((41.13, 42.78), abs=1e-6)
+    # Dolu (elle çizilmiş) çizimde ölçek korunur, çizimin ortası aranan yere gelir
+    okul = json.loads(json.dumps(bm.sablonlar()["Okul (iki katlı, merdivenli ve rampalı)"]))
+    oplan = {"konum": {"a": [0.0, 0.0], "b": [10.0, 0.0]}, "olcek": 2.0}
+    hr.cizimi_yere_koy({**okul, "baglantilar": [{"a": "a", "b": "b", "adim": 20}]}, oplan, 40.0, 30.0)
+    g = cz.dis_gps(oplan)
+    assert oplan["olcek"] == 2.0
+    assert (g["a"][0] + g["b"][0]) / 2 == pytest.approx(40.0, abs=1e-5)
+    assert math.dist(((g["b"][1] - g["a"][1]) * 85300, 0), (0, 0)) == pytest.approx(10 * 2.0 * 0.7, rel=0.02)
 
 
 def test_buyuk_kampuste_tek_nokta_etiketi_basilir():
