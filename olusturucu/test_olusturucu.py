@@ -534,7 +534,7 @@ def test_cizim_bina_ici_kat_listesinden_kurulur():
     assert {"WC (Konukevi)", "WC (Konukevi, 1. kat)"} <= {h["ad"] for h in m["hedefler"]}
     assert any("1. kat" in s or "kat" in s.lower() for s in bm.rota_onizleme(m, "101"))
     # İkinci binada aynı kimlikler çakışmaz
-    cz.binayi_doldur(m, plan, "iibf", "Zemin kat: Dekanlık, WC")
+    cz.binayi_doldur(m, plan, "iktisadi-ve-idari", "Zemin kat: Dekanlık, WC")
     assert bm.dogrula(m)[0] == []
     assert len({n["id"] for n in m["noktalar"]}) == len(m["noktalar"])
 
@@ -720,11 +720,11 @@ def test_haritali_cizimde_konum_cizimden_hesaplanir_qrya_girer_ve_kimlikle_tasin
     gps = cz.dis_gps(plan)
     assert set(gps) == {n["id"] for n in sablon["noktalar"]}
     # Çizim ↔ harita gidiş-dönüş aynı yere varır
-    x, y = cz.gpsden_konum(plan, *gps["cami"])
-    assert math.dist((x, y), plan["konum"]["cami"]) < 0.05
+    x, y = cz.gpsden_konum(plan, *gps["hoca-ahmet-yesevi"])
+    assert math.dist((x, y), plan["konum"]["hoca-ahmet-yesevi"]) < 0.05
     qr = cz.yonleri_ekle(sablon, plan)
     giris = next(n for n in qr["noktalar"] if n["id"] == "giris")
-    assert (giris["enlem"], giris["boylam"]) == gps["giris"]
+    assert (giris["enlem"], giris["boylam"]) == pytest.approx(gps["giris"], abs=1e-5)
     cz.plan_kimlikleri_degistir(plan, {"giris": "ana-kapi"})
     assert "ana-kapi" in cz.dis_gps(plan)
 
@@ -740,7 +740,7 @@ def test_elle_cizim_iki_noktayla_haritaya_oturtulur():
     elle = {**plan, "konum": {i: [k * (x * math.cos(aci) - y * math.sin(aci)), k * (x * math.sin(aci) + y * math.cos(aci))]
                               for i, (x, y) in plan["konum"].items()}}
     elle.pop("harita")
-    elle["gps"] = {i: list(gercek[i]) for i in ("giris", "cami")}
+    elle["gps"] = {i: list(gercek[i]) for i in ("giris", "hoca-ahmet-yesevi")}
     uyum = hr.haritaya_oturt(sablon, elle)
     assert 0 <= uyum < 1 and "harita" in elle and "gps" not in elle
     for i, (enlem, boylam) in cz.dis_gps(elle).items():
@@ -763,7 +763,7 @@ def test_osmden_kampus_kurulur():
     # Elle hazırlanan şablonla aynı yol ağı: toplam yürüme mesafesi aynı (kıvrımlara dönemeç eklenince parçalanır)
     sablon = _ardahan()
     assert abs(sum(b["adim"] for b in m["baglantilar"]) - sum(b["adim"] for b in sablon["baglantilar"])) <= len(m["baglantilar"])
-    donemecler = [n["id"] for n in m["noktalar"] if n["id"].startswith("donemec-")]
+    donemecler = [n["id"] for n in m["noktalar"] if n["ad"].endswith("dönemeç")]
     assert donemecler and set(donemecler) <= set(plan["etiketsiz"])
     assert any(b["tarif"] in ("Sağa dönün", "Sola dönün") for b in m["baglantilar"])
     assert cz.dis_gps(plan)["giris"] == pytest.approx(cz.dis_gps(sablon["plan"])["giris"], abs=1e-4)
@@ -801,7 +801,7 @@ def test_yola_kavsak_eklenir_ve_kosesine_surukleninca_tarif_doner():
     import cizim as cz
     sablon = _ardahan()
     plan = sablon.pop("plan")
-    yol = next(y for y in sablon["baglantilar"] if y["b"] == "kultur-merkezi")
+    yol = next(y for y in sablon["baglantilar"] if y["b"] == "asik-senlik-kultur")
     a, b, toplam = yol["a"], yol["b"], yol["adim"]
     yeni = cz.yolu_bol(sablon, plan, a, b)
     assert yeni and yeni in plan["konum"] and yeni in plan["etiketsiz"]
@@ -862,3 +862,24 @@ def test_buyuk_kampuste_tek_nokta_etiketi_basilir():
         bm.qr_png(bm.qr_verisi(m))
     tek = bm.etiket_sayfasi(m, yalniz="rektorluk")
     assert tek.count('class="etiket"') == 1
+
+
+def test_buyuk_kampus_qrsi_kucultulur_ve_depo_adresi_secilebilir():
+    import cizim as cz
+    import osm_kampus as ok
+    elemanlar = json.loads((Path(__file__).parent / "test_veri" / "ardahan-osm.json").read_text(encoding="utf-8"))["elements"]
+    m = ok.kampus_kur(elemanlar, 662891327, "Ardahan Üniversitesi Yenisey Kampüsü")
+    plan = m.pop("plan")
+    m["id"] = "q-ardahan-universitesi-12ab"
+    qr = cz.yonleri_ekle(m, plan)
+    # Dönemeçlerin konumu QR'a girmez, koordinatlar 5 hane: haritadan kurulan kampüs tek QR'a sığar
+    assert not any("enlem" in n for n in qr["noktalar"] if n["id"] in plan["etiketsiz"])
+    assert all(len(str(n["enlem"]).split(".")[1]) <= 5 for n in qr["noktalar"] if "enlem" in n)
+    assert bm.qr_sigar_mi(bm.qr_verisi(qr))
+    assert not any(h.get("kisaAd", "").lower() in h["anahtarlar"] for h in m["hedefler"])
+    # Sığmayan büyük binada BAK deposu adresi tek tıkla kullanılır
+    at = sablon_ac(uygulama(), next(a for a in bm.sablonlar() if "Gebze Center" in a))
+    at.switch_page("app_pages/yazdir.py").run()
+    dugme = next(b for b in at.button if b.label == "BAK deposu adresini kullan")
+    dugme.click().run()
+    assert at.text_input(key="duzen_adresi").value.startswith("https://burhanettiny.github.io/bak-mekanlar/mekanlar/q")

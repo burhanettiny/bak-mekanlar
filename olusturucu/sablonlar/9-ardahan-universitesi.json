@@ -8,35 +8,35 @@
  "noktalar": [
   {
    "id": "giris",
-   "ad": "Kampüs giriş kapısı"
-  },
-  {
-   "id": "cami",
-   "ad": "Hoca Ahmet Yesevi Camii önü"
+   "ad": "Giriş kapısı"
   },
   {
    "id": "rektorluk",
    "ad": "Rektörlük önü"
   },
   {
-   "id": "kultur-merkezi",
+   "id": "asik-senlik-kultur",
    "ad": "Âşık Şenlik Kültür Merkezi önü"
   },
   {
    "id": "insani-bilimler",
-   "ad": "İnsani Bilimler Fakültesi önü"
+   "ad": "İnsani Bilimler önü"
   },
   {
-   "id": "iibf",
-   "ad": "İktisadi ve İdari Bilimler Fakültesi önü"
+   "id": "iktisadi-ve-idari",
+   "ad": "İktisadi ve İdari Bilimler önü"
   },
   {
    "id": "muhendislik",
-   "ad": "Mühendislik Fakültesi önü"
+   "ad": "Mühendislik önü"
   },
   {
    "id": "konukevi",
    "ad": "Konukevi önü"
+  },
+  {
+   "id": "hoca-ahmet-yesevi",
+   "ad": "Hoca Ahmet Yesevi Camii önü"
   },
   {
    "id": "kavsak-1",
@@ -47,6 +47,14 @@
    "ad": "2. kavşak"
   },
   {
+   "id": "d1",
+   "ad": "1. dönemeç"
+  },
+  {
+   "id": "d2",
+   "ad": "2. dönemeç"
+  },
+  {
    "id": "kavsak-3",
    "ad": "3. kavşak"
   },
@@ -55,8 +63,52 @@
    "ad": "4. kavşak"
   },
   {
+   "id": "d3",
+   "ad": "3. dönemeç"
+  },
+  {
+   "id": "d4",
+   "ad": "4. dönemeç"
+  },
+  {
+   "id": "d5",
+   "ad": "5. dönemeç"
+  },
+  {
+   "id": "d6",
+   "ad": "6. dönemeç"
+  },
+  {
    "id": "kavsak-5",
    "ad": "5. kavşak"
+  },
+  {
+   "id": "d7",
+   "ad": "7. dönemeç"
+  },
+  {
+   "id": "d8",
+   "ad": "8. dönemeç"
+  },
+  {
+   "id": "d9",
+   "ad": "9. dönemeç"
+  },
+  {
+   "id": "d10",
+   "ad": "10. dönemeç"
+  },
+  {
+   "id": "d11",
+   "ad": "11. dönemeç"
+  },
+  {
+   "id": "d12",
+   "ad": "12. dönemeç"
+  },
+  {
+   "id": "d13",
+   "ad": "13. dönemeç"
   }
  ],
  "baglantilar": [
@@ -64,247 +116,502 @@
    "a": "giris",
    "b": "kavsak-1",
    "adim": 20,
-   "tarif": "Kapıdan kampüse girin, yol boyunca ilerleyin, kampüs yolları araç yoludur, yol kenarından yürüyün",
-   "geriTarif": "Giriş kapısı yönüne yürüyün"
+   "tarif": "Düz ilerleyin",
+   "geriTarif": "Giriş kapısı yönüne ilerleyin"
   },
   {
    "a": "kavsak-1",
+   "b": "d1",
+   "adim": 208,
+   "tarif": "Sağa dönün",
+   "geriTarif": "Hafif sağa yönelin"
+  },
+  {
+   "a": "d1",
+   "b": "d2",
+   "adim": 163,
+   "tarif": "Hafif sola yönelin",
+   "geriTarif": "Hafif sağa yönelin"
+  },
+  {
+   "a": "d2",
    "b": "kavsak-2",
-   "adim": 974,
-   "tarif": "Kavşakta İnsani Bilimler, Mühendislik, Konukevi ve diğerleri yönündeki yola girin (girişten gelirken sağa dönün), yol iki kez sola kıvrılır",
-   "geriTarif": "1. kavşak yönüne yürüyün, yol iki kez sağa kıvrılır"
+   "adim": 603,
+   "tarif": "Hafif sola yönelin",
+   "geriTarif": "2. dönemeç yönüne ilerleyin"
   },
   {
    "a": "kavsak-1",
    "b": "kavsak-3",
    "adim": 15,
-   "tarif": "Kavşakta Rektörlük, Kültür Merkezi ve İİBF yönündeki yola girin (girişten gelirken düz devam edin)",
-   "geriTarif": "1. kavşak yönüne yürüyün"
+   "tarif": "Düz ilerleyin",
+   "geriTarif": "1. kavşak yönüne ilerleyin"
   },
   {
    "a": "kavsak-2",
    "b": "kavsak-4",
    "adim": 31,
-   "tarif": "Kavşakta Mühendislik, Konukevi ve Cami yönündeki yola girin (girişten gelirken düz devam edin)",
-   "geriTarif": "2. kavşak yönüne yürüyün"
+   "tarif": "Düz ilerleyin",
+   "geriTarif": "2. kavşak yönüne ilerleyin"
   },
   {
    "a": "kavsak-2",
+   "b": "d3",
+   "adim": 60,
+   "tarif": "Sağa dönün",
+   "geriTarif": "Sola dönün"
+  },
+  {
+   "a": "d3",
    "b": "insani-bilimler",
-   "adim": 100,
-   "tarif": "Kavşakta İnsani Bilimler Fakültesi yönündeki yola girin (girişten gelirken sağa dönün), yol sağa kıvrılır, İnsani Bilimler Fakültesi solunuzda",
-   "geriTarif": "2. kavşak yönüne yürüyün, yol sola kıvrılır"
+   "adim": 41,
+   "tarif": "Sağa dönün",
+   "geriTarif": "Geri dönün"
   },
   {
    "a": "kavsak-3",
+   "b": "d4",
+   "adim": 210,
+   "tarif": "Sağa dönün",
+   "geriTarif": "Hafif sağa yönelin"
+  },
+  {
+   "a": "d4",
+   "b": "d5",
+   "adim": 156,
+   "tarif": "Hafif sola yönelin",
+   "geriTarif": "Hafif sağa yönelin"
+  },
+  {
+   "a": "d5",
+   "b": "d6",
+   "adim": 189,
+   "tarif": "Hafif sola yönelin",
+   "geriTarif": "Sağa dönün"
+  },
+  {
+   "a": "d6",
    "b": "rektorluk",
-   "adim": 742,
-   "tarif": "Kavşakta Rektörlük yönündeki yola girin (girişten gelirken sağa dönün), yol iki kez sola kıvrılır, Rektörlük solunuzda",
-   "geriTarif": "3. kavşak yönüne yürüyün, yol iki kez sağa kıvrılır"
+   "adim": 187,
+   "tarif": "Sola dönün",
+   "geriTarif": "Geri dönün"
   },
   {
    "a": "kavsak-3",
+   "b": "d7",
+   "adim": 128,
+   "tarif": "Hafif sola yönelin",
+   "geriTarif": "Düz ilerleyin"
+  },
+  {
+   "a": "d7",
+   "b": "d8",
+   "adim": 108,
+   "tarif": "Düz ilerleyin",
+   "geriTarif": "Hafif sola yönelin"
+  },
+  {
+   "a": "d8",
+   "b": "d9",
+   "adim": 439,
+   "tarif": "Hafif sağa yönelin",
+   "geriTarif": "Sola dönün"
+  },
+  {
+   "a": "d9",
    "b": "kavsak-5",
-   "adim": 874,
-   "tarif": "Kavşakta Kültür Merkezi ve İİBF yönündeki yola girin (girişten gelirken sola dönün), yol iki kez sağa kıvrılır",
-   "geriTarif": "3. kavşak yönüne yürüyün, yol iki kez sola kıvrılır"
+   "adim": 200,
+   "tarif": "Sağa dönün",
+   "geriTarif": "9. dönemeç yönüne ilerleyin"
   },
   {
    "a": "kavsak-4",
    "b": "muhendislik",
    "adim": 345,
-   "tarif": "Kavşakta Mühendislik Fakültesi yönündeki yola girin (girişten gelirken düz devam edin), Mühendislik Fakültesi sağınızda",
-   "geriTarif": "4. kavşak yönüne yürüyün"
+   "tarif": "Düz ilerleyin",
+   "geriTarif": "Geri dönün"
   },
   {
    "a": "kavsak-4",
+   "b": "d10",
+   "adim": 291,
+   "tarif": "Hafif sağa yönelin",
+   "geriTarif": "Sola dönün"
+  },
+  {
+   "a": "d10",
    "b": "konukevi",
-   "adim": 369,
-   "tarif": "Kavşakta Konukevi yönündeki yola girin (girişten gelirken hafif sağa yönelin), yol sağa kıvrılır, Konukevi solunuzda",
-   "geriTarif": "4. kavşak yönüne yürüyün, yol sola kıvrılır"
+   "adim": 78,
+   "tarif": "Sağa dönün",
+   "geriTarif": "Geri dönün"
   },
   {
    "a": "kavsak-5",
-   "b": "iibf",
-   "adim": 342,
-   "tarif": "Kavşakta İktisadi ve İdari Bilimler Fakültesi yönündeki yola girin (girişten gelirken düz devam edin), yol sola kıvrılır, İktisadi ve İdari Bilimler Fakültesi sağınızda",
-   "geriTarif": "5. kavşak yönüne yürüyün, yol sağa kıvrılır"
+   "b": "d11",
+   "adim": 55,
+   "tarif": "Düz ilerleyin",
+   "geriTarif": "Hafif sağa yönelin"
+  },
+  {
+   "a": "d11",
+   "b": "d12",
+   "adim": 72,
+   "tarif": "Hafif sola yönelin",
+   "geriTarif": "Hafif sağa yönelin"
+  },
+  {
+   "a": "d12",
+   "b": "iktisadi-ve-idari",
+   "adim": 215,
+   "tarif": "Hafif sola yönelin",
+   "geriTarif": "Geri dönün"
   },
   {
    "a": "kavsak-5",
-   "b": "kultur-merkezi",
+   "b": "asik-senlik-kultur",
    "adim": 158,
-   "tarif": "Kavşakta Âşık Şenlik Kültür Merkezi yönündeki yola girin (girişten gelirken sola dönün), Âşık Şenlik Kültür Merkezi solunuzda",
-   "geriTarif": "5. kavşak yönüne yürüyün"
+   "tarif": "Sola dönün",
+   "geriTarif": "Geri dönün"
   },
   {
    "a": "muhendislik",
-   "b": "cami",
-   "adim": 318,
-   "tarif": "Mühendislik Fakültesi önünden Hoca Ahmet Yesevi Camii yönündeki yola girin (girişten gelirken düz devam edin), Hoca Ahmet Yesevi Camii sağınızda",
-   "geriTarif": "Mühendislik Fakültesi önü yönüne yürüyün"
+   "b": "d13",
+   "adim": 148,
+   "tarif": "Düz ilerleyin",
+   "geriTarif": "Hafif sola yönelin"
+  },
+  {
+   "a": "d13",
+   "b": "hoca-ahmet-yesevi",
+   "adim": 169,
+   "tarif": "Hafif sağa yönelin",
+   "geriTarif": "Geri dönün"
   }
  ],
  "hedefler": [
   {
    "ad": "Rektörlük",
    "nokta": "rektorluk",
-   "tarif": "Rektörlük yolun solunda, yaklaşık 40 metre içeride. Bina kapısının yerini sorabilirsiniz.",
+   "tarif": "Bina yaklaşık 40 metre içeride. Kapıyı sorabilirsiniz.",
    "anahtarlar": [
     "rektörlük",
     "rektör",
-    "genel sekreterlik",
-    "personel daire",
     "öğrenci işleri"
    ]
   },
   {
    "ad": "Âşık Şenlik Kültür Merkezi",
-   "nokta": "kultur-merkezi",
-   "tarif": "Âşık Şenlik Kültür Merkezi yolun solunda, yaklaşık 30 metre içeride. Bina kapısının yerini sorabilirsiniz.",
+   "nokta": "asik-senlik-kultur",
+   "tarif": "Bina yaklaşık 30 metre içeride. Kapıyı sorabilirsiniz.",
    "anahtarlar": [
-    "kültür merkezi",
-    "aşık şenlik",
-    "konferans salonu",
-    "salon",
-    "tören"
+    "âşık şenlik kültür merkezi",
+    "konferans salonu"
    ],
    "kisaAd": "Kültür Merkezi"
   },
   {
    "ad": "İnsani Bilimler Fakültesi",
    "nokta": "insani-bilimler",
-   "tarif": "İnsani Bilimler Fakültesi yolun solunda, yaklaşık 80 metre içeride. Bina kapısının yerini sorabilirsiniz.",
+   "tarif": "Bina yaklaşık 80 metre içeride. Kapıyı sorabilirsiniz.",
    "anahtarlar": [
-    "insani bilimler",
-    "edebiyat",
-    "fen edebiyat",
-    "tarih",
-    "türk dili"
+    "edebiyat"
    ],
    "kisaAd": "İnsani Bilimler"
   },
   {
    "ad": "İktisadi ve İdari Bilimler Fakültesi",
-   "nokta": "iibf",
-   "tarif": "İktisadi ve İdari Bilimler Fakültesi yolun sağında, yaklaşık 40 metre içeride. Bina kapısının yerini sorabilirsiniz.",
+   "nokta": "iktisadi-ve-idari",
+   "tarif": "Bina yaklaşık 40 metre içeride. Kapıyı sorabilirsiniz.",
    "anahtarlar": [
-    "iktisadi",
-    "idari bilimler",
-    "iibf",
-    "işletme",
-    "iktisat"
+    "işletme"
    ],
    "kisaAd": "İİBF"
   },
   {
    "ad": "Mühendislik Fakültesi",
    "nokta": "muhendislik",
-   "tarif": "Mühendislik Fakültesi yolun sağında, yaklaşık 90 metre içeride. Bina kapısının yerini sorabilirsiniz.",
-   "anahtarlar": [
-    "mühendislik",
-    "mühendislik fakültesi",
-    "bilgisayar mühendisliği"
-   ],
+   "tarif": "Bina yaklaşık 90 metre içeride. Kapıyı sorabilirsiniz.",
+   "anahtarlar": [],
    "kisaAd": "Mühendislik"
   },
   {
    "ad": "Konukevi",
    "nokta": "konukevi",
-   "tarif": "Konukevi yolun solunda, yaklaşık 60 metre içeride. Bina kapısının yerini sorabilirsiniz.",
+   "tarif": "Bina yaklaşık 60 metre içeride. Kapıyı sorabilirsiniz.",
    "anahtarlar": [
     "konukevi",
-    "misafirhane",
-    "otel"
+    "misafirhane"
    ]
   },
   {
    "ad": "Hoca Ahmet Yesevi Camii",
-   "nokta": "cami",
-   "tarif": "Hoca Ahmet Yesevi Camii yolun sağında, yaklaşık 40 metre içeride. Bina kapısının yerini sorabilirsiniz.",
+   "nokta": "hoca-ahmet-yesevi",
+   "tarif": "Bina yaklaşık 40 metre içeride. Kapıyı sorabilirsiniz.",
    "anahtarlar": [
-    "cami",
-    "camii",
-    "mescit",
-    "namaz"
+    "hoca ahmet yesevi camii",
+    "namaz",
+    "mescit"
    ],
    "kisaAd": "Cami"
   }
  ],
  "plan": {
-  "konum": {
-   "giris": [
-    59.2,
-    -10.4
-   ],
-   "cami": [
-    -61.8,
-    30.5
-   ],
-   "rektorluk": [
-    28.8,
-    0.9
-   ],
-   "kultur-merkezi": [
-    -9.2,
-    -1.5
-   ],
-   "insani-bilimler": [
-    -4.0,
-    24.6
-   ],
-   "iibf": [
-    -18.9,
-    7.1
-   ],
-   "muhendislik": [
-    -38.0,
-    19.6
-   ],
-   "konukevi": [
-    -10.8,
-    42.0
-   ],
-   "kavsak-1": [
-    57.5,
-    -10.4
-   ],
-   "kavsak-2": [
-    -5.5,
-    18.2
-   ],
-   "kavsak-3": [
-    56.2,
-    -10.3
-   ],
-   "kavsak-4": [
-    -8.1,
-    18.8
-   ],
-   "kavsak-5": [
-    4.7,
-    -1.7
-   ]
-  },
-  "tur": {
-   "giris": "kavsak",
-   "cami": "bina",
-   "rektorluk": "bina",
-   "kultur-merkezi": "bina",
-   "insani-bilimler": "bina",
-   "iibf": "bina",
-   "muhendislik": "bina",
-   "konukevi": "bina",
-   "kavsak-1": "kavsak",
-   "kavsak-2": "kavsak",
-   "kavsak-3": "kavsak",
-   "kavsak-4": "kavsak",
-   "kavsak-5": "kavsak"
-  },
   "olcek": 11.4286,
   "harita": {
    "enlem": 41.131604,
    "boylam": 42.780828
-  }
+  },
+  "konum": {
+   "giris": [
+    59.22,
+    -10.44
+   ],
+   "rektorluk": [
+    28.77,
+    0.94
+   ],
+   "asik-senlik-kultur": [
+    -9.18,
+    -1.47
+   ],
+   "insani-bilimler": [
+    -3.96,
+    24.63
+   ],
+   "iktisadi-ve-idari": [
+    -18.89,
+    7.13
+   ],
+   "muhendislik": [
+    -38.01,
+    19.56
+   ],
+   "konukevi": [
+    -10.79,
+    41.99
+   ],
+   "hoca-ahmet-yesevi": [
+    -61.78,
+    30.52
+   ],
+   "kavsak-1": [
+    57.49,
+    -10.37
+   ],
+   "kavsak-2": [
+    -5.49,
+    18.17
+   ],
+   "d1": [
+    57.04,
+    7.65
+   ],
+   "d2": [
+    46.91,
+    17.35
+   ],
+   "kavsak-3": [
+    56.19,
+    -10.32
+   ],
+   "kavsak-4": [
+    -8.12,
+    18.79
+   ],
+   "d3": [
+    -6.77,
+    23.21
+   ],
+   "d4": [
+    55.68,
+    7.81
+   ],
+   "d5": [
+    45.54,
+    16.65
+   ],
+   "d6": [
+    29.05,
+    17.27
+   ],
+   "kavsak-5": [
+    4.66,
+    -1.73
+   ],
+   "d7": [
+    49.93,
+    -19.37
+   ],
+   "d8": [
+    41.9,
+    -23.87
+   ],
+   "d9": [
+    3.79,
+    -19.17
+   ],
+   "d10": [
+    -17.64,
+    42.07
+   ],
+   "d11": [
+    5.05,
+    3.04
+   ],
+   "d12": [
+    -0.12,
+    6.63
+   ],
+   "d13": [
+    -50.85,
+    20.5
+   ]
+  },
+  "tur": {
+   "giris": "kavsak",
+   "rektorluk": "bina",
+   "asik-senlik-kultur": "bina",
+   "insani-bilimler": "bina",
+   "iktisadi-ve-idari": "bina",
+   "muhendislik": "bina",
+   "konukevi": "bina",
+   "hoca-ahmet-yesevi": "bina",
+   "kavsak-1": "kavsak",
+   "kavsak-2": "kavsak",
+   "d1": "kavsak",
+   "d2": "kavsak",
+   "kavsak-3": "kavsak",
+   "kavsak-4": "kavsak",
+   "d3": "kavsak",
+   "d4": "kavsak",
+   "d5": "kavsak",
+   "d6": "kavsak",
+   "kavsak-5": "kavsak",
+   "d7": "kavsak",
+   "d8": "kavsak",
+   "d9": "kavsak",
+   "d10": "kavsak",
+   "d11": "kavsak",
+   "d12": "kavsak",
+   "d13": "kavsak"
+  },
+  "otoTarif": [
+   [
+    "d1",
+    "d2"
+   ],
+   [
+    "d10",
+    "konukevi"
+   ],
+   [
+    "d11",
+    "d12"
+   ],
+   [
+    "d12",
+    "iktisadi-ve-idari"
+   ],
+   [
+    "d13",
+    "hoca-ahmet-yesevi"
+   ],
+   [
+    "d2",
+    "kavsak-2"
+   ],
+   [
+    "d3",
+    "insani-bilimler"
+   ],
+   [
+    "d4",
+    "d5"
+   ],
+   [
+    "d5",
+    "d6"
+   ],
+   [
+    "d6",
+    "rektorluk"
+   ],
+   [
+    "d7",
+    "d8"
+   ],
+   [
+    "d8",
+    "d9"
+   ],
+   [
+    "d9",
+    "kavsak-5"
+   ],
+   [
+    "giris",
+    "kavsak-1"
+   ],
+   [
+    "kavsak-1",
+    "d1"
+   ],
+   [
+    "kavsak-1",
+    "kavsak-3"
+   ],
+   [
+    "kavsak-2",
+    "d3"
+   ],
+   [
+    "kavsak-2",
+    "kavsak-4"
+   ],
+   [
+    "kavsak-3",
+    "d4"
+   ],
+   [
+    "kavsak-3",
+    "d7"
+   ],
+   [
+    "kavsak-4",
+    "d10"
+   ],
+   [
+    "kavsak-4",
+    "muhendislik"
+   ],
+   [
+    "kavsak-5",
+    "asik-senlik-kultur"
+   ],
+   [
+    "kavsak-5",
+    "d11"
+   ],
+   [
+    "muhendislik",
+    "d13"
+   ]
+  ],
+  "sabitAdim": [],
+  "etiketsiz": [
+   "d1",
+   "d2",
+   "d3",
+   "d4",
+   "d5",
+   "d6",
+   "d7",
+   "d8",
+   "d9",
+   "d10",
+   "d11",
+   "d12",
+   "d13"
+  ]
  }
 }

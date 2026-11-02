@@ -282,7 +282,7 @@ def kampus_kur(elemanlar: list[dict], sinir_kimligi: int, ad: str) -> dict:
         while k in kullanilan:
             k += "-2"
         kullanilan.add(k)
-        kimlik[n], ad_[n] = k, f"{adlar[0]} önü"
+        kimlik[n], ad_[n] = k, f"{kisa_ad(adlar[0], ad)} önü"   # kısa ad: QR'a sığsın, okunması kısa olsun
     def donemecler(yol: list) -> list[int]:
         """Yolun belirgin kıvrımları (Douglas–Peucker): çizim gerçek yolu izlesin, tarif "sola dönün" desin."""
         tut = {0, len(yol) - 1}
@@ -322,7 +322,7 @@ def kampus_kur(elemanlar: list[dict], sinir_kimligi: int, ad: str) -> dict:
                 p, q = yol[i], yol[j]
                 if q not in kimlik:   # ara dönemeç: QR etiketi gerekmez
                     donemec += 1
-                    kimlik[q], ad_[q] = f"donemec-{donemec}", f"{donemec}. dönemeç"
+                    kimlik[q], ad_[q] = f"d{donemec}", f"{donemec}. dönemeç"   # kısa kimlik: QR'a sığsın
                     etiketsiz.append(kimlik[q])
                 metre = sum(math.dist(konum[a], konum[b]) for a, b in zip(yol[i:j], yol[i + 1:j + 1]))
                 baglantilar.append({"a": kimlik[p], "b": kimlik[q], "adim": bm.metreden_adim(metre),
@@ -337,12 +337,16 @@ def kampus_kur(elemanlar: list[dict], sinir_kimligi: int, ad: str) -> dict:
         for bad in adlar:
             d = bina_dugum[bad][1]
             hedefler.append({"ad": bad, "nokta": kimlik[n],
-                             "tarif": f"{bad} yakınındasınız" + ("." if d < 25 else f", bina yaklaşık {round(d / 10) * 10} "
-                                                                  "metre içeride.") + " Bina kapısının yerini sorabilirsiniz.",
-                             "anahtarlar": list(dict.fromkeys(
-                                 s.replace("I", "ı").replace("İ", "i").lower() for s in (bad, kisa_ad(bad, ad))))})
+                             # Uygulama varışta yerin adını zaten söyler; burada yalnızca kapıya dair bilgi
+                             "tarif": ("Bina yolun hemen yanında." if d < 25 else
+                                       f"Bina yaklaşık {round(d / 10) * 10} metre içeride.") + " Kapıyı sorabilirsiniz.",
+                             "anahtarlar": []})
+            # Uygulama kısa adı ve adın sözcüklerini zaten tanır ("mühendislik fakültesi" → Mühendislik): tam ad
+            # yalnızca kısa adı olmayan yerde anahtar yazılır (QR'a sığsın)
             if kisa_ad(bad, ad) != bad:
                 hedefler[-1]["kisaAd"] = kisa_ad(bad, ad)
+            else:
+                hedefler[-1]["anahtarlar"] = [bad.replace("I", "ı").replace("İ", "i").lower()]
     olcek = round(BIRIM_M / bm.STANDART_ADIM_M, 4)
     plan = {"olcek": olcek, "harita": {"enlem": round(enlem0, 6), "boylam": round(boylam0, 6)},
             "konum": {kimlik[n]: [round(konum[n][0] / BIRIM_M, 2), round(konum[n][1] / BIRIM_M, 2)] for n in kimlik},

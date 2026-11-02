@@ -45,6 +45,9 @@ UZUN_AD = 22
 # Düzendeki adım sayıları standart adımladır (yaklaşık 70 cm). Kurum mesafeyi metre olarak girer; uygulama bunu
 # ziyaretçinin kendi adım uzunluğuna göre çevirir (kişiye göre ölçülüp ayarlanır).
 STANDART_ADIM_M = 0.7
+# Uygulama, kişi henüz ölçülmeden görme engelli yürüyüşüne göre 60 cm'lik adım sayar (BAK uygulaması
+# src/sabitler.ts ADIM_BOYLARI "normal"); önizlemede ziyaretçinin duyacağı adım buna göre gösterilir.
+ZIYARETCI_ADIM_M = 0.6
 
 
 def metreden_adim(metre: float) -> int:
@@ -394,8 +397,9 @@ def rota_onizleme(mekan: dict, hedef_ad: str) -> list[str]:
             adimlar.append(f"{DIKEY_ADLARI[tur]} ile {yon} → {adlar[varis]}. {ek}".strip())
         else:
             tarif = (b.get("geriTarif") if ters else b.get("tarif")) or ""
-            # Kurum metreyi görür; uygulama ziyaretçiye kendi adım uzunluğuna göre adım söyler
-            adimlar.append(f"{tarif}, yaklaşık {b['adim']} adım ({mesafe_etiketi(b['adim'])}) → {adlar[varis]}")
+            # Kurum metreyi görür; uygulama ziyaretçiye kendi adım uzunluğuna göre adım söyler (ölçülmemişse 60 cm)
+            ziyaretci = max(1, round(b["adim"] * STANDART_ADIM_M / ZIYARETCI_ADIM_M)) if b.get("adim") else "?"
+            adimlar.append(f"{tarif}, {mesafe_etiketi(b.get('adim'))}: yaklaşık {ziyaretci} adım → {adlar[varis]}")
         i += 1
     return [f"Giriş: {adlar[mekan['giris']]}", *adimlar, f"Varınca: {hedef['tarif']}"]
 

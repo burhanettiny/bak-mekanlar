@@ -518,7 +518,8 @@ if not gorunum:
 if mekan["hedefler"] and mekan.get("giris") in adlar:
     with st.container(border=True):
         st.markdown("**:material/hearing: Ziyaretçi ne duyacak?** Bir yer seçin; girişten oraya giden sesli tarif "
-                    "görünür.")
+                    "görünür. Adımlar görme engelli yürüyüşüne göre (yaklaşık 60 cm) gösterilir; uygulama her "
+                    "ziyaretçinin adımını yürüdükçe ölçüp kendisine göre söyler.")
         hedef_adi = st.selectbox("Gidilecek yer", [h["ad"] for h in mekan["hedefler"]], key="cizim-onizleme",
                                  label_visibility="collapsed")
         st.markdown("\n".join(f"1. {adim}" for adim in bm.rota_onizleme(mekan, hedef_adi)))

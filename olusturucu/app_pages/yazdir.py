@@ -89,6 +89,16 @@ if not hatalar:
                 "3. Dosyanın adresini buraya yapıştırın.\n\n"
                 "Bina değişince yalnızca o dosyayı güncellemeniz yeter; basılmış QR'lar aynı kalır. "
                 "Ziyaretçinin telefonu bina bilgisini ilk okutmada indirir, sonra internetsiz de kullanır.")
+            # Kurumun sitesi yoksa ya da siteye dosya koyamıyorsa: dosya BAK deposunda yayınlanır. Adres önceden
+            # bilindiği için QR hemen basılabilir; dosya yayınlanınca çalışmaya başlar.
+            depo_adresi = f"https://burhanettiny.github.io/bak-mekanlar/mekanlar/{mekan['id']}.json"
+            with st.container(border=True):
+                st.markdown("**Web siteniz yok mu, ya da siteye dosya koyamıyor musunuz?** Düzen dosyasını indirip "
+                            "`mailtoburhanettin@gmail.com` adresine gönderin; BAK deposunda yayınlanır. Aşağıdaki "
+                            "düğmeyle deponun adresini şimdiden kullanıp QR'ı basabilirsiniz; dosya yayınlanınca "
+                            "(genellikle bir iki gün içinde) çalışmaya başlar.")
+                st.button("BAK deposu adresini kullan", icon=":material/cloud_upload:",
+                          on_click=lambda: st.session_state.update(duzen_adresi=depo_adresi))
             adres = st.text_input("Düzen dosyasının adresi", key="duzen_adresi",
                                   placeholder="https://kurumunuz.com.tr/bak/duzen.json").strip()
             if adres and not bm.adres_gecerli(adres):

@@ -307,11 +307,14 @@ def yonleri_ekle(mekan: dict, plan: dict) -> dict:
             b["yon"] = pusula_yonu(konum, b["a"], b["b"])
             if (b["a"], b["b"]) in oto and _oto_mu(b):
                 b["oto"] = True
-    # Açık alandaki noktaların harita koordinatı: uygulama "neredeyim"de GPS'ten en yakın noktayı söyler
+    # Açık alandaki noktaların harita koordinatı: uygulama "neredeyim"de GPS'ten en yakın noktayı söyler. QR'ı
+    # büyütmesin diye yalnızca etiket asılan (ziyaretçinin tanıyacağı) noktalara ve 5 haneyle (~1 m; GPS zaten
+    # 5–20 m hassas) yazılır; yol ortasındaki dönemeçlerin konumu gerekmez.
     gps = dis_gps(plan)
+    etiketsiz = set(plan.get("etiketsiz") or [])
     for n in yeni["noktalar"]:
-        if n["id"] in gps:
-            n["enlem"], n["boylam"] = gps[n["id"]]
+        if n["id"] in gps and n["id"] not in etiketsiz:
+            n["enlem"], n["boylam"] = (round(d, 5) for d in gps[n["id"]])
     return yeni
 
 
