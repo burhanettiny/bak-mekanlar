@@ -32,7 +32,7 @@ Bina bilgisi QR'ın içinde taşınır. Sunucu, hesap ya da internet bağlantıs
 | 1. Başla | Tek soru: ne için QR? (Hastane/okul/kurum, Market, AVM, Kampüs). Hazır örnek ve kayıtlı dosya kapalı kutularda. "Kampüsünüzü haritadan kurun": kurum adı OpenStreetMap'te aranır, binalar ve yollar haritadan kurulur |
 | 2. Yerleri yazın | Varsayılan: ad + "Zemin kat: Danışma, Vezne, WC" gibi tek bir liste; kurumun sitesindeki kat planı yapıştırılabilir. Market için koridor koridor solda/sağda reyonlar. Ayrıntılı tablo (sağ/sol, adım, oda no) isteğe bağlı |
 | 3. Kontrol ve çizim | Oluşan düzen 2B çizimde: tıklayıp düzeltme, sürükleme (adımlar mesafeden), yer ekleme, binanın içini açma, "koridor gibi sırala", yola kavşak ekleme (çift tıklama), ziyaretçinin duyacağı tarifin önizlemesi. Kampüs burada sıfırdan çizilir. Harita ayrı değil, çizimin arka planıdır: çizimin üstündeki kutuda kurum aranınca çizim oraya konur (harita/uydu), "Tıklayarak ekle" ile yerler yerine tıklanarak eklenir ve bir öncekine bağlanır, "Buradayım" seçili noktayı telefonun konumuna taşır. Boş çizimde kurum adıyla OpenStreetMap'ten kurulur. Haritadaki noktaların konumu QR'a girer (telefon açık alanda GPS'le en yakın noktayı söyler) |
-| 4. Yazdır | Giriş QR'ı ve etiketler. Bina bilgisi kendiliğinden QR'ın içine konur; QR'a sığmayan büyük binada kurumun sitesindeki adres yolu açılır |
+| 4. Yazdır | Giriş QR'ı ve etiketler. Bina bilgisi kendiliğinden QR'ın içine konur; QR'a sığmayan büyük binada (ör. 100 noktalı kampüs) "BAK'ta yayınla" düğmesi düzeni bu deponun `kurum/` klasörüne yazar ve QR adresini taşır (kurumun web sitesi gerekmez). İsteyen kendi sitesinde de tutabilir |
 | Gelişmiş › Tablolar | Noktalar, yollar ve hedefler tabloları; her şey elle değiştirilebilir |
 | Gelişmiş › Teknik plan | Graphviz planı ve tarif önizleme |
 
@@ -98,3 +98,19 @@ pytest
 
 Birkaç dakika sonra uygulama `https://bak-qr.streamlit.app` gibi bir adreste yayında olur. Depoya her push'ta
 kendiliğinden güncellenir.
+
+
+## BAK'ta yayınlama (büyük binalar)
+
+`yayin.py`, tek QR'a sığmayan düzeni GitHub API ile bu deponun `kurum/<kimlik>.json` dosyasına yazar; GitHub Pages
+onu `https://burhanettiny.github.io/bak-mekanlar/kurum/<kimlik>.json` adresinde yayınlar. Bunun için Streamlit
+Cloud'da (Manage app → Settings → Secrets) bir GitHub anahtarı tanımlanır:
+
+```toml
+[github]
+token = "github_pat_..."   # fine-grained; yalnızca bak-mekanlar deposu, "Contents: Read and write"
+```
+
+Anahtar yoksa sayfa e-postayla gönderme yolunu gösterir. Başkasının yayınının üzerine yazılmasın diye ilk yayında
+rastgele bir yayın anahtarı üretilir: dosyada yalnızca özeti durur, anahtarın kendisi kurumun "Kaydet" ile indirdiği
+düzen dosyasının planındadır; güncelleme yalnızca o dosyayla yapılabilir.

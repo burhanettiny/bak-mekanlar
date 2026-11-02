@@ -882,4 +882,58 @@ def test_buyuk_kampus_qrsi_kucultulur_ve_depo_adresi_secilebilir():
     at.switch_page("app_pages/yazdir.py").run()
     dugme = next(b for b in at.button if b.label == "BAK deposu adresini kullan")
     dugme.click().run()
-    assert at.text_input(key="duzen_adresi").value.startswith("https://burhanettiny.github.io/bak-mekanlar/mekanlar/q")
+    assert at.text_input(key="duzen_adresi").value.startswith("https://burhanettiny.github.io/bak-mekanlar/kurum/q")
+
+
+class _SahteGitHub:
+    """GitHub içerik API'sinin taklidi: dosyaları bellekte tutar."""
+    def __init__(self):
+        self.dosyalar = {}
+
+    def __call__(self, yontem, url, token, govde=None):
+        if yontem == "GET":
+            return self.dosyalar.get(url)
+        self.dosyalar[url] = {"content": govde["content"], "sha": f"sha{len(self.dosyalar)}"}
+        return {}
+
+
+def test_buyuk_bina_bak_deposunda_yayinlanir_ve_yalniz_sahibi_gunceller():
+    import base64
+    import yayin as yy
+    m = json.loads(json.dumps(bm.sablonlar()[next(a for a in bm.sablonlar() if "Gebze Center" in a)]))
+    m.pop("plan")
+    m["id"] = "q-gebze-center-avm-1a2b"
+    gh, ayar = _SahteGitHub(), {"token": "x", "depo": "burhanettiny/bak-mekanlar"}
+    plan = {}
+    adres = yy.yayinla(m, plan, ayar, gh)
+    assert adres == "https://burhanettiny.github.io/bak-mekanlar/kurum/q-gebze-center-avm-1a2b.json"
+    anahtar = plan["yayinAnahtari"]
+    yazilan = json.loads(base64.b64decode(next(iter(gh.dosyalar.values()))["content"]))
+    assert yazilan["id"] == m["id"] and "plan" not in yazilan and anahtar not in json.dumps(yazilan)
+    # Aynı anahtarla güncellenir; anahtarı olmayan (başkası) üzerine yazamaz
+    m["ad"] = "Gebze Center"
+    assert yy.yayinla(m, plan, ayar, gh) == adres
+    with pytest.raises(yy.YayinHatasi):
+        yy.yayinla(m, {}, ayar, gh)
+    with pytest.raises(yy.YayinHatasi):
+        yy.yayinla({**m, "id": "../index"}, {}, ayar, gh)
+
+
+def test_yazdir_sayfasinda_tek_dugmeyle_yayinlanir():
+    import yayin as yy
+    import os
+    gh = _SahteGitHub()
+    eski = yy._istek
+    yy._istek = gh
+    yy._yukleme_zamani = os.path.getmtime(yy.__file__)   # streamlit_app modülü yeniden yükleyip sahteyi silmesin
+    try:
+        at = sablon_ac(uygulama(), next(a for a in bm.sablonlar() if "Gebze Center" in a))
+        at.secrets["github"] = {"token": "x"}
+        at.switch_page("app_pages/yazdir.py").run()
+        next(b for b in at.button if b.label == "BAK'ta yayınla ve QR'ı oluştur").click().run()
+        assert not at.exception
+        assert at.text_input(key="duzen_adresi").value.startswith("https://burhanettiny.github.io/bak-mekanlar/kurum/q-")
+        assert at.session_state["plan"]["yayinAnahtari"] and gh.dosyalar
+        assert any(b.label == "Değişiklikleri yayınla" for b in at.button)
+    finally:
+        yy._istek = eski

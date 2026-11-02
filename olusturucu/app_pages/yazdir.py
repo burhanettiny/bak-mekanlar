@@ -6,6 +6,7 @@ import streamlit as st
 import bak_mekan as bm
 import cizim as cz
 import durum
+import yayin as yy
 
 
 @st.cache_data(max_entries=50)
@@ -79,26 +80,64 @@ if not hatalar:
     if yontem == "icinde":
         veri = gomulu
     else:
+        plan_y = st.session_state.get("plan") or {}
+        ayar = yy.ayarlar()
         with st.container(border=True):
-            if sigmiyor:
-                st.info("Binanız tek bir QR'a sığmayacak kadar büyük. Bina bilgisini kurumunuzun web sitesine koyup "
-                        "QR'a yalnızca adresini yazacağız.", icon=":material/info:")
-            st.markdown(
-                "1. Aşağıdan **düzen dosyasını** indirin.\n"
-                "2. Dosyayı kurumunuzun web sitesine yükleyin (ör. `https://kurumunuz.com.tr/bak/duzen.json`).\n"
-                "3. Dosyanın adresini buraya yapıştırın.\n\n"
-                "Bina değişince yalnızca o dosyayı güncellemeniz yeter; basılmış QR'lar aynı kalır. "
-                "Ziyaretçinin telefonu bina bilgisini ilk okutmada indirir, sonra internetsiz de kullanır.")
-            # Kurumun sitesi yoksa ya da siteye dosya koyamıyorsa: dosya BAK deposunda yayınlanır. Adres önceden
-            # bilindiği için QR hemen basılabilir; dosya yayınlanınca çalışmaya başlar.
-            depo_adresi = f"https://burhanettiny.github.io/bak-mekanlar/mekanlar/{mekan['id']}.json"
-            with st.container(border=True):
-                st.markdown("**Web siteniz yok mu, ya da siteye dosya koyamıyor musunuz?** Düzen dosyasını indirip "
-                            "`mailtoburhanettin@gmail.com` adresine gönderin; BAK deposunda yayınlanır. Aşağıdaki "
-                            "düğmeyle deponun adresini şimdiden kullanıp QR'ı basabilirsiniz; dosya yayınlanınca "
-                            "(genellikle bir iki gün içinde) çalışmaya başlar.")
-                st.button("BAK deposu adresini kullan", icon=":material/cloud_upload:",
-                          on_click=lambda: st.session_state.update(duzen_adresi=depo_adresi))
+            # Kurumun web sitesi gerekmez: oluşturucu düzeni BAK deposunda kendisi yayınlar, QR adresini taşır
+            if ayar:
+                if sigmiyor:
+                    st.info("Binanız tek bir QR'a sığmayacak kadar büyük. Bina bilgisini **BAK'ta yayınlayıp** QR'a "
+                            "yalnızca adresini yazacağız; web siteniz gerekmez.", icon=":material/info:")
+                yayinli = plan_y.get("yayinAdresi")
+                if yayinli:
+                    st.success(f"BAK'ta yayında: {yayinli}", icon=":material/cloud_done:")
+                if st.button("Değişiklikleri yayınla" if yayinli else "BAK'ta yayınla ve QR'ı oluştur",
+                             type="primary", icon=":material/cloud_upload:"):
+                    try:
+                        plan_y = json.loads(json.dumps(plan_y))
+                        adres_y = yy.yayinla(mekan, plan_y, ayar)
+                    except yy.YayinHatasi as hata:
+                        st.error(str(hata), icon=":material/error:")
+                    else:
+                        plan_y["yayinAdresi"] = adres_y
+                        st.session_state.plan = plan_y
+                        st.session_state.duzen_adresi = adres_y
+                        st.session_state.yayin_bildirimi = True
+                        st.rerun()
+                st.caption("Bina bilgisi BAK'ın herkese açık deposunda durur (QR'ın içine konan bilginin aynısı: yerler, "
+                           "yollar, tarifler). Kişisel bilgi yazmayın.")
+                if st.session_state.pop("yayin_bildirimi", False):
+                    st.success("Yayınlandı. Adres bir iki dakika içinde çalışmaya başlar; QR'ı şimdiden basabilirsiniz. "
+                               "Sonra güncelleyebilmek için aşağıdaki **Daha sonra düzenlemek için kaydet** ile dosyanızı "
+                               "saklayın (yayın anahtarınız o dosyadadır).", icon=":material/check_circle:")
+                if yayinli and "duzen_adresi" not in st.session_state:
+                    st.session_state.duzen_adresi = yayinli
+                kendi_sitesi = st.expander("Bina bilgisini kendi web sitemizde tutacağız", icon=":material/language:")
+            else:
+                if sigmiyor:
+                    st.info("Binanız tek bir QR'a sığmayacak kadar büyük. Bina bilgisini kurumunuzun web sitesine "
+                            "koyup QR'a yalnızca adresini yazacağız.", icon=":material/info:")
+                kendi_sitesi = st.container()
+            with kendi_sitesi:
+                st.markdown(
+                    "1. Aşağıdan **düzen dosyasını** indirin.\n"
+                    "2. Dosyayı kurumunuzun web sitesine yükleyin (ör. `https://kurumunuz.com.tr/bak/duzen.json`).\n"
+                    "3. Dosyanın adresini buraya yapıştırın.\n\n"
+                    "Bina değişince yalnızca o dosyayı güncellemeniz yeter; basılmış QR'lar aynı kalır. "
+                    "Ziyaretçinin telefonu bina bilgisini ilk okutmada indirir, sonra internetsiz de kullanır.")
+                if not ayar:
+                    # BAK'ın GitHub erişimi ayarlanmamışsa: dosya e-postayla gönderilir, depoda elle yayınlanır
+                    depo_adresi = yy.yayin_adresi(mekan["id"])
+                    with st.container(border=True):
+                        st.markdown("**Web siteniz yok mu, ya da siteye dosya koyamıyor musunuz?** Düzen dosyasını "
+                                    "indirip `mailtoburhanettin@gmail.com` adresine gönderin; BAK deposunda yayınlanır. "
+                                    "Aşağıdaki düğmeyle deponun adresini şimdiden kullanıp QR'ı basabilirsiniz; dosya "
+                                    "yayınlanınca (genellikle bir iki gün içinde) çalışmaya başlar.")
+                        st.button("BAK deposu adresini kullan", icon=":material/cloud_upload:",
+                                  on_click=lambda: st.session_state.update(duzen_adresi=depo_adresi))
+                st.download_button("Düzen dosyasını indir (siteye yüklemek için)", durum.dosya_icerigi(mekan),
+                                   file_name=f"{mekan['id']}.json", mime="application/json",
+                                   icon=":material/download:")
             adres = st.text_input("Düzen dosyasının adresi", key="duzen_adresi",
                                   placeholder="https://kurumunuz.com.tr/bak/duzen.json").strip()
             if adres and not bm.adres_gecerli(adres):
@@ -107,9 +146,6 @@ if not hatalar:
                 tamam, mesaj = adresi_kontrol_et(adres, mekan)
                 (st.success if tamam else st.error)(mesaj)
             veri = bm.adres_qr_verisi(adres) if bm.adres_gecerli(adres) else None
-            st.download_button("Düzen dosyasını indir (siteye yüklemek için)", durum.dosya_icerigi(mekan),
-                               file_name=f"{mekan['id']}.json", mime="application/json",
-                               icon=":material/download:")
 
 if not hatalar and veri:
     sol, sag = st.columns([1, 2])
