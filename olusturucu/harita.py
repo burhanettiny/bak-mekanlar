@@ -87,7 +87,7 @@ def haritadan_kur_formu(anahtar: str, *, uyari: str | None = None) -> dict | Non
     import osm_kampus as ok
     with st.form(f"osm-ara-{anahtar}", border=False):
         with st.container(horizontal=True, vertical_alignment="bottom"):
-            sorgu = st.text_input("Kurumun adı", placeholder="ör. Ardahan Üniversitesi Yenisey Kampüsü",
+            sorgu = st.text_input("Kurumun adı", placeholder="ör. XYX Üniversitesi ",
                                   key=f"osm-sorgu-{anahtar}")
             aranacak = st.form_submit_button("Haritada ara", icon=":material/search:")
     aday_anahtari = f"osm_adaylar_{anahtar}"
