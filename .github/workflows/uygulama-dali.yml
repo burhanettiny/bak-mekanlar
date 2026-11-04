@@ -1,0 +1,28 @@
+# Streamlit Cloud uygulamayı "uygulama" dalından çalıştırır. Bu iş, main'de yalnızca uygulama kodu
+# (olusturucu/) değiştiğinde main'i "uygulama" dalına aktarır. Kurum yayınları (kurum/) main'e yazılır ama
+# uygulamayı yeniden başlatmaz; böylece açık sekmeler "Failed to fetch dynamically imported module" hatası almaz.
+name: Uygulama dalını güncelle
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "olusturucu/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: uygulama-dali
+  cancel-in-progress: false
+
+jobs:
+  aktar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: main'i uygulama dalına aktar
+        run: git push --force origin HEAD:refs/heads/uygulama
