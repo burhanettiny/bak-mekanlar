@@ -1,0 +1,45 @@
+# Streamlit Community Cloud ücretsiz uygulamaları bir süre ziyaret edilmeyince uyutur; ilk açılış 30–60 saniye sürer
+# ve kurum görevlisi "çalışmıyor" sanabilir. Bu iş QR oluşturucuyu 6 saatte bir gerçek bir tarayıcıyla açar;
+# uyumuşsa "uyandır" düğmesine basar. Elle de çalıştırılabilir (Actions → Uygulamayı uyanık tut → Run workflow).
+name: Uygulamayı uyanık tut
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  uyandir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Tarayıcıyı kur
+        run: |
+          pip install playwright==1.48.0
+          python -m playwright install --with-deps chromium
+      - name: bakmekan.streamlit.app'i aç
+        run: |
+          python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          with sync_playwright() as p:
+              tarayici = p.chromium.launch()
+              sayfa = tarayici.new_page()
+              sayfa.goto("https://bakmekan.streamlit.app/", timeout=120000)
+              sayfa.wait_for_timeout(10000)
+              for cerceve in sayfa.frames:
+                  dugme = cerceve.get_by_role("button", name="Yes, get this app back up!")
+                  if dugme.count():
+                      print("Uygulama uyuyordu; uyandırılıyor")
+                      dugme.click()
+                      sayfa.wait_for_timeout(90000)
+                      break
+              else:
+                  print("Uygulama zaten uyanık")
+              tarayici.close()
+          PY

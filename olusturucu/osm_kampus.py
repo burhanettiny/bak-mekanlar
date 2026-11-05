@@ -29,7 +29,8 @@ _ONEM = {"primary": 6, "secondary": 5, "tertiary": 4, "unclassified": 3, "reside
          "living_street": 2, "pedestrian": 2, "footway": 1, "path": 1, "steps": 0, "cycleway": 1}
 _AJAN = "BAK-QR-olusturucu/1.0 (https://bakmekan.streamlit.app; mailtoburhanettin@gmail.com)"
 OVERPASS = ["https://overpass-api.de/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
-            "https://overpass.kumi.systems/api/interpreter"]
+            "https://overpass.kumi.systems/api/interpreter",
+            "https://overpass.private.coffee/api/interpreter"]
 _TR = str.maketrans("çğıöşüÇĞİÖŞÜâÂîÎûÛ", "cgiosuCGIOSUaAiIuU")
 
 
@@ -67,33 +68,64 @@ def _getir(url: str, veri: bytes | None = None, zaman: int = 25):
 
 def ara(sorgu: str) -> list[dict]:
     """Kurum adı → OSM'de alan olan (yol ya da ilişki) adaylar: [{ad, aciklama, tur, kimlik}]."""
+    # Alanın sınırı aramayla birlikte (sadeleştirilmiş olarak) gelir: kurulumda ayrıca sorulmaz, yarım dakika kazanılır
     url = "https://nominatim.openstreetmap.org/search?" + urllib.parse.urlencode(
-        {"q": sorgu, "format": "jsonv2", "limit": 8, "accept-language": "tr"})
+        {"q": sorgu, "format": "jsonv2", "limit": 8, "accept-language": "tr", "polygon_geojson": 1,
+         "polygon_threshold": 0.00005})
     sonuc = []
     for s in _getir(url):
         if s.get("osm_type") not in ("way", "relation"):
             continue
         ad = s.get("name") or s["display_name"].split(",")[0]
-        sonuc.append({"ad": ad, "aciklama": s["display_name"], "tur": s["osm_type"], "kimlik": int(s["osm_id"])})
+        sonuc.append({"ad": ad, "aciklama": s["display_name"], "tur": s["osm_type"], "kimlik": int(s["osm_id"]),
+                      "sinir": _dis_halka(s.get("geojson"))})
     return sonuc
 
 
+def _dis_halka(geojson: dict | None) -> list[list[float]] | None:
+    """GeoJSON alanının en büyük dış halkası: [[enlem, boylam], …]; alan değilse None."""
+    if not geojson:
+        return None
+    if geojson.get("type") == "Polygon":
+        halkalar = [geojson["coordinates"][0]]
+    elif geojson.get("type") == "MultiPolygon":
+        halkalar = [p[0] for p in geojson["coordinates"]]
+    else:
+        return None
+    halka = max(halkalar, key=len)
+    return [[round(lat, 7), round(lon, 7)] for lon, lat in halka] if len(halka) >= 4 else None
+
+
 def _overpass(sorgu: str) -> list[dict]:
+    """Sorgu bütün Overpass sunucularına aynı anda gönderilir, ilk cevap veren kullanılır: biri kuyrukta beklerken
+    öbürü çoğu zaman saniyeler içinde cevap verir."""
+    from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
+    veri = urllib.parse.urlencode({"data": sorgu}).encode()
+    havuz = ThreadPoolExecutor(max_workers=len(OVERPASS))
+    bekleyen = {havuz.submit(_getir, adres, veri, 90) for adres in OVERPASS}
     hata = None
-    for adres in OVERPASS:
-        try:
-            return _getir(adres, urllib.parse.urlencode({"data": sorgu}).encode(), zaman=90)["elements"]
-        except Exception as e:   # bir ayna meşgulse sıradakine geçilir
-            hata = e
+    try:
+        while bekleyen:
+            biten, bekleyen = wait(bekleyen, return_when=FIRST_COMPLETED)
+            for is_ in biten:
+                try:
+                    return is_.result()["elements"]
+                except Exception as e:   # bu sunucu meşgul ya da hatalı; öbürleri beklenir
+                    hata = e
+    finally:
+        havuz.shutdown(wait=False, cancel_futures=True)
     raise RuntimeError(f"OpenStreetMap verisi alınamadı: {hata}")
 
 
-def veri_cek(tur: str, kimlik: int) -> list[dict]:
+def veri_cek(tur: str, kimlik: int, sinir: list[list[float]] | None = None) -> list[dict]:
     """Alanın sınırı; sınırı çevreleyen kutudaki yollar, adlı binalar ve kapılar (Overpass, "out geom"). Kutunun
     sınır dışında kalan kısmı kurulumda atılır. (Overpass'ın "area" araması her alan için hazır olmadığından
     kullanılmaz.)"""
-    secici = "rel" if tur == "relation" else "way"
-    sinir = _overpass(f"[out:json][timeout:60];{secici}({kimlik});out geom;")
+    if sinir:   # aramadan geldi: Overpass'a ayrıca sorulmaz
+        sinir = [{"type": tur, "id": kimlik, "geometry": [{"lat": a, "lon": b} for a, b in sinir]}]
+    else:
+        secici = "rel" if tur == "relation" else "way"
+        sinir = _overpass(f"[out:json][timeout:60];{secici}({kimlik});out geom;")
     noktalar = [p for e in sinir for p in _geometri(e)]
     if not noktalar:
         raise ValueError("Alanın sınırı bulunamadı.")
@@ -117,8 +149,8 @@ def ara_onbellek(sorgu: str) -> list[dict]:
 
 
 @st.cache_data(ttl=86400, show_spinner=False)
-def veri_onbellek(tur: str, kimlik: int) -> list[dict]:
-    return veri_cek(tur, kimlik)
+def veri_onbellek(tur: str, kimlik: int, sinir_json: str = "") -> list[dict]:
+    return veri_cek(tur, kimlik, json.loads(sinir_json) if sinir_json else None)
 
 
 # ── Kurulum ───────────────────────────────────────────────

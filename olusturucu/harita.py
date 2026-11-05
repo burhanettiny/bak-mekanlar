@@ -8,6 +8,7 @@ gerçek yerlerine taşır; ya da iki noktanın konumunu yazar, çizimin tamamı 
 hesaplanır (bkz. cizim.dis_gps): haritada taşınan nokta çizimde de taşınmış olur.
 OpenStreetMap'ten kurulan kampüsler (osm_kampus.py) baştan haritaya oturtulmuş gelir.
 """
+import json
 import math
 
 import streamlit as st
@@ -113,7 +114,8 @@ def haritadan_kur_formu(anahtar: str, *, uyari: str | None = None) -> dict | Non
     aday = adaylar[secim]
     with st.spinner("Binalar ve yollar haritadan alınıyor; bir dakika kadar sürebilir…"):
         try:
-            kurulan = ok.kampus_kur(ok.veri_onbellek(aday["tur"], aday["kimlik"]), aday["kimlik"], aday["ad"])
+            sinir = json.dumps(aday["sinir"]) if aday.get("sinir") else ""   # aramadan gelen alan sınırı
+            kurulan = ok.kampus_kur(ok.veri_onbellek(aday["tur"], aday["kimlik"], sinir), aday["kimlik"], aday["ad"])
         except ValueError as hata:
             st.error(f"{hata} Haritada bu alanda yeterli bilgi yok; yerleri haritaya tıklayarak kendiniz ekleyin.")
             return None
