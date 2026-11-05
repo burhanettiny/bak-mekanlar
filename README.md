@@ -85,3 +85,9 @@ Her kurumun düzenini bu depoya eklemek yerine kurumlar [`olusturucu/`](olusturu
 uygulamasıyla kendi giriş QR'larını hazırlayabilir. Bina bilgisi QR'ın içinde taşınır, depoya bir şey eklenmez.
 Bu binalar uygulamada "kurum tarafından hazırlandı, doğrulanmadı" diye duyurulur. Yayınlama adımları:
 [`olusturucu/README.md`](olusturucu/README.md).
+
+## Lisans
+
+- **Kod ve örnek düzenler:** [MIT](LICENSE). Kullanabilir, değiştirebilir, paylaşabilirsiniz; telif satırını koruyun.
+- **`kurum/` klasöründeki planlar:** OpenStreetMap verisi içerebilir. Bu planlar
+  [ODbL 1.0](kurum/LICENSE.md) ile paylaşılır. Harita verisi © OpenStreetMap katkıcıları.

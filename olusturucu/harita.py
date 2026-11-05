@@ -109,6 +109,8 @@ def haritadan_kur_formu(anahtar: str, *, uyari: str | None = None) -> dict | Non
                      key=f"osm-secim-{anahtar}")
     if uyari:
         st.caption(uyari)
+    st.caption("Harita verisi © [OpenStreetMap katkıcıları](https://www.openstreetmap.org/copyright). Bu veriden "
+               "kurulan plan, yayınlanınca ODbL lisansıyla herkese açık paylaşılır.")
     if not st.button("Bu alanı kur", type="primary", icon=":material/construction:", key=f"osm-kur-{anahtar}"):
         return None
     aday = adaylar[secim]
